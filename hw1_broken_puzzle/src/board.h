@@ -1,9 +1,6 @@
 #pragma once
-#include <algorithm>
 #include <array>
-#include <iomanip>
 #include <iostream>
-#include <vector>
 #define M 4
 #define N 5
 using namespace std;
