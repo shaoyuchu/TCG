@@ -1,4 +1,5 @@
 #include "board.h"
+#include "puzzle_solver.h"
 #include "utils.h"
 using namespace std;
 
@@ -7,7 +8,12 @@ int main() {
     Board board;
     cin >> n >> m;
     cin >> board;
-    cout << board;
+    cout << board << endl;
+
+    vector<Board> nextBoards = board.getNext();
+    for (auto& nextBoard : nextBoards) {
+        cout << nextBoard << endl;
+    }
 
     return 0;
 }

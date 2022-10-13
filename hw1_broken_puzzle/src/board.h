@@ -1,8 +1,11 @@
 #pragma once
 #include <array>
 #include <iostream>
+#include <utility>
+#include <vector>
 #define M 4
 #define N 5
+#define convert2dTo1d(i, j) (i * N + j)
 using namespace std;
 
 /*
@@ -31,17 +34,24 @@ M:________________
 [0][0]==1 [0][1]==2 ... [0][1]==6 ... [3][4]==20
 */
 
+enum Action { up, down, left, right, null };
+
 class Board {
    private:
     array<array<int, N>, M> puzzle = {0};
+    vector<pair<short, Action>> prevMoves;
+
+    void slide(int i, Action act) { slide(i / N, i % N, act); }
+    void slide(int i, int j, Action act);
+    void appendMove(int i, int j, Action act);
+    void move(int i, int j, Action act);
 
    public:
-    enum Action { up, down, left, right, null };
-
     Board() {}
     int& operator()(int i) { return puzzle[i / N][i % N]; }
     array<int, N>& operator[](int i) { return puzzle[i]; }
-    void slide(int i, Action act) { slide(i / N, i % N, act); }
-    void slide(int i, int j, Action act);
+    vector<pair<short, Action>> getPrevMoves() { return this->prevMoves; }
+    vector<Board> getNext();
     bool isCompleted();
+    string toString();
 };
