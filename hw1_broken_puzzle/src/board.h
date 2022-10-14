@@ -41,7 +41,6 @@ class Board {
     array<array<int, N>, M> puzzle = {0};
     vector<pair<short, Action>> prevMoves;
 
-    void slide(int i, Action act) { slide(i / N, i % N, act); }
     void slide(int i, int j, Action act);
     void appendMove(int i, int j, Action act);
     void move(int i, int j, Action act);

@@ -12,4 +12,5 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.cpp
 	$(CC) $(CFLAGS) -c $^ -o $@
 
 clean:
-	rm -f $(OBJDIR)/*.o $(TARGET)
+	rm -rf $(OBJDIR)
+	rm -f $(TARGET)
