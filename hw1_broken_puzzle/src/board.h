@@ -50,7 +50,8 @@ class Board {
     int& operator()(int i) { return puzzle[i / N][i % N]; }
     array<int, N>& operator[](int i) { return puzzle[i]; }
     vector<pair<short, Action>> getPrevMoves() { return this->prevMoves; }
-    vector<Board> getNext();
+    array<Board, 8> getNext();
     bool isCompleted();
+    bool isNull();
     string toString();
 };

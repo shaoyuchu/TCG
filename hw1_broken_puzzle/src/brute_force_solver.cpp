@@ -4,7 +4,7 @@ bool BruteForceSolver::isVisited(Board board) {
     return (this->visited.find(board.toString()) != this->visited.end());
 }
 
-BruteForceSolver::BruteForceSolver(Board initialBoard) {
+BruteForceSolver::BruteForceSolver(Board& initialBoard) {
     this->boardQueue.push(initialBoard);
     this->visited.insert(initialBoard.toString());
 }
@@ -19,7 +19,7 @@ vector<pair<short, Action>> BruteForceSolver::solve() {
 
         // search deeper
         for (auto nextBoard : curBoard.getNext()) {
-            if (!this->isVisited(nextBoard)) {
+            if (!nextBoard.isNull() and !this->isVisited(nextBoard)) {
                 this->boardQueue.push(nextBoard);
             }
         }

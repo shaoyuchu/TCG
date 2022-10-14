@@ -10,7 +10,7 @@ int main() {
 
     BruteForceSolver solver(initialBoard);
     vector<pair<short, Action>> result = solver.solve();
-    
+
     cout << result.size() << endl;
     for (auto resIter = result.begin(); resIter < result.end(); resIter++) {
         cout << resIter->first << " " << resIter->second << endl;

@@ -31,8 +31,9 @@ void Board::appendMove(int i, int j, Action act) {
 
 /*Public Method*/
 
-vector<Board> Board::getNext() {
-    vector<Board> next;
+array<Board, 8> Board::getNext() {
+    array<Board, 8> next;
+    int curCnt = 0;
     for (int i = 0; i < M; i++) {
         for (int j = 0; j < N; j++) {
             if (this->puzzle[i][j] != 0) continue;
@@ -40,25 +41,29 @@ vector<Board> Board::getNext() {
             if (i - 1 >= 0 && this->puzzle[i - 1][j] > 0) {
                 Board movedDown(*this);
                 movedDown.move(i - 1, j, Action::down);
-                next.push_back(movedDown);
+                next[curCnt] = movedDown;
+                curCnt++;
             }
             // (i+1, j) move up
             if (i + 1 < M && this->puzzle[i + 1][j] > 0) {
                 Board movedUp(*this);
                 movedUp.move(i + 1, j, Action::up);
-                next.push_back(movedUp);
+                next[curCnt] = movedUp;
+                curCnt++;
             }
             // (i, j-1) move right
             if (j - 1 >= 0 && this->puzzle[i][j - 1] > 0) {
                 Board movedRight(*this);
                 movedRight.move(i, j - 1, Action::right);
-                next.push_back(movedRight);
+                next[curCnt] = movedRight;
+                curCnt++;
             }
             // (i, j+1) move left
             if (j + 1 < N && this->puzzle[i][j + 1] > 0) {
                 Board movedLeft(*this);
                 movedLeft.move(i, j + 1, Action::left);
-                next.push_back(movedLeft);
+                next[curCnt] = movedLeft;
+                curCnt++;
             }
         }
     }
@@ -73,10 +78,14 @@ void Board::move(int i, int j, Action action) {
 
 bool Board::isCompleted() {
     for (int i = 0; i < M * N; i++) {
-        if (!(this->operator()(i) == i + 1 || this->operator()(i) == 0 ||
-              this->operator()(i) == -1))
-            return false;
+        if (!(this->operator()(i) == i + 1 || this->operator()(i) <= 0)) return false;
     }
+    return true;
+}
+
+bool Board::isNull() {
+    for (int j = 0; j < N; j++)
+        if (puzzle[0][j] > 0) return false;
     return true;
 }
 

@@ -14,6 +14,6 @@ class BruteForceSolver {
     bool isVisited(Board board);
 
    public:
-    BruteForceSolver(Board initialBoard);
+    BruteForceSolver(Board& initialBoard);
     vector<pair<short, Action>> solve();
 };
