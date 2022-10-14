@@ -1,18 +1,20 @@
 #include "board.h"
-#include "puzzle_solver.h"
+#include "brute_force_solver.h"
 #include "utils.h"
 using namespace std;
 
 int main() {
     int n = 0, m = 0;
-    Board board;
+    Board initialBoard;
     cin >> n >> m;
-    cin >> board;
-    cout << board << endl;
+    cin >> initialBoard;
+    cout << initialBoard << endl;
 
-    vector<Board> nextBoards = board.getNext();
-    for (auto& nextBoard : nextBoards) {
-        cout << nextBoard << endl;
+    BruteForceSolver solver(initialBoard);
+    vector<pair<short, Action>> result = solver.solve();
+    cout << result.size() << endl;
+    for (auto resIter = result.begin(); resIter < result.end(); resIter++) {
+        cout << resIter->first << " " << resIter->second << endl;
     }
 
     return 0;
