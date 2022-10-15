@@ -1,3 +1,5 @@
+#pragma once
+#include <unordered_set>
 #include <vector>
 
 #include "board.h"
@@ -5,7 +7,7 @@
 class PuzzleSolver {
    protected:
     unordered_set<bitset<BITSET_LEN>> visited;
-    bool isVisited(Board board) {
+    bool isVisited(Board& board) {
         return (this->visited.find(board.toBitset()) != this->visited.end());
     }
 

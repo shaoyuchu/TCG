@@ -8,7 +8,7 @@
 #define N 5
 #define BIT_PER_CELL 5
 #define BITSET_LEN 128
-#define convert2dTo1d(i, j) (i * N + j)
+#define CONVERT_2D_2_1D(i, j) (i * N + j)
 using namespace std;
 
 /*
@@ -54,11 +54,12 @@ class Board {
     Board() {}
     int& operator()(int i) { return puzzle[i / N][i % N]; }
     array<int, N>& operator[](int i) { return puzzle[i]; }
+    void initEstRemaining();
     vector<pair<short, Action>>& getPrevMoves() { return this->prevMoves; }
+    int getEstTotalCost() { return this->prevMoves.size() + this->estRemaining; }
     array<Board, 8> getNext();
-    int getEstRemaining() { return this->estRemaining; }
-    void setEstRemaining(int est) { this->estRemaining = est; }
     bool isCompleted();
     bool isNull();
     bitset<BITSET_LEN> toBitset();
+    void printDebugMsg();
 };

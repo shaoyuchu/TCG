@@ -7,8 +7,8 @@ BruteForceSolver::BruteForceSolver(Board& initialBoard) {
 
 vector<pair<short, Action>> BruteForceSolver::solve() {
     while (!this->boardQueue.empty()) {
-        Board curBoard = boardQueue.front();
-        boardQueue.pop();
+        Board curBoard = this->boardQueue.front();
+        this->boardQueue.pop();
 
         // check if the game ends
         if (curBoard.isCompleted()) return curBoard.getPrevMoves();

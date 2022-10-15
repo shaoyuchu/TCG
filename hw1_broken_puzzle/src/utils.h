@@ -9,7 +9,6 @@ istream& operator>>(istream& in, Board& board) {
     for (int i = 0; i < M * N; i++) {
         in >> board(i);
     }
-
     return in;
 }
 
