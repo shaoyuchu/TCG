@@ -91,10 +91,9 @@ bool Board::isNull() {
 
 bitset<BITSET_LEN> Board::toBitset() {
     bitset<BITSET_LEN> result;
-    bitset<BITSET_LEN> mask((1 << BIT_PER_CELL) - 1);
     for (int i = 0; i < M * N; i++) {
         bitset<BITSET_LEN> current(this->operator()(i));
-        current &= mask;
+        current &= this->cellBitMask;
         result |= (current << (i * BIT_PER_CELL));
     }
     return result;

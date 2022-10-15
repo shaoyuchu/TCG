@@ -43,16 +43,17 @@ class Board {
    private:
     array<array<int, N>, M> puzzle = {0};
     vector<pair<short, Action>> prevMoves;
+    bitset<BITSET_LEN> cellBitMask;
 
     void slide(int i, int j, Action act);
     void appendMove(int i, int j, Action act);
     void move(int i, int j, Action act);
 
    public:
-    Board() {}
+    Board() { this->cellBitMask = bitset<BITSET_LEN>((1 << BIT_PER_CELL) - 1); }
     int& operator()(int i) { return puzzle[i / N][i % N]; }
     array<int, N>& operator[](int i) { return puzzle[i]; }
-    vector<pair<short, Action>> getPrevMoves() { return this->prevMoves; }
+    vector<pair<short, Action>>& getPrevMoves() { return this->prevMoves; }
     array<Board, 8> getNext();
     bool isCompleted();
     bool isNull();
