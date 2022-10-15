@@ -1,7 +1,8 @@
 #include "board.h"
 using namespace std;
 
-/*Private Method*/
+/*Private*/
+bitset<BITSET_LEN> Board::cellBitMask = bitset<BITSET_LEN>((1 << BIT_PER_CELL) - 1);
 
 void Board::slide(int i, int j, Action act) {
     if (puzzle[i][j] == 0 || puzzle[i][j] == -1) {
@@ -29,7 +30,7 @@ void Board::appendMove(int i, int j, Action act) {
     this->prevMoves.push_back(make_pair(convert2dTo1d(i, j), act));
 }
 
-/*Public Method*/
+/*Public*/
 
 array<Board, 8> Board::getNext() {
     array<Board, 8> next;
