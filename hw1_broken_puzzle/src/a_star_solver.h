@@ -21,9 +21,6 @@ class PQWithRemove : public priority_queue<Board, vector<Board>, CostComparison>
 class AStarSolver : public PuzzleSolver {
    private:
     PQWithRemove priorityQueue;
-    unordered_set<bitset<BITSET_LEN>> closedList;
-
-    bool isClosed(Board& board);
 
    public:
     AStarSolver(Board& initialBoard);

@@ -19,15 +19,10 @@ AStarSolver::AStarSolver(Board& initialBoard) {
     this->visited.insert(initialBoard.toBitset());
 }
 
-bool AStarSolver::isClosed(Board& board) {
-    return (this->closedList.find(board.toBitset()) != this->closedList.end());
-}
-
 vector<pair<short, Action>> AStarSolver::solve() {
     while (!this->priorityQueue.empty()) {
         Board curBoard = this->priorityQueue.top();
         this->priorityQueue.pop();
-        this->closedList.insert(curBoard.toBitset());
 
         // check if the game ends, if not, add curBoard to closed list
         if (curBoard.isCompleted()) return curBoard.getPrevMoves();
@@ -38,7 +33,7 @@ vector<pair<short, Action>> AStarSolver::solve() {
             if (!this->isVisited(nextBoard)) {
                 this->priorityQueue.push(nextBoard);
                 this->visited.insert(nextBoard.toBitset());
-            } else if (!this->isClosed(nextBoard)) {
+            } else {
                 this->priorityQueue.replaceIfSmallerCost(nextBoard);
             }
         }
