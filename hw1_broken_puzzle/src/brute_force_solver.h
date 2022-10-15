@@ -3,9 +3,10 @@
 #include <vector>
 
 #include "board.h"
+#include "puzzle_solver.h"
 using namespace std;
 
-class BruteForceSolver {
+class BruteForceSolver : public PuzzleSolver {
    private:
     queue<Board> boardQueue;
     unordered_set<bitset<BITSET_LEN>> visited;
