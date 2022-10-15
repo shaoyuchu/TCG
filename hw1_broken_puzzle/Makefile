@@ -5,7 +5,10 @@ OBJDIR = obj
 TARGET = main.out
 
 $(TARGET): $(OBJDIR)/board.o $(OBJDIR)/main.o $(OBJDIR)/brute_force_solver.o
-	$(CC) $^ -o $@
+	$(CC) $(CFLAGS) $^ -o $@
+
+profile: CFLAGS += -pg
+profile: $(TARGET)
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.cpp
 	@mkdir -p $(@D)
