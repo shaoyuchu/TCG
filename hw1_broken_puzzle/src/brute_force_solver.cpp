@@ -1,9 +1,5 @@
 #include "brute_force_solver.h"
 
-bool BruteForceSolver::isVisited(Board board) {
-    return (this->visited.find(board.toBitset()) != this->visited.end());
-}
-
 BruteForceSolver::BruteForceSolver(Board& initialBoard) {
     this->boardQueue.push(initialBoard);
     this->visited.insert(initialBoard.toBitset());
@@ -19,8 +15,10 @@ vector<pair<short, Action>> BruteForceSolver::solve() {
 
         // search deeper
         for (auto nextBoard : curBoard.getNext()) {
-            if (!nextBoard.isNull() and !this->isVisited(nextBoard)) {
+            if (nextBoard.isNull()) break;
+            if (!this->isVisited(nextBoard)) {
                 this->boardQueue.push(nextBoard);
+                this->visited.insert(nextBoard.toBitset());
             }
         }
     }

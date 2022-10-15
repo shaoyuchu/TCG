@@ -9,9 +9,6 @@ using namespace std;
 class BruteForceSolver : public PuzzleSolver {
    private:
     queue<Board> boardQueue;
-    unordered_set<bitset<BITSET_LEN>> visited;
-
-    bool isVisited(Board board);
 
    public:
     BruteForceSolver(Board& initialBoard);
