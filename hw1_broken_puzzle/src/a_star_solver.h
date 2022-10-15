@@ -15,7 +15,7 @@ class CostComparison {
 
 class PQWithRemove : public priority_queue<Board, vector<Board>, CostComparison> {
    public:
-    void replaceIfSmallerCost(Board replaceBy) {
+    void replaceIfSmallerCost(Board& replaceBy) {
         for (int i = c.size() - 1; i >= 0; i++) {
             // no existance with higher cost
             if (this->c[i].getEstTotalCost() <= replaceBy.getEstTotalCost()) return;
