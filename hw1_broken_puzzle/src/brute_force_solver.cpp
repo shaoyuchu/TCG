@@ -1,12 +1,12 @@
 #include "brute_force_solver.h"
 
 bool BruteForceSolver::isVisited(Board board) {
-    return (this->visited.find(board.toString()) != this->visited.end());
+    return (this->visited.find(board.toBitset()) != this->visited.end());
 }
 
 BruteForceSolver::BruteForceSolver(Board& initialBoard) {
     this->boardQueue.push(initialBoard);
-    this->visited.insert(initialBoard.toString());
+    this->visited.insert(initialBoard.toBitset());
 }
 
 vector<pair<short, Action>> BruteForceSolver::solve() {

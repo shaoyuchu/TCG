@@ -89,10 +89,14 @@ bool Board::isNull() {
     return true;
 }
 
-string Board::toString() {
-    string result = "";
-    for (int i = 0; i < M * N; i++) {
-        result += to_string(this->operator()(i)) + "/";
+bitset<BITSET_LEN> Board::toBitset() {
+    bitset<BITSET_LEN> result;
+    for (int i = 0; i < M; i++) {
+        for (int j = 0; j < N; j++) {
+            if (puzzle[i][j] <= 0) continue;
+            bitset<BITSET_LEN> current(puzzle[i][j]);
+            result |= (current << (convert2dTo1d(i, j) * BIT_PER_CELL));
+        }
     }
     return result;
 }

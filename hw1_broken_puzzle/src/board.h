@@ -1,10 +1,13 @@
 #pragma once
 #include <array>
+#include <bitset>
 #include <iostream>
 #include <utility>
 #include <vector>
 #define M 4
 #define N 5
+#define BIT_PER_CELL 5
+#define BITSET_LEN 128
 #define convert2dTo1d(i, j) (i * N + j)
 using namespace std;
 
@@ -53,5 +56,5 @@ class Board {
     array<Board, 8> getNext();
     bool isCompleted();
     bool isNull();
-    string toString();
+    bitset<BITSET_LEN> toBitset();
 };
