@@ -16,7 +16,7 @@ void PQWithRemove::replaceIfSmallerCost(Board& replaceBy) {
 
 AStarSolver::AStarSolver(Board& initialBoard) {
     this->priorityQueue.push(initialBoard);
-    this->visited.insert(initialBoard.toBitset());
+    this->addToVisited(initialBoard);
 }
 
 vector<pair<short, Action>> AStarSolver::solve() {
@@ -32,7 +32,7 @@ vector<pair<short, Action>> AStarSolver::solve() {
             if (nextBoard.isNull()) break;
             if (!this->isVisited(nextBoard)) {
                 this->priorityQueue.push(nextBoard);
-                this->visited.insert(nextBoard.toBitset());
+                this->addToVisited(nextBoard);
             } else {
                 this->priorityQueue.replaceIfSmallerCost(nextBoard);
             }

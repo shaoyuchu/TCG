@@ -2,7 +2,7 @@
 
 BruteForceSolver::BruteForceSolver(Board& initialBoard) {
     this->boardQueue.push(initialBoard);
-    this->visited.insert(initialBoard.toBitset());
+    this->addToVisited(initialBoard);
 }
 
 vector<pair<short, Action>> BruteForceSolver::solve() {
@@ -18,7 +18,7 @@ vector<pair<short, Action>> BruteForceSolver::solve() {
             if (nextBoard.isNull()) break;
             if (!this->isVisited(nextBoard)) {
                 this->boardQueue.push(nextBoard);
-                this->visited.insert(nextBoard.toBitset());
+                this->addToVisited(nextBoard);
             }
         }
     }
