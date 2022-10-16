@@ -8,14 +8,15 @@ using namespace std;
 
 class CostComparison {
    public:
-    bool operator()(Board left, Board right) {
-        return left.getEstTotalCost() > right.getEstTotalCost();
+    bool operator()(Board* left, Board* right) {
+        return left->getEstTotalCost() > right->getEstTotalCost();
     }
 };
 
-class PQWithRemove : public priority_queue<Board, vector<Board>, CostComparison> {
+class PQWithRemove : public priority_queue<Board*, vector<Board*>, CostComparison> {
    public:
-    void replaceIfSmallerCost(Board& replaceBy);
+    void replaceIfSmallerCost(Board* replaceBy);
+    void deleteAll();
 };
 
 class AStarSolver : public PuzzleSolver {
@@ -23,6 +24,7 @@ class AStarSolver : public PuzzleSolver {
     PQWithRemove priorityQueue;
 
    public:
-    AStarSolver(Board& initialBoard);
-    vector<pair<short, Action>> solve();
+    AStarSolver(Board* initialBoard);
+    Board* solve();
+    void deleteAll();
 };

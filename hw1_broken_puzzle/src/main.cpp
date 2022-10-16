@@ -6,7 +6,7 @@
 #include "utils.h"
 using namespace std;
 
-PuzzleSolver* getSolver(int argc, char** argv, Board& initialBoard) {
+PuzzleSolver* getSolver(int argc, char** argv, Board* initialBoard) {
     if (argc == 2 && !strcmp(argv[1], "--brute-force")) {
         return (new BruteForceSolver(initialBoard));
     } else if (argc == 2 && !strcmp(argv[1], "--a-star")) {
@@ -19,17 +19,19 @@ PuzzleSolver* getSolver(int argc, char** argv, Board& initialBoard) {
 
 int main(int argc, char** argv) {
     int n = 0, m = 0;
-    Board initialBoard;
-    cin >> n >> m >> initialBoard;
+    Board* initialBoard = new Board;
+    cin >> n >> m >> (*initialBoard);
 
     PuzzleSolver* solver = getSolver(argc, argv, initialBoard);
-    vector<pair<short, Action>> result = solver->solve();
+    Board* terminalBoard = solver->solve();
+    vector<pair<short, Action>> moveHistory = terminalBoard->getPrevMoves();
 
-    cout << result.size() << endl;
-    for (auto resIter = result.begin(); resIter < result.end(); resIter++) {
+    cout << moveHistory.size() << endl;
+    for (auto resIter = moveHistory.begin(); resIter < moveHistory.end(); resIter++) {
         cout << resIter->first << " " << resIter->second << endl;
     }
 
+    solver->deleteAll();
     delete solver;
     return 0;
 }
