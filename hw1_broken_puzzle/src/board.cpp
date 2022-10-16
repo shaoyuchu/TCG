@@ -37,37 +37,14 @@ void Board::appendMove(int i, int j, Action act) {
 
 // Apply `action` to cell (i, j), add the move to `prevMoves`. Update `estRemaining`
 // if `updateEstRemaining` is true
-void Board::move(int i, int j, Action action, bool updateEstRemaining) {
-    int targetPos = puzzle[i][j] - 1;
+void Board::move(int i, int j, Action action) {
     this->slide(i, j, action);
     this->appendMove(i, j, action);
-    if (updateEstRemaining) {
-        if (action == Action::up)
-            this->estRemaining += (i > (targetPos / N) ? -1 : 1);
-        else if (action == Action::down)
-            this->estRemaining += (i < (targetPos / N) ? -1 : 1);
-        else if (action == Action::left)
-            this->estRemaining += (j > (targetPos % N) ? -1 : 1);
-        else if (action == Action::right)
-            this->estRemaining += (j < (targetPos % N) ? -1 : 1);
-    }
 }
 
 /*Public*/
 
-void Board::initEstRemaining() {
-    this->estRemaining = 0;
-    for (int i = 0; i < M; i++) {
-        for (int j = 0; j < N; j++) {
-            int cellValue = this->puzzle[i][j];
-            if (cellValue <= 0) continue;
-            int targetPos = cellValue - 1;
-            this->estRemaining += abs(i - (targetPos / N)) + abs(j - (targetPos % N));
-        }
-    }
-}
-
-array<Board*, 8> Board::getNext(bool updateEstRemaining) {
+array<Board*, 8> Board::getNext() {
     array<Board*, 8> next = {NULL};
     int curCnt = 0;
     for (int i = 0; i < M; i++) {
@@ -76,28 +53,28 @@ array<Board*, 8> Board::getNext(bool updateEstRemaining) {
             // (i-1, j) move down
             if (i - 1 >= 0 && this->puzzle[i - 1][j] > 0) {
                 Board* movedDown = new Board(*this);
-                movedDown->move(i - 1, j, Action::down, updateEstRemaining);
+                movedDown->move(i - 1, j, Action::down);
                 next[curCnt] = movedDown;
                 curCnt++;
             }
             // (i+1, j) move up
             if (i + 1 < M && this->puzzle[i + 1][j] > 0) {
                 Board* movedUp = new Board(*this);
-                movedUp->move(i + 1, j, Action::up, updateEstRemaining);
+                movedUp->move(i + 1, j, Action::up);
                 next[curCnt] = movedUp;
                 curCnt++;
             }
             // (i, j-1) move right
             if (j - 1 >= 0 && this->puzzle[i][j - 1] > 0) {
                 Board* movedRight = new Board(*this);
-                movedRight->move(i, j - 1, Action::right, updateEstRemaining);
+                movedRight->move(i, j - 1, Action::right);
                 next[curCnt] = movedRight;
                 curCnt++;
             }
             // (i, j+1) move left
             if (j + 1 < N && this->puzzle[i][j + 1] > 0) {
                 Board* movedLeft = new Board(*this);
-                movedLeft->move(i, j + 1, Action::left, updateEstRemaining);
+                movedLeft->move(i, j + 1, Action::left);
                 next[curCnt] = movedLeft;
                 curCnt++;
             }
@@ -124,8 +101,6 @@ bitset<BITSET_LEN> Board::toBitset() {
 }
 
 void Board::printDebugMsg() {
-    cout << "#previous_step: " << this->prevMoves.size() << endl;
-    cout << "#estimated_remaining_step: " << this->estRemaining << endl;
     for (int i = 0; i < M; i++) {
         for (int j = 0; j < N; j++) {
             cout << setw(4) << puzzle[i][j];

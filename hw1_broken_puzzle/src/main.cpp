@@ -1,7 +1,7 @@
 #include <cstring>
 
+#include "a_star_board.h"
 #include "a_star_solver.h"
-#include "board.h"
 #include "brute_force_solver.h"
 #include "utils.h"
 using namespace std;
@@ -19,8 +19,10 @@ PuzzleSolver* getSolver(int argc, char** argv) {
 
 Board* getInitialBoard(PuzzleSolver* solver) {
     Board* initialBoard;
-    if (dynamic_cast<BruteForceSolver*>(solver) || dynamic_cast<AStarSolver*>(solver)) {
+    if (typeid(*solver) == typeid(BruteForceSolver)) {
         initialBoard = new Board();
+    } else if (typeid(*solver) == typeid(AStarSolver)) {
+        initialBoard = new AStarBoard();
     } else {
         cerr << "Error: Invalid solver.\n";
         exit(1);

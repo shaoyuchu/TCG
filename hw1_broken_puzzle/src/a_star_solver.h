@@ -9,7 +9,7 @@ using namespace std;
 class CostComparison {
    public:
     bool operator()(Board* left, Board* right) {
-        return left->getEstTotalCost() > right->getEstTotalCost();
+        return left->getCost() > right->getCost();
     }
 };
 

@@ -1,9 +1,11 @@
 #include "a_star_solver.h"
 
+#include "a_star_board.h"
+
 void PQWithRemove::replaceIfSmallerCost(Board* replaceBy) {
     for (int i = this->c.size() - 1; i >= 0; i--) {
         // no existance with higher cost
-        if (this->c[i]->getEstTotalCost() <= replaceBy->getEstTotalCost()) return;
+        if (this->c[i]->getCost() <= replaceBy->getCost()) return;
 
         // remove if the same puzzle exists
         if (this->c[i]->toBitset() == replaceBy->toBitset()) {
@@ -22,7 +24,7 @@ void PQWithRemove::deleteAll() {
 }
 
 void AStarSolver::init(Board* initialBoard) {
-    initialBoard->initEstRemaining();
+    initialBoard->init();
     this->priorityQueue.push(initialBoard);
     this->addToVisited(initialBoard);
 }
@@ -34,7 +36,7 @@ Board* AStarSolver::solve() {
         this->priorityQueue.pop();
 
         // search deeper
-        for (Board* nextBoard : curBoard->getNext(true)) {
+        for (Board* nextBoard : curBoard->getNext()) {
             if (nextBoard == NULL) break;
             if (!this->isVisited(nextBoard)) {
                 this->priorityQueue.push(nextBoard);

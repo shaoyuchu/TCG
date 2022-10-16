@@ -40,25 +40,23 @@ M:________________
 enum Action { up, down, left, right, null };
 
 class Board {
-   private:
+   protected:
     array<array<int, N>, M> puzzle = {0};
     vector<pair<short, Action>> prevMoves;
-    int estRemaining = 0;
     static bitset<BITSET_LEN> cellBitMask;
 
     void slide(int i, int j, Action act);
     void appendMove(int i, int j, Action act);
-    void move(int i, int j, Action act, bool updateEstRemaining = false);
 
    public:
     Board() {}
     int& operator()(int i) { return puzzle[i / N][i % N]; }
-    array<int, N>& operator[](int i) { return puzzle[i]; }
-    void initEstRemaining();
     vector<pair<short, Action>>& getPrevMoves() { return this->prevMoves; }
-    int getEstTotalCost() { return this->prevMoves.size() + this->estRemaining; }
-    array<Board*, 8> getNext(bool updateEstRemaining = false);
     bool isCompleted();
     bitset<BITSET_LEN> toBitset();
-    void printDebugMsg();
+    virtual void init() {}
+    virtual int getCost() { return -1; };
+    virtual array<Board*, 8> getNext();
+    virtual void move(int i, int j, Action act);
+    virtual void printDebugMsg();
 };
