@@ -21,7 +21,7 @@ void PQWithRemove::deleteAll() {
     }
 }
 
-AStarSolver::AStarSolver(Board* initialBoard) {
+void AStarSolver::init(Board* initialBoard) {
     initialBoard->initEstRemaining();
     this->priorityQueue.push(initialBoard);
     this->addToVisited(initialBoard);

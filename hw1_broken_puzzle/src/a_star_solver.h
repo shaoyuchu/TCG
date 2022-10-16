@@ -24,7 +24,7 @@ class AStarSolver : public PuzzleSolver {
     PQWithRemove priorityQueue;
 
    public:
-    AStarSolver(Board* initialBoard);
+    void init(Board* initialBoard);
     Board* solve();
     void deleteAll();
 };

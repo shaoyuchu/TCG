@@ -1,6 +1,6 @@
 #include "brute_force_solver.h"
 
-BruteForceSolver::BruteForceSolver(Board* initialBoard) {
+void BruteForceSolver::init(Board* initialBoard) {
     this->boardQueue.push(initialBoard);
     this->addToVisited(initialBoard);
 }

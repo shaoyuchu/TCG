@@ -9,7 +9,7 @@ class BruteForceSolver : public PuzzleSolver {
     queue<Board*> boardQueue;
 
    public:
-    BruteForceSolver(Board* initialBoard);
+    void init(Board* initialBoard);
     Board* solve();
     void deleteAll();
 };

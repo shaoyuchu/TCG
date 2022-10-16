@@ -6,23 +6,36 @@
 #include "utils.h"
 using namespace std;
 
-PuzzleSolver* getSolver(int argc, char** argv, Board* initialBoard) {
+PuzzleSolver* getSolver(int argc, char** argv) {
     if (argc == 2 && !strcmp(argv[1], "--brute-force")) {
-        return (new BruteForceSolver(initialBoard));
+        return (new BruteForceSolver());
     } else if (argc == 2 && !strcmp(argv[1], "--a-star")) {
-        return (new AStarSolver(initialBoard));
+        return (new AStarSolver());
     }
     cerr << "Usage:" << endl;
     cerr << "  [brute-force solver] ./main.out --brute-force" << endl;
     exit(1);
 }
 
+Board* getInitialBoard(PuzzleSolver* solver) {
+    Board* initialBoard;
+    if (dynamic_cast<BruteForceSolver*>(solver) || dynamic_cast<AStarSolver*>(solver)) {
+        initialBoard = new Board();
+    } else {
+        cerr << "Error: Invalid solver.\n";
+        exit(1);
+    }
+    cin >> initialBoard;
+    return initialBoard;
+}
+
 int main(int argc, char** argv) {
     int n = 0, m = 0;
-    Board* initialBoard = new Board;
-    cin >> n >> m >> (*initialBoard);
+    cin >> n >> m;
 
-    PuzzleSolver* solver = getSolver(argc, argv, initialBoard);
+    PuzzleSolver* solver = getSolver(argc, argv);
+    Board* initialBoard = getInitialBoard(solver);
+    solver->init(initialBoard);
     Board* terminalBoard = solver->solve();
     vector<pair<short, Action>> moveHistory = terminalBoard->getPrevMoves();
 
