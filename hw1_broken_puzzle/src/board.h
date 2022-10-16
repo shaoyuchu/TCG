@@ -48,7 +48,7 @@ class Board {
 
     void slide(int i, int j, Action act);
     void appendMove(int i, int j, Action act);
-    void move(int i, int j, Action act);
+    void move(int i, int j, Action act, bool updateEstRemaining = false);
 
    public:
     Board() {}
@@ -57,7 +57,7 @@ class Board {
     void initEstRemaining();
     vector<pair<short, Action>>& getPrevMoves() { return this->prevMoves; }
     int getEstTotalCost() { return this->prevMoves.size() + this->estRemaining; }
-    array<Board, 8> getNext();
+    array<Board, 8> getNext(bool updateEstRemaining = false);
     bool isCompleted();
     bool isNull();
     bitset<BITSET_LEN> toBitset();

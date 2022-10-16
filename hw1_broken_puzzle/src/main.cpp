@@ -21,7 +21,6 @@ int main(int argc, char** argv) {
     int n = 0, m = 0;
     Board initialBoard;
     cin >> n >> m >> initialBoard;
-    initialBoard.initEstRemaining();
 
     PuzzleSolver* solver = getSolver(argc, argv, initialBoard);
     vector<pair<short, Action>> result = solver->solve();
