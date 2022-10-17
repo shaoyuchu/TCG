@@ -4,7 +4,7 @@ SRCDIR = src
 OBJDIR = obj
 TARGET = main.out
 
-$(TARGET): $(OBJDIR)/board.o $(OBJDIR)/a_star_board.o $(OBJDIR)/main.o $(OBJDIR)/brute_force_solver.o $(OBJDIR)/a_star_solver.o
+$(TARGET): $(OBJDIR)/board/board.o $(OBJDIR)/board/a_star_board.o $(OBJDIR)/main.o $(OBJDIR)/brute_force_solver.o $(OBJDIR)/a_star_solver.o
 	$(CC) $(CFLAGS) $^ -o $@
 
 profile: CFLAGS += -pg

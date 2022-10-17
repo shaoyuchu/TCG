@@ -2,7 +2,7 @@
 #include <unordered_set>
 #include <vector>
 
-#include "board.h"
+#include "board/board.h"
 #include "puzzle_solver.h"
 using namespace std;
 

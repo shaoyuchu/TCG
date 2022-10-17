@@ -1,7 +1,7 @@
 #include <cstring>
 
-#include "a_star_board.h"
 #include "a_star_solver.h"
+#include "board/a_star_board.h"
 #include "brute_force_solver.h"
 #include "utils.h"
 using namespace std;

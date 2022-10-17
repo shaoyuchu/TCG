@@ -1,6 +1,6 @@
 #include <queue>
 
-#include "board.h"
+#include "board/board.h"
 #include "puzzle_solver.h"
 using namespace std;
 

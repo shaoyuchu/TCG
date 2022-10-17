@@ -2,7 +2,7 @@
 #include <iomanip>
 #include <iostream>
 
-#include "board.h"
+#include "board/board.h"
 using namespace std;
 
 istream& operator>>(istream& in, Board* board) {

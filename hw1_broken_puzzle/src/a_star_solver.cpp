@@ -1,6 +1,6 @@
 #include "a_star_solver.h"
 
-#include "a_star_board.h"
+#include "board/a_star_board.h"
 
 void PQWithRemove::replaceIfSmallerCost(Board* replaceBy) {
     for (int i = this->c.size() - 1; i >= 0; i--) {
