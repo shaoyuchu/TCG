@@ -1,7 +1,7 @@
 #include "board.h"
 
 class AStarBoard : public Board {
-   private:
+   protected:
     int estRemaining = 0;
 
    public:

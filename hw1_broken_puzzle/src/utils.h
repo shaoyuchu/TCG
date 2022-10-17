@@ -1,6 +1,7 @@
 #pragma once
 #include <iomanip>
 #include <iostream>
+#include <string>
 
 #include "board/board.h"
 using namespace std;
@@ -20,4 +21,13 @@ ostream& operator<<(ostream& out, Board* board) {
         out << '\n';
     }
     return out;
+}
+
+string pattern2Str(vector<int>& pattern) {
+    string result;
+    for (int i = 0; i < pattern.size(); i++) {
+        result += (to_string(pattern[i]) + "-");
+    }
+    result.erase(result.size() - 1);
+    return result;
 }

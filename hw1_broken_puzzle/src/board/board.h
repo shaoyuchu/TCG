@@ -6,8 +6,9 @@
 #include <vector>
 #define M 4
 #define N 5
+#define N_EMPTY 2
 #define BIT_PER_CELL 5
-#define BITSET_LEN 128
+#define BITSET_LEN (BIT_PER_CELL * M * N)
 #define CONVERT_2D_2_1D(i, j) (i * N + j)
 using namespace std;
 
@@ -52,8 +53,8 @@ class Board {
     Board() {}
     int& operator()(int i) { return puzzle[i / N][i % N]; }
     vector<pair<short, Action>>& getPrevMoves() { return this->prevMoves; }
-    bool isCompleted();
     bitset<BITSET_LEN> toBitset();
+    virtual bool isCompleted();
     virtual void init() {}
     virtual int getCost() { return -1; };
     virtual array<Board*, 8> getNext();
