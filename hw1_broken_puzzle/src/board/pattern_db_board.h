@@ -6,7 +6,8 @@ class PatternDbBoard : public AStarBoard {
     array<bool, M* N> targetPattern = {0};
 
    public:
-    void init();                             // override the estimation method
+    void init(vector<int>& pattern);         // override the estimation method
     void move(int i, int j, Action action);  // override the estimation update method
+    array<Board*, 8> getNext();
     bool isCompleted();
 };

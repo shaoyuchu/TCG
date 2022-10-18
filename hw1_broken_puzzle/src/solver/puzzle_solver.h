@@ -16,6 +16,6 @@ class PuzzleSolver {
    public:
     virtual ~PuzzleSolver() = default;
     virtual void init(Board* initialBoard) = 0;
-    virtual Board* solve() = 0;
+    virtual Board solve() = 0;
     virtual void deleteAll() = 0;
 };

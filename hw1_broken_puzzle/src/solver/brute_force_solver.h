@@ -11,6 +11,6 @@ class BruteForceSolver : public PuzzleSolver {
 
    public:
     void init(Board* initialBoard);
-    Board* solve();
+    Board solve();
     void deleteAll();
 };

@@ -29,10 +29,13 @@ void AStarSolver::init(Board* initialBoard) {
     this->addToVisited(initialBoard);
 }
 
-Board* AStarSolver::solve() {
+Board AStarSolver::solve() {
     while (!this->priorityQueue.empty()) {
         Board* curBoard = this->priorityQueue.top();
-        if (curBoard->isCompleted()) return curBoard;
+        if (curBoard->isCompleted()) {
+            Board terminalBoard(*curBoard);
+            return terminalBoard;
+        }
         this->priorityQueue.pop();
 
         // search deeper
@@ -48,7 +51,7 @@ Board* AStarSolver::solve() {
         delete curBoard;
     }
     cerr << "AStarSolver: Failed to find a solution." << endl;
-    return NULL;
+    return Board();
 }
 
 void AStarSolver::deleteAll() { this->priorityQueue.deleteAll(); }

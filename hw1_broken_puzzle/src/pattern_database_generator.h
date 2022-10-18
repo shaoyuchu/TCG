@@ -9,16 +9,19 @@
 
 class PatternDatabaseGenerator {
    private:
-    Board baseBoard;
+    PatternDbBoard baseBoard;
     vector<vector<int>> patterns;
-    void setBaseBoard(Board baseBoard);
+    void setBaseBoard(PatternDbBoard baseBoard);
     void setPatterns(vector<vector<int>> patterns);
-    void generateAllZeroOnlyInitials(int remainingCnt, int startId, Board& startBoard,
-                                     vector<Board>* results);
-    vector<Board> generateAllZeroOnlyInitials();
-    void generate(Board& startBoard, vector<int>& remaining, PatternDatabase& pattDb);
+    int solveSingleBoard(PatternDbBoard& board);
+    void generateAllZeroOnlyInitials(int remainingCnt, int startId,
+                                     PatternDbBoard& startBoard,
+                                     vector<PatternDbBoard>* results);
+    vector<PatternDbBoard> generateAllZeroOnlyInitials();
+    void generate(PatternDbBoard& startBoard, vector<int>& remaining,
+                  PatternDatabase& pattDb);
 
    public:
-    PatternDatabaseGenerator(Board baseBoard, vector<vector<int>> patterns);
+    PatternDatabaseGenerator(PatternDbBoard baseBoard, vector<vector<int>> patterns);
     void generate();
 };

@@ -21,7 +21,7 @@ void PatternDatabaseGenerator::setPatterns(vector<vector<int>> patterns) {
     this->patterns = patterns;
 }
 
-void PatternDatabaseGenerator::setBaseBoard(Board baseBoard) {
+void PatternDatabaseGenerator::setBaseBoard(PatternDbBoard baseBoard) {
     // set all movable cells to the largest number to deal with the zeros placed
     // afterwards
     for (int i = 0; i < M * N; i++) {
@@ -30,15 +30,26 @@ void PatternDatabaseGenerator::setBaseBoard(Board baseBoard) {
     this->baseBoard = baseBoard;
 }
 
-PatternDatabaseGenerator::PatternDatabaseGenerator(Board baseBoard,
+PatternDatabaseGenerator::PatternDatabaseGenerator(PatternDbBoard baseBoard,
                                                    vector<vector<int>> patterns) {
     this->setBaseBoard(baseBoard);
     this->setPatterns(patterns);
 }
 
-void PatternDatabaseGenerator::generateAllZeroOnlyInitials(int remainingCnt, int startId,
-                                                           Board& startBoard,
-                                                           vector<Board>* results) {
+int PatternDatabaseGenerator::solveSingleBoard(PatternDbBoard& board) {
+    AStarSolver solver;
+    Board* boardToSolve = new PatternDbBoard(board);
+    solver.init(boardToSolve);
+    Board terminalBoard = solver.solve();
+    int moveCnt = terminalBoard.getPrevMoves().size();
+
+    solver.deleteAll();
+    return moveCnt;
+}
+
+void PatternDatabaseGenerator::generateAllZeroOnlyInitials(
+    int remainingCnt, int startId, PatternDbBoard& startBoard,
+    vector<PatternDbBoard>* results) {
     if (remainingCnt > 0 && startId >= M * N) return;
     if (remainingCnt == 0) {
         results->push_back(startBoard);
@@ -52,18 +63,19 @@ void PatternDatabaseGenerator::generateAllZeroOnlyInitials(int remainingCnt, int
     }
 }
 
-vector<Board> PatternDatabaseGenerator::generateAllZeroOnlyInitials() {
-    vector<Board> allZeroOnlyInitials;
-    Board startBoard(this->baseBoard);
+vector<PatternDbBoard> PatternDatabaseGenerator::generateAllZeroOnlyInitials() {
+    vector<PatternDbBoard> allZeroOnlyInitials;
+    PatternDbBoard startBoard(this->baseBoard);
     this->generateAllZeroOnlyInitials(N_EMPTY, 0, startBoard, &allZeroOnlyInitials);
     return allZeroOnlyInitials;
 }
 
-void PatternDatabaseGenerator::generate(Board& startBoard, vector<int>& remaining,
-                                        PatternDatabase& pattDb) {
+void PatternDatabaseGenerator::generate(PatternDbBoard& startBoard,
+                                        vector<int>& remaining, PatternDatabase& pattDb) {
     // all numbers are filled in, write result to database
     if (remaining.size() == 0) {
-        pattDb.write(startBoard, 0);
+        int moveCnt = this->solveSingleBoard(startBoard);
+        pattDb.write(startBoard, moveCnt);
         return;
     }
 
@@ -83,16 +95,17 @@ void PatternDatabaseGenerator::generate(Board& startBoard, vector<int>& remainin
 void PatternDatabaseGenerator::generate() {
     for (vector<int> pattern : this->patterns) {
         PatternDatabase pattDb(PATT_DB_INITIAL_DIR + pattern2Str(pattern), Mode::write);
-        vector<Board> allZeroOnlyInitials = this->generateAllZeroOnlyInitials();
-        for (Board startBoard : allZeroOnlyInitials) {
+        vector<PatternDbBoard> allZeroOnlyInitials = this->generateAllZeroOnlyInitials();
+        for (PatternDbBoard& startBoard : allZeroOnlyInitials) {
+            startBoard.init(pattern);
             this->generate(startBoard, pattern, pattDb);
         }
         cout << PATT_DB_INITIAL_DIR + pattern2Str(pattern) << " generated" << endl;
     }
 }
 
-void readPatterns(Board* baseBoard, vector<vector<int>>* patterns) {
-    cin >> baseBoard;
+void readPatterns(PatternDbBoard* baseBoard, vector<vector<int>>* patterns) {
+    cin >> (Board*)baseBoard;
     cin.ignore();  // ignore newline
 
     string line;
@@ -108,7 +121,7 @@ void readPatterns(Board* baseBoard, vector<vector<int>>* patterns) {
 }
 
 int main() {
-    Board pattDbBoard;
+    PatternDbBoard pattDbBoard;
     vector<vector<int>> patterns;
     readPatterns(&pattDbBoard, &patterns);
 

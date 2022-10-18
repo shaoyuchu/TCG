@@ -5,10 +5,13 @@ void BruteForceSolver::init(Board* initialBoard) {
     this->addToVisited(initialBoard);
 }
 
-Board* BruteForceSolver::solve() {
+Board BruteForceSolver::solve() {
     while (!this->boardQueue.empty()) {
         Board* curBoard = this->boardQueue.front();
-        if (curBoard->isCompleted()) return curBoard;
+        if (curBoard->isCompleted()) {
+            Board terminalBoard(*curBoard);
+            return terminalBoard;
+        }
         this->boardQueue.pop();
 
         // search deeper
@@ -23,7 +26,7 @@ Board* BruteForceSolver::solve() {
     }
 
     cerr << "BruteForceSolver: Failed to find a solution." << endl;
-    return NULL;
+    return Board();
 }
 
 void BruteForceSolver::deleteAll() {

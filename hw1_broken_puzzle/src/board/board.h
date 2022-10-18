@@ -47,7 +47,7 @@ class Board {
     static bitset<BITSET_LEN> cellBitMask;
 
     void slide(int i, int j, Action act);
-    void appendMove(int i, int j, Action act);
+    virtual void appendMove(int i, int j, Action act);
 
    public:
     Board() {}
