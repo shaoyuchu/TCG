@@ -1,7 +1,5 @@
 #include "pattern_database.h"
 
-#include "utils.h"
-
 PatternDatabase::PatternDatabase(string fileName, Mode mode) {
     if (mode == Mode::read)
         this->file.open(fileName, fstream::in | fstream::binary);

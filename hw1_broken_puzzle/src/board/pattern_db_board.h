@@ -1,3 +1,4 @@
+#pragma once
 #include "a_star_board.h"
 
 class PatternDbBoard : public AStarBoard {

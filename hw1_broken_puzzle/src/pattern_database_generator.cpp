@@ -3,8 +3,6 @@
 #include <sstream>
 #include <string>
 
-#include "utils.h"
-
 void PatternDatabaseGenerator::setPatterns(vector<vector<int>> patterns) {
     bool exists[M * N] = {false};
     for (vector<int> pattern : patterns) {
@@ -62,10 +60,10 @@ vector<Board> PatternDatabaseGenerator::generateAllZeroOnlyInitials() {
 }
 
 void PatternDatabaseGenerator::generate(Board& startBoard, vector<int>& remaining,
-                                        ofstream& outfile) {
-    // all numbers are filled in, write result to file
+                                        PatternDatabase& pattDb) {
+    // all numbers are filled in, write result to database
     if (remaining.size() == 0) {
-        outfile << (&startBoard) << endl;
+        pattDb.write(startBoard, 0);
         return;
     }
 
@@ -75,7 +73,7 @@ void PatternDatabaseGenerator::generate(Board& startBoard, vector<int>& remainin
     for (int pos = 0; pos < M * N; pos++) {
         if (startBoard.operator()(pos) == DONT_CARE_CELL) {
             startBoard.operator()(pos) = numToFillIn;  // set number
-            this->generate(startBoard, remaining, outfile);
+            this->generate(startBoard, remaining, pattDb);
             startBoard.operator()(pos) = DONT_CARE_CELL;  // reset number
         }
     }
@@ -84,13 +82,11 @@ void PatternDatabaseGenerator::generate(Board& startBoard, vector<int>& remainin
 
 void PatternDatabaseGenerator::generate() {
     for (vector<int> pattern : this->patterns) {
-        ofstream outfile;
-        outfile.open(PATT_DB_INITIAL_DIR + pattern2Str(pattern));
+        PatternDatabase pattDb(PATT_DB_INITIAL_DIR + pattern2Str(pattern), Mode::write);
         vector<Board> allZeroOnlyInitials = this->generateAllZeroOnlyInitials();
         for (Board startBoard : allZeroOnlyInitials) {
-            this->generate(startBoard, pattern, outfile);
+            this->generate(startBoard, pattern, pattDb);
         }
-        outfile.close();
         cout << PATT_DB_INITIAL_DIR + pattern2Str(pattern) << " generated" << endl;
     }
 }

@@ -1,3 +1,4 @@
+#pragma once
 #include "board.h"
 
 class AStarBoard : public Board {
