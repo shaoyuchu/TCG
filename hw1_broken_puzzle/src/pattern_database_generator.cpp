@@ -61,9 +61,8 @@ vector<Board> PatternDatabaseGenerator::generateAllZeroOnlyInitials() {
     return allZeroOnlyInitials;
 }
 
-void PatternDatabaseGenerator::generateAllInitials(Board& startBoard,
-                                                   vector<int>& remaining,
-                                                   ofstream& outfile) {
+void PatternDatabaseGenerator::generate(Board& startBoard, vector<int>& remaining,
+                                        ofstream& outfile) {
     // all numbers are filled in, write result to file
     if (remaining.size() == 0) {
         outfile << (&startBoard) << endl;
@@ -76,20 +75,20 @@ void PatternDatabaseGenerator::generateAllInitials(Board& startBoard,
     for (int pos = 0; pos < M * N; pos++) {
         if (startBoard.operator()(pos) == DONT_CARE_CELL) {
             startBoard.operator()(pos) = numToFillIn;  // set number
-            generateAllInitials(startBoard, remaining, outfile);
+            this->generate(startBoard, remaining, outfile);
             startBoard.operator()(pos) = DONT_CARE_CELL;  // reset number
         }
     }
     remaining.push_back(numToFillIn);
 }
 
-void PatternDatabaseGenerator::generateAllInitials() {
+void PatternDatabaseGenerator::generate() {
     for (vector<int> pattern : this->patterns) {
         ofstream outfile;
         outfile.open(PATT_DB_INITIAL_DIR + pattern2Str(pattern));
         vector<Board> allZeroOnlyInitials = this->generateAllZeroOnlyInitials();
         for (Board startBoard : allZeroOnlyInitials) {
-            this->generateAllInitials(startBoard, pattern, outfile);
+            this->generate(startBoard, pattern, outfile);
         }
         outfile.close();
         cout << PATT_DB_INITIAL_DIR + pattern2Str(pattern) << " generated" << endl;

@@ -5,10 +5,10 @@ OBJDIR = obj
 TARGET = main.out
 DB_TARGET = pattern_database_generator.out
 
-$(TARGET): $(OBJDIR)/board/board.o $(OBJDIR)/board/a_star_board.o $(OBJDIR)/main.o $(OBJDIR)/brute_force_solver.o $(OBJDIR)/a_star_solver.o
+$(TARGET): $(OBJDIR)/board/board.o $(OBJDIR)/board/a_star_board.o $(OBJDIR)/solver/brute_force_solver.o $(OBJDIR)/solver/a_star_solver.o $(OBJDIR)/main.o
 	$(CC) $(CFLAGS) $^ -o $@
 
-$(DB_TARGET): $(OBJDIR)/board/board.o $(OBJDIR)/board/a_star_board.o $(OBJDIR)/board/pattern_db_board.o $(OBJDIR)/a_star_solver.o $(OBJDIR)/pattern_database_generator.o
+$(DB_TARGET): $(OBJDIR)/board/board.o $(OBJDIR)/board/a_star_board.o $(OBJDIR)/board/pattern_db_board.o $(OBJDIR)/solver/a_star_solver.o $(OBJDIR)/pattern_database_generator.o
 	$(CC) $(CFLAGS) $^ -o $@
 
 profile: CFLAGS += -pg

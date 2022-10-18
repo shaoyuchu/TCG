@@ -1,7 +1,7 @@
 #pragma once
 #include <unordered_set>
 
-#include "board/board.h"
+#include "../board/board.h"
 
 class PuzzleSolver {
    private:
