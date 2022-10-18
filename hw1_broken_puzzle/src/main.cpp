@@ -14,6 +14,7 @@ PuzzleSolver* getSolver(int argc, char** argv) {
     }
     cerr << "Usage:" << endl;
     cerr << "  [brute-force solver] ./main.out --brute-force" << endl;
+    cerr << "  [A-star solver] ./main.out --a-star" << endl;
     exit(1);
 }
 
@@ -38,8 +39,8 @@ int main(int argc, char** argv) {
     PuzzleSolver* solver = getSolver(argc, argv);
     Board* initialBoard = getInitialBoard(solver);
     solver->init(initialBoard);
-    Board* terminalBoard = solver->solve();
-    vector<pair<short, Action>> moveHistory = terminalBoard->getPrevMoves();
+    Board terminalBoard = solver->solve();
+    vector<pair<short, Action>> moveHistory = terminalBoard.getPrevMoves();
 
     cout << moveHistory.size() << endl;
     for (auto resIter = moveHistory.begin(); resIter < moveHistory.end(); resIter++) {
