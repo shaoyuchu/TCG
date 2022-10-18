@@ -92,7 +92,6 @@ void PatternDatabaseGenerator::generate() {
         }
         outfile.close();
         cout << PATT_DB_INITIAL_DIR + pattern2Str(pattern) << " generated" << endl;
-        ;
     }
 }
 
