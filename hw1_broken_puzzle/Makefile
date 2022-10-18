@@ -16,6 +16,9 @@ profile: $(TARGET)
 
 database: $(DB_TARGET)
 
+check_database: $(OBJDIR)/board/board.o $(OBJDIR)/board/a_star_board.o $(OBJDIR)/board/pattern_db_board.o $(OBJDIR)/solver/a_star_solver.o $(OBJDIR)/pattern_database.o $(OBJDIR)/check_database.o
+	$(CC) $(CFLAGS) $^ -o $@
+
 $(OBJDIR)/%.o: $(SRCDIR)/%.cpp
 	@mkdir -p $(@D)
 	$(CC) $(CFLAGS) -c $^ -o $@
