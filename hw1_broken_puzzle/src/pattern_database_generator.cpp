@@ -3,10 +3,10 @@
 #include <sstream>
 #include <string>
 
-void PatternDatabaseGenerator::setPatterns(vector<vector<int>> patterns) {
+void PatternDatabaseGenerator::setPatterns(map<string, vector<int>> patterns) {
     bool exists[M * N] = {false};
-    for (vector<int> pattern : patterns) {
-        for (int number : pattern) {
+    for (auto& pattern : patterns) {
+        for (int number : pattern.second) {
             if (number <= 0 || number >= (M * N)) {
                 cerr << "Error: Invalid patterns." << endl;
                 exit(1);
@@ -31,7 +31,7 @@ void PatternDatabaseGenerator::setBaseBoard(PatternDbBoard baseBoard) {
 }
 
 PatternDatabaseGenerator::PatternDatabaseGenerator(PatternDbBoard baseBoard,
-                                                   vector<vector<int>> patterns) {
+                                                   map<string, vector<int>> patterns) {
     this->setBaseBoard(baseBoard);
     this->setPatterns(patterns);
 }
@@ -93,36 +93,39 @@ void PatternDatabaseGenerator::generate(PatternDbBoard& startBoard,
 }
 
 void PatternDatabaseGenerator::generate() {
-    for (vector<int> pattern : this->patterns) {
-        PatternDatabase pattDb(PATT_DB_INITIAL_DIR + pattern2Str(pattern), Mode::write);
+    for (auto& pattern : this->patterns) {
+        string patternFileName = pattern.first;
+        PatternDatabase pattDb(patternFileName, Mode::write);
         vector<PatternDbBoard> allZeroOnlyInitials = this->generateAllZeroOnlyInitials();
         for (PatternDbBoard& startBoard : allZeroOnlyInitials) {
-            startBoard.init(pattern);
-            this->generate(startBoard, pattern, pattDb);
+            startBoard.init(pattern.second);
+            this->generate(startBoard, pattern.second, pattDb);
         }
-        cout << PATT_DB_INITIAL_DIR + pattern2Str(pattern) << " generated" << endl;
+        cout << patternFileName << " generated" << endl;
     }
 }
 
-void readPatterns(PatternDbBoard* baseBoard, vector<vector<int>>* patterns) {
+void readPatterns(PatternDbBoard* baseBoard, map<string, vector<int>>* patterns) {
     cin >> (Board*)baseBoard;
     cin.ignore();  // ignore newline
 
-    string line;
-    while (getline(cin, line)) {
-        stringstream ss(line);
+    string fileName;
+    string pattern;
+    while (getline(cin, fileName)) {
+        getline(cin, pattern);
+        stringstream ss(pattern);
         vector<int> numbers;
         int num;
         while (ss >> num) {
             numbers.push_back(num);
         }
-        patterns->push_back(numbers);
+        patterns->insert(pair<string, vector<int>>(fileName, numbers));
     }
 }
 
 int main() {
     PatternDbBoard pattDbBoard;
-    vector<vector<int>> patterns;
+    map<string, vector<int>> patterns;
     readPatterns(&pattDbBoard, &patterns);
 
     PatternDatabaseGenerator pattDbGen(pattDbBoard, patterns);

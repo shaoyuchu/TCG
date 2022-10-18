@@ -1,4 +1,6 @@
 #pragma once
+#include <map>
+#include <string>
 
 #include "board/pattern_db_board.h"
 #include "pattern_database.h"
@@ -10,9 +12,9 @@
 class PatternDatabaseGenerator {
    private:
     PatternDbBoard baseBoard;
-    vector<vector<int>> patterns;
+    map<string, vector<int>> patterns;
     void setBaseBoard(PatternDbBoard baseBoard);
-    void setPatterns(vector<vector<int>> patterns);
+    void setPatterns(map<string, vector<int>> patterns);
     int solveSingleBoard(PatternDbBoard& board);
     void generateAllZeroOnlyInitials(int remainingCnt, int startId,
                                      PatternDbBoard& startBoard,
@@ -22,6 +24,6 @@ class PatternDatabaseGenerator {
                   PatternDatabase& pattDb);
 
    public:
-    PatternDatabaseGenerator(PatternDbBoard baseBoard, vector<vector<int>> patterns);
+    PatternDatabaseGenerator(PatternDbBoard baseBoard, map<string, vector<int>> patterns);
     void generate();
 };

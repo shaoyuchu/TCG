@@ -16,6 +16,9 @@ profile: $(TARGET)
 
 database: $(DB_TARGET)
 
+profile_database: CFLAGS += -pg
+profile_database: $(DB_TARGET)
+
 $(OBJDIR)/%.o: $(SRCDIR)/%.cpp
 	@mkdir -p $(@D)
 	$(CC) $(CFLAGS) -c $^ -o $@
