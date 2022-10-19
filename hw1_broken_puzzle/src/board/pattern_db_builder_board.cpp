@@ -46,5 +46,6 @@ void PatternDbBuilderBoard::move(int i, int j, Action action) {
 
 Board* PatternDbBuilderBoard::duplicate() {
     Board* newBoard = new PatternDbBuilderBoard(*this);
+    this->clearCache();
     return newBoard;
 }
