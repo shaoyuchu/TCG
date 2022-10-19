@@ -7,8 +7,10 @@
 using namespace std;
 
 istream& operator>>(istream& in, Board* board) {
+    int buf = 0;
     for (int i = 0; i < M * N; i++) {
-        in >> (*board)(i);
+        in >> buf;
+        board->set(i, buf);
     }
     return in;
 }
@@ -16,7 +18,7 @@ istream& operator>>(istream& in, Board* board) {
 ostream& operator<<(ostream& out, Board* board) {
     for (int i = 0; i < M; i++) {
         for (int j = 0; j < N; j++) {
-            out << setw(4) << (*board)(i * N + j);
+            out << setw(4) << board->get(i * N + j);
         }
         out << '\n';
     }
