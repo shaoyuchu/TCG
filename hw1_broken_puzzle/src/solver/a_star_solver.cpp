@@ -66,6 +66,8 @@ Board AStarSolver::solve() {
                 this->addToVisited(nextBoard);
             } else if (this->priorityQueue.exist(nextBoard)) {
                 this->priorityQueue.replaceIfSmallerCost(nextBoard);
+            } else {
+                delete nextBoard;
             }
         }
         delete curBoard;

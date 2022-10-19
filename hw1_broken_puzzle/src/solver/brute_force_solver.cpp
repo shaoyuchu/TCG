@@ -20,6 +20,8 @@ Board BruteForceSolver::solve() {
             if (!this->isVisited(nextBoard)) {
                 this->boardQueue.push(nextBoard);
                 this->addToVisited(nextBoard);
+            } else {
+                delete nextBoard;
             }
         }
         delete curBoard;
