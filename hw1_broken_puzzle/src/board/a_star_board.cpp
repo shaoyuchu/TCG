@@ -14,6 +14,7 @@ void AStarBoard::init() {
 
 Board* AStarBoard::duplicate() {
     Board* newBoard = new AStarBoard(*this);
+    newBoard->clearCache();
     return newBoard;
 }
 

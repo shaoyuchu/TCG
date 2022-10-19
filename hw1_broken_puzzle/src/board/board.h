@@ -41,18 +41,24 @@ M:________________
 enum Action { up, down, left, right, null };
 
 class Board {
+   private:
+    int& operator()(int i) { return puzzle[i / N][i % N]; }
+
    protected:
     array<array<int, N>, M> puzzle = {0};
     vector<pair<short, Action>> prevMoves;
     static bitset<BITSET_LEN> cellBitMask;
+    bitset<BITSET_LEN> bitsetCache;
 
     void slide(int i, int j, Action act);
     virtual void appendMove(int i, int j, Action act);
     virtual Board* duplicate();
 
    public:
-    Board() {}
-    int& operator()(int i) { return puzzle[i / N][i % N]; }
+    Board() { this->bitsetCache = bitset<BITSET_LEN>(0); }
+    int get(int i) { return this->operator()(i); }
+    void set(int i, int value);
+    void clearCache() { this->bitsetCache = bitset<BITSET_LEN>(0); }
     vector<pair<short, Action>>& getPrevMoves() { return this->prevMoves; }
     bitset<BITSET_LEN> toBitset();
     virtual bool isCompleted();

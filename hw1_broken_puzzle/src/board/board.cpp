@@ -7,6 +7,11 @@ using namespace std;
 
 bitset<BITSET_LEN> Board::cellBitMask = bitset<BITSET_LEN>((1 << BIT_PER_CELL) - 1);
 
+void Board::set(int i, int value) {
+    this->operator()(i) = value;
+    this->clearCache();
+}
+
 void Board::slide(int i, int j, Action act) {
     if (puzzle[i][j] == 0 || puzzle[i][j] == -1) {
         // moving an empty cell or a non-movable tile
@@ -42,6 +47,7 @@ void Board::move(int i, int j, Action action) {
 
 Board* Board::duplicate() {
     Board* newBoard = new Board(*this);
+    newBoard->clearCache();
     return newBoard;
 }
 
@@ -86,19 +92,20 @@ array<Board*, 8> Board::getNext() {
 
 bool Board::isCompleted() {
     for (int i = 0; i < M * N; i++) {
-        if (!(this->operator()(i) == i + 1 || this->operator()(i) <= 0)) return false;
+        if (!(this->get(i) == i + 1 || this->get(i) <= 0)) return false;
     }
     return true;
 }
 
 bitset<BITSET_LEN> Board::toBitset() {
-    bitset<BITSET_LEN> result;
+    if (this->bitsetCache.any()) return this->bitsetCache;
+
     for (int i = 0; i < M * N; i++) {
-        bitset<BITSET_LEN> current(this->operator()(i));
+        bitset<BITSET_LEN> current(this->get(i));
         current &= this->cellBitMask;
-        result |= (current << (i * BIT_PER_CELL));
+        this->bitsetCache |= (current << (i * BIT_PER_CELL));
     }
-    return result;
+    return this->bitsetCache;
 }
 
 void Board::printDebugMsg() {

@@ -3,7 +3,7 @@
 bool PatternDbBuilderBoard::isCompleted() {
     for (int i = 0; i < M * N - N_EMPTY; i++) {
         if (!this->targetPattern[i + 1]) continue;
-        if (!(this->operator()(i) == i + 1 || this->operator()(i) < 0)) return false;
+        if (!(this->get(i) == i + 1 || this->get(i) < 0)) return false;
     }
     return true;
 }

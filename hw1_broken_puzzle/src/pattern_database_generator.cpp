@@ -25,7 +25,7 @@ void PatternDatabaseGenerator::setBaseBoard(PatternDbBuilderBoard baseBoard) {
     // set all movable cells to the largest number to deal with the zeros placed
     // afterwards
     for (int i = 0; i < M * N; i++) {
-        if (baseBoard.operator()(i) == 0) baseBoard.operator()(i) = DONT_CARE_CELL;
+        if (baseBoard.get(i) == 0) baseBoard.set(i, DONT_CARE_CELL);
     }
     this->baseBoard = baseBoard;
 }
@@ -56,10 +56,10 @@ void PatternDatabaseGenerator::generateAllZeroOnlyInitials(
         return;
     }
     for (int i = startId; i < M * N; i++) {
-        if (startBoard.operator()(i) != DONT_CARE_CELL) continue;
-        startBoard.operator()(i) = 0;  // set
+        if (startBoard.get(i) != DONT_CARE_CELL) continue;
+        startBoard.set(i, 0);  // set
         this->generateAllZeroOnlyInitials(remainingCnt - 1, i + 1, startBoard, results);
-        startBoard.operator()(i) = DONT_CARE_CELL;  // reset
+        startBoard.set(i, DONT_CARE_CELL);  // reset
     }
 }
 
@@ -83,10 +83,10 @@ void PatternDatabaseGenerator::generate(PatternDbBuilderBoard& startBoard,
     int numToFillIn = remaining.back();
     remaining.pop_back();
     for (int pos = 0; pos < M * N; pos++) {
-        if (startBoard.operator()(pos) == DONT_CARE_CELL) {
-            startBoard.operator()(pos) = numToFillIn;  // set number
+        if (startBoard.get(pos) == DONT_CARE_CELL) {
+            startBoard.set(pos, numToFillIn);  // set number
             this->generate(startBoard, remaining, pattDb);
-            startBoard.operator()(pos) = DONT_CARE_CELL;  // reset number
+            startBoard.set(pos, DONT_CARE_CELL);  // reset number
         }
     }
     remaining.push_back(numToFillIn);

@@ -8,8 +8,8 @@ int PatternDatabaseBoard::getPatternHeuristicCost() {
         const bitset<M* N>& pattern = patternIter.first;
         const unordered_map<bitset<BITSET_LEN>, int>& database = patternIter.second;
         for (int i = 0; i < M * N; i++) {
-            int number = board.operator()(i);
-            if (number != 0 && number != -1 && !pattern[number]) board.operator()(i) = -1;
+            int number = board.get(i);
+            if (number != 0 && number != -1 && !pattern[number]) board.set(i, -1);
         }
 
         // lookup database
@@ -21,6 +21,7 @@ int PatternDatabaseBoard::getPatternHeuristicCost() {
 
 Board* PatternDatabaseBoard::duplicate() {
     Board* newBoard = new PatternDatabaseBoard(*this);
+    newBoard->clearCache();
     return newBoard;
 }
 
