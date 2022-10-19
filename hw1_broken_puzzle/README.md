@@ -27,15 +27,15 @@ make database
 
 1. **Compile**: `make`
 2. **Execute**
-    - *Brute-force solver*: `./main.out —-brute-force < <testcase>`
-    - *A-star solver*: `./main.out —-a-star < <testcase>`
-    - *Pattern-database solver*: `./main.out —-pattern-database <config-path> < <testcase>`
+    - *Brute-force solver*: `./main.out --brute-force < <testcase>`
+    - *A-star solver*: `./main.out --a-star < <testcase>`
+    - *Pattern-database solver*: `./main.out --pattern-database <config-path> < <testcase>`
 
 For example, if you want to compile and run the Pattern-database solver with config `pattern_database/2_2_2_2_2_2_1_1_1.in`, and pass in the test case `test_case/case1_1.in`, run the following command.
 
 ```bash
 make
-./main.out —-pattern-database pattern_database/2_2_2_2_2_2_1_1_1.in < test_case/case1_1.in
+./main.out --pattern-database pattern_database/2_2_2_2_2_2_1_1_1.in < test_case/case1_1.in
 ```
 
 ## 3. Algorithms
@@ -106,7 +106,7 @@ The total size of the generated databases is about 4MB.
 
 The following shows the result of running the 3 solvers on the public test cases. The numbers shows the number of explored states.
 
-The execution time is not listed here as all of the test cases complete within 1 second on the NTU CSIE workstation. The magnitude is too small that it may be easily affected by the machine’s workload variations. The number of explored states will be a better indicator of the solver performance.
+The execution time is not listed here as most of the test cases complete within 1 second on the NTU CSIE workstation. The magnitude is too small that it may be easily affected by the machine’s workload variations. The number of explored states will be a better indicator of the solver performance.
 
 |  | Brute-force solver | A-star solver | Pattern-database solver |
 | --- | --- | --- | --- |
