@@ -5,8 +5,6 @@
 #include <iomanip>
 using namespace std;
 
-/*Private*/
-
 bitset<BITSET_LEN> Board::cellBitMask = bitset<BITSET_LEN>((1 << BIT_PER_CELL) - 1);
 
 void Board::slide(int i, int j, Action act) {
@@ -42,7 +40,10 @@ void Board::move(int i, int j, Action action) {
     this->appendMove(i, j, action);
 }
 
-/*Public*/
+Board* Board::duplicate() {
+    Board* newBoard = new Board(*this);
+    return newBoard;
+}
 
 array<Board*, 8> Board::getNext() {
     array<Board*, 8> next = {NULL};
@@ -52,28 +53,28 @@ array<Board*, 8> Board::getNext() {
             if (this->puzzle[i][j] != 0) continue;
             // (i-1, j) move down
             if (i - 1 >= 0 && this->puzzle[i - 1][j] > 0) {
-                Board* movedDown = new Board(*this);
+                Board* movedDown = this->duplicate();
                 movedDown->move(i - 1, j, Action::down);
                 next[curCnt] = movedDown;
                 curCnt++;
             }
             // (i+1, j) move up
             if (i + 1 < M && this->puzzle[i + 1][j] > 0) {
-                Board* movedUp = new Board(*this);
+                Board* movedUp = this->duplicate();
                 movedUp->move(i + 1, j, Action::up);
                 next[curCnt] = movedUp;
                 curCnt++;
             }
             // (i, j-1) move right
             if (j - 1 >= 0 && this->puzzle[i][j - 1] > 0) {
-                Board* movedRight = new Board(*this);
+                Board* movedRight = this->duplicate();
                 movedRight->move(i, j - 1, Action::right);
                 next[curCnt] = movedRight;
                 curCnt++;
             }
             // (i, j+1) move left
             if (j + 1 < N && this->puzzle[i][j + 1] > 0) {
-                Board* movedLeft = new Board(*this);
+                Board* movedLeft = this->duplicate();
                 movedLeft->move(i, j + 1, Action::left);
                 next[curCnt] = movedLeft;
                 curCnt++;

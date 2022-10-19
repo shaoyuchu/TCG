@@ -5,9 +5,10 @@ class PatternDbBoard : public AStarBoard {
    private:
     array<bool, M* N> targetPattern = {0};
 
+    Board* duplicate();
+
    public:
     void init(vector<int>& pattern);         // override the estimation method
     void move(int i, int j, Action action);  // override the estimation update method
-    array<Board*, 8> getNext();
     bool isCompleted();
 };

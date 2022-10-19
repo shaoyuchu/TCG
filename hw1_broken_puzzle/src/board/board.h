@@ -48,6 +48,7 @@ class Board {
 
     void slide(int i, int j, Action act);
     virtual void appendMove(int i, int j, Action act);
+    virtual Board* duplicate();
 
    public:
     Board() {}
