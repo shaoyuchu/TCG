@@ -10,7 +10,10 @@ bool PQWithRemove::exist(Board* board) {
 void PQWithRemove::replaceIfSmallerCost(Board* replaceBy) {
     for (int i = this->c.size() - 1; i >= 0; i--) {
         // no existance with higher cost
-        if (this->c[i]->getCost() <= replaceBy->getCost()) return;
+        if (this->c[i]->getCost() <= replaceBy->getCost()) {
+            delete replaceBy;
+            return;
+        }
 
         // remove if the same puzzle exists
         if (this->c[i]->toBitset() == replaceBy->toBitset()) {
@@ -20,6 +23,7 @@ void PQWithRemove::replaceIfSmallerCost(Board* replaceBy) {
             return;
         }
     }
+    delete replaceBy;
 }
 
 void PQWithRemove::push(Board* board) {
