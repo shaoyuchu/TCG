@@ -4,11 +4,15 @@ SRCDIR = src
 OBJDIR = obj
 TARGET = main.out
 DB_TARGET = pattern_database_generator.out
+DB_CHECKER = check_database.out
 
 $(TARGET): $(OBJDIR)/board/board.o $(OBJDIR)/board/a_star_board.o $(OBJDIR)/board/pattern_database_board.o $(OBJDIR)/solver/brute_force_solver.o $(OBJDIR)/solver/a_star_solver.o $(OBJDIR)/solver/pattern_database_solver.o $(OBJDIR)/pattern_database.o $(OBJDIR)/main.o
 	$(CC) $(CFLAGS) $^ -o $@
 
 $(DB_TARGET): $(OBJDIR)/board/board.o $(OBJDIR)/board/a_star_board.o $(OBJDIR)/board/pattern_db_builder_board.o $(OBJDIR)/solver/a_star_solver.o $(OBJDIR)/pattern_database.o $(OBJDIR)/pattern_database_generator.o
+	$(CC) $(CFLAGS) $^ -o $@
+
+$(DB_CHECKER): $(OBJDIR)/board/board.o $(OBJDIR)/board/a_star_board.o $(OBJDIR)/board/pattern_db_builder_board.o $(OBJDIR)/solver/a_star_solver.o $(OBJDIR)/pattern_database.o $(OBJDIR)/check_database.o
 	$(CC) $(CFLAGS) $^ -o $@
 
 profile: CFLAGS += -pg
@@ -19,10 +23,12 @@ database: $(DB_TARGET)
 profile_database: CFLAGS += -pg
 profile_database: $(DB_TARGET)
 
+check_database: $(DB_CHECKER)
+
 $(OBJDIR)/%.o: $(SRCDIR)/%.cpp
 	@mkdir -p $(@D)
 	$(CC) $(CFLAGS) -c $^ -o $@
 
 clean:
 	rm -rf $(OBJDIR)
-	rm -f $(TARGET) $(DB_TARGET)
+	rm -f $(TARGET) $(DB_TARGET) $(DB_CHECKER)
