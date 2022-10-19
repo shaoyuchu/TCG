@@ -3,6 +3,7 @@
 #include "board/a_star_board.h"
 #include "solver/a_star_solver.h"
 #include "solver/brute_force_solver.h"
+#include "solver/pattern_database_solver.h"
 #include "utils.h"
 using namespace std;
 
@@ -11,10 +12,15 @@ PuzzleSolver* getSolver(int argc, char** argv) {
         return (new BruteForceSolver());
     } else if (argc == 2 && !strcmp(argv[1], "--a-star")) {
         return (new AStarSolver());
+    } else if (argc == 3 && !strcmp(argv[1], "--pattern-database")) {
+        return (new PatternDatabaseSolver(argv[2]));
     }
     cerr << "Usage:" << endl;
     cerr << "  [brute-force solver] ./main.out --brute-force" << endl;
     cerr << "  [A-star solver] ./main.out --a-star" << endl;
+    cerr << "  [pattern-database solver] ./main.out --pattern-database "
+            "<database-config-path>"
+         << endl;
     exit(1);
 }
 
@@ -23,6 +29,8 @@ Board* getInitialBoard(PuzzleSolver* solver) {
     if (typeid(*solver) == typeid(BruteForceSolver)) {
         initialBoard = new Board();
     } else if (typeid(*solver) == typeid(AStarSolver)) {
+        initialBoard = new AStarBoard();
+    } else if (typeid(*solver) == typeid(PatternDatabaseSolver)) {
         initialBoard = new AStarBoard();
     } else {
         cerr << "Error: Invalid solver.\n";

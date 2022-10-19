@@ -21,5 +21,4 @@ class PatternDatabase {
     ~PatternDatabase();
     void write(Board& board, int moveCnt);
     unordered_map<bitset<BITSET_LEN>, int> read();
-    int lookup(Board* board) { return -1; }
 };
