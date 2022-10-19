@@ -8,22 +8,27 @@ bool PatternDbBuilderBoard::isCompleted() {
     return true;
 }
 
-void PatternDbBuilderBoard::init(vector<int>& pattern) {
-    this->estRemaining = 0;
-    for (int i = 0; i < M; i++) {
-        for (int j = 0; j < N; j++) {
-            int cellValue = this->puzzle[i][j];
-            if (cellValue <= 0 || !this->targetPattern[cellValue - 1]) continue;
-            int targetPos = cellValue - 1;
-            this->estRemaining += abs(i - (targetPos / N)) + abs(j - (targetPos % N));
-        }
-    }
+void PatternDbBuilderBoard::setPattern(vector<int>& pattern) {
     for (int& num : pattern) {
         if (num < 0 || num >= M * N) {
             cerr << "Error: Invalid pattern." << endl;
             exit(1);
         }
         this->targetPattern[num] = true;
+    }
+}
+
+void PatternDbBuilderBoard::init() {
+    // initialize estRemaining
+    this->estRemaining = 0;
+    for (int i = 0; i < M; i++) {
+        for (int j = 0; j < N; j++) {
+            int cellValue = this->puzzle[i][j];
+            if (cellValue <= 0 || cellValue >= M * N || !this->targetPattern[cellValue])
+                continue;
+            int targetPos = cellValue - 1;
+            this->estRemaining += abs(i - (targetPos / N)) + abs(j - (targetPos % N));
+        }
     }
 }
 

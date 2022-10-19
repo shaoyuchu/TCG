@@ -8,7 +8,8 @@ class PatternDbBuilderBoard : public AStarBoard {
     Board* duplicate();
 
    public:
-    void init(vector<int>& pattern);         // override the estimation method
+    void setPattern(vector<int>& pattern);
+    void init();                             // override the estimation method
     void move(int i, int j, Action action);  // override the estimation update method
     bool isCompleted();
 };

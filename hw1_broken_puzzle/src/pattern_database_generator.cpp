@@ -99,7 +99,7 @@ void PatternDatabaseGenerator::generate() {
         vector<PatternDbBuilderBoard> allZeroOnlyInitials =
             this->generateAllZeroOnlyInitials();
         for (PatternDbBuilderBoard& startBoard : allZeroOnlyInitials) {
-            startBoard.init(pattern.second);
+            startBoard.setPattern(pattern.second);
             this->generate(startBoard, pattern.second, pattDb);
         }
         cout << patternFileName << " generated" << endl;
