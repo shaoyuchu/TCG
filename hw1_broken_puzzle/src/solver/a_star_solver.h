@@ -15,8 +15,14 @@ class CostComparison {
 };
 
 class PQWithRemove : public priority_queue<Board*, vector<Board*>, CostComparison> {
+   private:
+    unordered_set<bitset<BITSET_LEN>> items;
+
    public:
     void replaceIfSmallerCost(Board* replaceBy);
+    void push(Board* board);
+    void pop();
+    bool exist(Board* board);
     void deleteAll();
 };
 

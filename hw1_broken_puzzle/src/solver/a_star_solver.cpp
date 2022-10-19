@@ -2,6 +2,11 @@
 
 #include "../board/a_star_board.h"
 
+// check if any board with the same puzzle exists in the priority queue
+bool PQWithRemove::exist(Board* board) {
+    return (this->items.find(board->toBitset()) != this->items.end());
+}
+
 void PQWithRemove::replaceIfSmallerCost(Board* replaceBy) {
     for (int i = this->c.size() - 1; i >= 0; i--) {
         // no existance with higher cost
@@ -15,6 +20,17 @@ void PQWithRemove::replaceIfSmallerCost(Board* replaceBy) {
             return;
         }
     }
+}
+
+void PQWithRemove::push(Board* board) {
+    priority_queue<Board*, vector<Board*>, CostComparison>::push(board);
+    this->items.insert(board->toBitset());
+}
+
+void PQWithRemove::pop() {
+    Board* top = this->top();
+    priority_queue<Board*, vector<Board*>, CostComparison>::pop();
+    this->items.erase(top->toBitset());
 }
 
 void PQWithRemove::deleteAll() {
@@ -44,7 +60,7 @@ Board AStarSolver::solve() {
             if (!this->isVisited(nextBoard)) {
                 this->priorityQueue.push(nextBoard);
                 this->addToVisited(nextBoard);
-            } else {
+            } else if (this->priorityQueue.exist(nextBoard)) {
                 this->priorityQueue.replaceIfSmallerCost(nextBoard);
             }
         }
