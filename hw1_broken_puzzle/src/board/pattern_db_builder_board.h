@@ -1,7 +1,7 @@
 #pragma once
 #include "a_star_board.h"
 
-class PatternDbBoard : public AStarBoard {
+class PatternDbBuilderBoard : public AStarBoard {
    private:
     array<bool, M* N> targetPattern = {0};
 

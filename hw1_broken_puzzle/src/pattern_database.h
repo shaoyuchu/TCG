@@ -3,7 +3,7 @@
 #include <string>
 #include <unordered_map>
 
-#include "board/pattern_db_board.h"
+#include "board/pattern_db_builder_board.h"
 
 enum Mode { read, write };
 

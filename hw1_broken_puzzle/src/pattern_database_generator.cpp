@@ -21,7 +21,7 @@ void PatternDatabaseGenerator::setPatterns(map<string, vector<int>> patterns) {
     this->patterns = patterns;
 }
 
-void PatternDatabaseGenerator::setBaseBoard(PatternDbBoard baseBoard) {
+void PatternDatabaseGenerator::setBaseBoard(PatternDbBuilderBoard baseBoard) {
     // set all movable cells to the largest number to deal with the zeros placed
     // afterwards
     for (int i = 0; i < M * N; i++) {
@@ -30,15 +30,15 @@ void PatternDatabaseGenerator::setBaseBoard(PatternDbBoard baseBoard) {
     this->baseBoard = baseBoard;
 }
 
-PatternDatabaseGenerator::PatternDatabaseGenerator(PatternDbBoard baseBoard,
+PatternDatabaseGenerator::PatternDatabaseGenerator(PatternDbBuilderBoard baseBoard,
                                                    map<string, vector<int>> patterns) {
     this->setBaseBoard(baseBoard);
     this->setPatterns(patterns);
 }
 
-int PatternDatabaseGenerator::solveSingleBoard(PatternDbBoard& board) {
+int PatternDatabaseGenerator::solveSingleBoard(PatternDbBuilderBoard& board) {
     AStarSolver solver;
-    Board* boardToSolve = new PatternDbBoard(board);
+    Board* boardToSolve = new PatternDbBuilderBoard(board);
     solver.init(boardToSolve);
     Board terminalBoard = solver.solve();
     int moveCnt = terminalBoard.getPrevMoves().size();
@@ -48,8 +48,8 @@ int PatternDatabaseGenerator::solveSingleBoard(PatternDbBoard& board) {
 }
 
 void PatternDatabaseGenerator::generateAllZeroOnlyInitials(
-    int remainingCnt, int startId, PatternDbBoard& startBoard,
-    vector<PatternDbBoard>* results) {
+    int remainingCnt, int startId, PatternDbBuilderBoard& startBoard,
+    vector<PatternDbBuilderBoard>* results) {
     if (remainingCnt > 0 && startId >= M * N) return;
     if (remainingCnt == 0) {
         results->push_back(startBoard);
@@ -63,14 +63,14 @@ void PatternDatabaseGenerator::generateAllZeroOnlyInitials(
     }
 }
 
-vector<PatternDbBoard> PatternDatabaseGenerator::generateAllZeroOnlyInitials() {
-    vector<PatternDbBoard> allZeroOnlyInitials;
-    PatternDbBoard startBoard(this->baseBoard);
+vector<PatternDbBuilderBoard> PatternDatabaseGenerator::generateAllZeroOnlyInitials() {
+    vector<PatternDbBuilderBoard> allZeroOnlyInitials;
+    PatternDbBuilderBoard startBoard(this->baseBoard);
     this->generateAllZeroOnlyInitials(N_EMPTY, 0, startBoard, &allZeroOnlyInitials);
     return allZeroOnlyInitials;
 }
 
-void PatternDatabaseGenerator::generate(PatternDbBoard& startBoard,
+void PatternDatabaseGenerator::generate(PatternDbBuilderBoard& startBoard,
                                         vector<int>& remaining, PatternDatabase& pattDb) {
     // all numbers are filled in, write result to database
     if (remaining.size() == 0) {
@@ -96,8 +96,9 @@ void PatternDatabaseGenerator::generate() {
     for (auto& pattern : this->patterns) {
         string patternFileName = pattern.first;
         PatternDatabase pattDb(patternFileName, Mode::write);
-        vector<PatternDbBoard> allZeroOnlyInitials = this->generateAllZeroOnlyInitials();
-        for (PatternDbBoard& startBoard : allZeroOnlyInitials) {
+        vector<PatternDbBuilderBoard> allZeroOnlyInitials =
+            this->generateAllZeroOnlyInitials();
+        for (PatternDbBuilderBoard& startBoard : allZeroOnlyInitials) {
             startBoard.init(pattern.second);
             this->generate(startBoard, pattern.second, pattDb);
         }
@@ -105,7 +106,7 @@ void PatternDatabaseGenerator::generate() {
     }
 }
 
-void readPatterns(PatternDbBoard* baseBoard, map<string, vector<int>>* patterns) {
+void readPatterns(PatternDbBuilderBoard* baseBoard, map<string, vector<int>>* patterns) {
     cin >> (Board*)baseBoard;
     cin.ignore();  // ignore newline
 
@@ -124,7 +125,7 @@ void readPatterns(PatternDbBoard* baseBoard, map<string, vector<int>>* patterns)
 }
 
 int main() {
-    PatternDbBoard pattDbBoard;
+    PatternDbBuilderBoard pattDbBoard;
     map<string, vector<int>> patterns;
     readPatterns(&pattDbBoard, &patterns);
 

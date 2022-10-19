@@ -2,7 +2,7 @@
 #include <map>
 #include <string>
 
-#include "board/pattern_db_board.h"
+#include "board/pattern_db_builder_board.h"
 #include "pattern_database.h"
 #include "solver/a_star_solver.h"
 #include "utils.h"
@@ -11,19 +11,20 @@
 
 class PatternDatabaseGenerator {
    private:
-    PatternDbBoard baseBoard;
+    PatternDbBuilderBoard baseBoard;
     map<string, vector<int>> patterns;
-    void setBaseBoard(PatternDbBoard baseBoard);
+    void setBaseBoard(PatternDbBuilderBoard baseBoard);
     void setPatterns(map<string, vector<int>> patterns);
-    int solveSingleBoard(PatternDbBoard& board);
+    int solveSingleBoard(PatternDbBuilderBoard& board);
     void generateAllZeroOnlyInitials(int remainingCnt, int startId,
-                                     PatternDbBoard& startBoard,
-                                     vector<PatternDbBoard>* results);
-    vector<PatternDbBoard> generateAllZeroOnlyInitials();
-    void generate(PatternDbBoard& startBoard, vector<int>& remaining,
+                                     PatternDbBuilderBoard& startBoard,
+                                     vector<PatternDbBuilderBoard>* results);
+    vector<PatternDbBuilderBoard> generateAllZeroOnlyInitials();
+    void generate(PatternDbBuilderBoard& startBoard, vector<int>& remaining,
                   PatternDatabase& pattDb);
 
    public:
-    PatternDatabaseGenerator(PatternDbBoard baseBoard, map<string, vector<int>> patterns);
+    PatternDatabaseGenerator(PatternDbBuilderBoard baseBoard,
+                             map<string, vector<int>> patterns);
     void generate();
 };

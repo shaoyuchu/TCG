@@ -1,6 +1,6 @@
-#include "pattern_db_board.h"
+#include "pattern_db_builder_board.h"
 
-bool PatternDbBoard::isCompleted() {
+bool PatternDbBuilderBoard::isCompleted() {
     for (int i = 0; i < M * N - N_EMPTY; i++) {
         if (!this->targetPattern[i + 1]) continue;
         if (!(this->operator()(i) == i + 1 || this->operator()(i) < 0)) return false;
@@ -8,7 +8,7 @@ bool PatternDbBoard::isCompleted() {
     return true;
 }
 
-void PatternDbBoard::init(vector<int>& pattern) {
+void PatternDbBuilderBoard::init(vector<int>& pattern) {
     this->estRemaining = 0;
     for (int i = 0; i < M; i++) {
         for (int j = 0; j < N; j++) {
@@ -27,7 +27,7 @@ void PatternDbBoard::init(vector<int>& pattern) {
     }
 }
 
-void PatternDbBoard::move(int i, int j, Action action) {
+void PatternDbBuilderBoard::move(int i, int j, Action action) {
     int movingNum = puzzle[i][j];
     int targetPos = movingNum - 1;
     Board::slide(i, j, action);
@@ -44,7 +44,7 @@ void PatternDbBoard::move(int i, int j, Action action) {
     }
 }
 
-Board* PatternDbBoard::duplicate() {
-    Board* newBoard = new PatternDbBoard(*this);
+Board* PatternDbBuilderBoard::duplicate() {
+    Board* newBoard = new PatternDbBuilderBoard(*this);
     return newBoard;
 }
