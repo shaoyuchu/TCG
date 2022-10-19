@@ -19,7 +19,7 @@ Building the pattern database is required before running the Pattern-database so
 For example, to meet the homework requirement (< 30 minutes of pre-processing time and < 1GB data generated), use the config at `pattern_database/2_2_2_2_2_2_1_1_1.in`. Run the following command.
 
 ```bash
-make
+make database
 ./pattern_database_generator.out < pattern_database/2_2_2_2_2_2_1_1_1.in
 ```
 
