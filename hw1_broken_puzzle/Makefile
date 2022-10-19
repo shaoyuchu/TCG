@@ -5,7 +5,7 @@ OBJDIR = obj
 TARGET = main.out
 DB_TARGET = pattern_database_generator.out
 
-$(TARGET): $(OBJDIR)/board/board.o $(OBJDIR)/board/a_star_board.o $(OBJDIR)/solver/brute_force_solver.o $(OBJDIR)/solver/a_star_solver.o $(OBJDIR)/solver/pattern_database_solver.o $(OBJDIR)/pattern_database.o $(OBJDIR)/main.o
+$(TARGET): $(OBJDIR)/board/board.o $(OBJDIR)/board/a_star_board.o $(OBJDIR)/board/pattern_database_board.o $(OBJDIR)/solver/brute_force_solver.o $(OBJDIR)/solver/a_star_solver.o $(OBJDIR)/solver/pattern_database_solver.o $(OBJDIR)/pattern_database.o $(OBJDIR)/main.o
 	$(CC) $(CFLAGS) $^ -o $@
 
 $(DB_TARGET): $(OBJDIR)/board/board.o $(OBJDIR)/board/a_star_board.o $(OBJDIR)/board/pattern_db_builder_board.o $(OBJDIR)/solver/a_star_solver.o $(OBJDIR)/pattern_database.o $(OBJDIR)/pattern_database_generator.o

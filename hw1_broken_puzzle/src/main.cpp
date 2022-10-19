@@ -1,6 +1,7 @@
 #include <cstring>
 
 #include "board/a_star_board.h"
+#include "board/pattern_database_board.h"
 #include "solver/a_star_solver.h"
 #include "solver/brute_force_solver.h"
 #include "solver/pattern_database_solver.h"
@@ -17,7 +18,7 @@ PuzzleSolver* getSolver(int argc, char** argv) {
     }
     cerr << "Usage:" << endl;
     cerr << "  [brute-force solver] ./main.out --brute-force" << endl;
-    cerr << "  [A-star solver] ./main.out --a-star" << endl;
+    cerr << "  [A* solver] ./main.out --a-star" << endl;
     cerr << "  [pattern-database solver] ./main.out --pattern-database "
             "<database-config-path>"
          << endl;
@@ -31,7 +32,7 @@ Board* getInitialBoard(PuzzleSolver* solver) {
     } else if (typeid(*solver) == typeid(AStarSolver)) {
         initialBoard = new AStarBoard();
     } else if (typeid(*solver) == typeid(PatternDatabaseSolver)) {
-        initialBoard = new AStarBoard();
+        initialBoard = new PatternDatabaseBoard();
     } else {
         cerr << "Error: Invalid solver.\n";
         exit(1);

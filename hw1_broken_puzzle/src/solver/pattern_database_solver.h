@@ -3,6 +3,8 @@
 #include <string>
 #include <unordered_map>
 
+#include "../board/pattern_database_board.h"
+#include "../pattern_database.h"
 #include "a_star_solver.h"
 
 class PatternDatabaseSolver : public AStarSolver {

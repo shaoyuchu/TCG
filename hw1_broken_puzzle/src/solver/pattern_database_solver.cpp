@@ -3,8 +3,6 @@
 #include <fstream>
 #include <sstream>
 
-#include "../pattern_database.h"
-
 PatternDatabaseSolver::PatternDatabaseSolver(string configPath) {
     ifstream file(configPath);
     string buffer, fileName, pattern;
@@ -28,6 +26,13 @@ PatternDatabaseSolver::PatternDatabaseSolver(string configPath) {
 }
 
 void PatternDatabaseSolver::init(Board* initialBoard) {
+    if (dynamic_cast<PatternDatabaseBoard*>(initialBoard)) {
+        PatternDatabaseBoard* castedBoard =
+            dynamic_cast<PatternDatabaseBoard*>(initialBoard);
+        castedBoard->setPatterns(&(this->patterns));
+    } else {
+        cerr << "Error: PatternDatabaseSolver should use PatternDatabaseBoard." << endl;
+        exit(1);
+    }
     this->AStarSolver::init(initialBoard);
-    // TODO: set pattern database ptr after adding new board type
 }
