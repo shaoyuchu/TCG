@@ -104,9 +104,9 @@ The total size of the generated databases is about 4MB.
 
 ## 5. Experiment Results
 
-The following shows the result of running the 3 solvers on the public test cases. The numbers shows the number of explored states.
+The following shows the result of running the 3 solvers on the public test cases. The numbers show the number of explored states.
 
-The execution time is not listed here as most of the test cases complete within 1 second on the NTU CSIE workstation. The magnitude is too small that it may be easily affected by the machine’s workload variations. The number of explored states will be a better indicator of the solver performance.
+The execution time is not listed here as most of the test cases complete within 1 second on the NTU CSIE workstation. Its magnitude is too small that comparison results may be easily affected by the machine’s workload variations. The number of explored states will be a better indicator of the solver performance.
 
 |  | Brute-force solver | A-star solver | Pattern-database solver |
 | --- | --- | --- | --- |
