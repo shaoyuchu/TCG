@@ -84,7 +84,7 @@ Given the time limit (30 min) for the database generation, we adopt the followin
 - Tile 16 & Tile 17
 - Tile 12
 - Tile 14
-- Tile 8
+- Tile 18
 
 A visualization of the split is shown below.
 
