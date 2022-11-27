@@ -39,10 +39,13 @@ class Board {
     array<array<Cube, N_COL>, N_ROW> cubes;
     array<int, 6> redCubeRow = {-1, -1, -1, -1, -1, -1};
     array<int, 6> redCubeCol = {-1, -1, -1, -1, -1, -1};
+    array<int, 6> blueCubeRow = {-1, -1, -1, -1, -1, -1};
+    array<int, 6> blueCubeCol = {-1, -1, -1, -1, -1, -1};
     Color nextTurn = Color::Red;
 
    public:
     Cube& get(int r, int c) { return this->cubes[r][c]; }
+    pair<int, int> getCubePos(const Cube& cube) const;
     void setCube(int r, int c, Cube cube);
     void setNextTurn(Color nextTurn) { this->nextTurn = nextTurn; }
     void swap(int r1, int c1, int r2, int c2);

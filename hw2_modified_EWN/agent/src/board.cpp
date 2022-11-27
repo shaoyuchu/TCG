@@ -30,11 +30,26 @@ ostream& operator<<(ostream& os, Ply ply) {
     }
 }
 
+pair<int, int> Board::getCubePos(const Cube& cube) const {
+    int r = -1, c = -1;
+    if (cube.color == Color::Red) {
+        r = this->redCubeRow[cube.num - '0'];
+        c = this->redCubeCol[cube.num - '0'];
+    } else if (cube.color == Color::Blue) {
+        r = this->blueCubeRow[cube.num - '0'];
+        c = this->blueCubeCol[cube.num - '0'];
+    }
+    return make_pair(r, c);
+}
+
 void Board::setCube(int r, int c, Cube cube) {
     this->cubes[r][c] = cube;
     if (cube.color == Color::Red) {
         this->redCubeRow[cube.num - '0'] = r;
         this->redCubeCol[cube.num - '0'] = c;
+    } else if (cube.color == Color::Blue) {
+        this->blueCubeRow[cube.num - '0'] = r;
+        this->blueCubeCol[cube.num - '0'] = c;
     }
 }
 
@@ -64,6 +79,9 @@ void Board::flip() {
             if (cube.color == Color::Blue) {
                 this->redCubeRow[cube.num - '0'] = r;
                 this->redCubeCol[cube.num - '0'] = c;
+            } else if (cube.color == Color::Red) {
+                this->blueCubeRow[cube.num - '0'] = r;
+                this->blueCubeCol[cube.num - '0'] = c;
             }
             cube.flipColor();
         }
@@ -129,9 +147,20 @@ vector<Ply> Board::getNextPly() const {
 void Board::playRand() {}
 
 ostream& operator<<(ostream& os, Board board) {
+    // board
     for (int r = 0; r < N_ROW; r++) {
         for (int c = 0; c < N_COL; c++) {
             os << setw(4) << board.get(r, c);
+        }
+        os << endl;
+    }
+
+    // cube positions
+    Color colors[2] = {Color::Red, Color::Blue};
+    for (int c = 0; c < 2; c++) {
+        for (int i = 0; i < 6; i++) {
+            pair<int, int> cubePos = board.getCubePos(Cube(colors[c], '0' + i));
+            os << "(" << cubePos.first << ", " << cubePos.second << ") ";
         }
         os << endl;
     }
