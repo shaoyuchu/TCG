@@ -25,10 +25,16 @@ void setPlayer(Board& board) {
 }
 
 int main() {
-    Board board;
-    setInitialPosition(board);
-    setPlayer(board);
-    cerr << board << endl;
+    Board initialBoard;
+    setInitialPosition(initialBoard);
+    setPlayer(initialBoard);
+
+    // test code
+    cerr << initialBoard << endl;
+    vector<Ply> validPlys = initialBoard.getNextPly();
+    for (Ply ply : validPlys) {
+        cerr << ply << endl;
+    }
 
     return 0;
 }

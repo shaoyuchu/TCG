@@ -19,12 +19,29 @@ void Cube::flipColor() {
         this->color = Color::Red;
 }
 
-void Board::toRandNext() {}
+ostream& operator<<(ostream& os, Ply ply) {
+    switch (ply.dir) {
+        case Direction::Horizontal:
+            return (os << ply.num << " horizontal");
+        case Direction::Vertical:
+            return (os << ply.num << " vertical");
+        case Direction::Diagonal:
+            return (os << ply.num << " diagonal");
+    }
+}
+
+void Board::setCube(int r, int c, Cube cube) {
+    this->cubes[r][c] = cube;
+    if (cube.color == Color::Red) {
+        this->redCubeRow[cube.num - '0'] = r;
+        this->redCubeCol[cube.num - '0'] = c;
+    }
+}
 
 void Board::swap(int r1, int c1, int r2, int c2) {
     Cube temp = cubes[r1][c1];
-    cubes[r1][c1] = cubes[r2][c2];
-    cubes[r2][c2] = temp;
+    this->setCube(r1, c1, this->cubes[r2][c2]);
+    this->setCube(r2, c2, temp);
 }
 
 void Board::flip() {
@@ -41,8 +58,13 @@ void Board::flip() {
         }
     }
     // exchange colors
-    for (array<Cube, N_COL>& row : this->cubes) {
-        for (Cube& cube : row) {
+    for (int r = 0; r < N_ROW; r++) {
+        for (int c = 0; c < N_COL; c++) {
+            Cube& cube = this->cubes[r][c];
+            if (cube.color == Color::Blue) {
+                this->redCubeRow[cube.num - '0'] = r;
+                this->redCubeCol[cube.num - '0'] = c;
+            }
             cube.flipColor();
         }
     }
@@ -76,12 +98,35 @@ Color Board::getWinner() const {
     return (redCnt == 0 ? Color::Blue : Color::Red);
 }
 
-vector<Board> Board::getNext() const {
-    vector<Board> results;
-    results.reserve(N_NEXT);
-    // TODO: get all possible next moves
-    return results;
+vector<Ply> Board::getNextPly() const {
+    vector<Ply> validPlys;
+    validPlys.reserve(N_NEXT);
+    for (int r = 0; r < N_ROW; r++) {
+        for (int c = 0; c < N_COL; c++) {
+            Cube cube = this->cubes[r][c];
+            if (cube.color != Color::Red) continue;
+            // horizontal: (r, c) -> (r, c + 1)
+            if ((c + 1 < N_COL) && (this->cubes[r][c + 1].color != Color::Red)) {
+                Ply ply(cube.num, Direction::Horizontal);
+                validPlys.push_back(ply);
+            }
+            // vertical: (r, c) -> (r + 1, c)
+            if ((r + 1 < N_ROW) && (this->cubes[r + 1][c].color != Color::Red)) {
+                Ply ply(cube.num, Direction::Vertical);
+                validPlys.push_back(ply);
+            }
+            // diagonal: (r, c) -> (r + 1, c + 1)
+            if ((r + 1 < N_ROW && c + 1 < N_COL) &&
+                this->cubes[r + 1][c + 1].color != Color::Red) {
+                Ply ply(cube.num, Direction::Diagonal);
+                validPlys.push_back(ply);
+            }
+        }
+    }
+    return validPlys;
 }
+
+void Board::playRand() {}
 
 ostream& operator<<(ostream& os, Board board) {
     for (int r = 0; r < N_ROW; r++) {
