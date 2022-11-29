@@ -19,6 +19,24 @@ void Cube::flipColor() {
         this->color = Color::Red;
 }
 
+map<pair<char, Direction>, Ply> Ply::initPlyInstances() {
+    map<pair<char, Direction>, Ply> instances;
+    Direction directions[] = {Direction::Horizontal, Direction::Vertical,
+                              Direction::Diagonal};
+    for (int i = 0; i < 6; i++) {
+        for (Direction& dir : directions) {
+            instances.insert(make_pair(make_pair('0' + i, dir), Ply('0' + i, dir)));
+        }
+    }
+    return instances;
+}
+
+const map<pair<char, Direction>, Ply> Ply::plyInstances = Ply::initPlyInstances();
+
+const Ply& Ply::getPly(char num, Direction dir) {
+    return plyInstances.at(make_pair(num, dir));
+}
+
 ostream& operator<<(ostream& os, Ply ply) {
     switch (ply.dir) {
         case Direction::Horizontal:
@@ -116,28 +134,25 @@ Color Board::getWinner() const {
     return (redCnt == 0 ? Color::Blue : Color::Red);
 }
 
-vector<Ply> Board::getNextPly() const {
-    vector<Ply> validPlys;
-    validPlys.reserve(N_NEXT);
+vector<Ply>* Board::getNextPly() const {
+    vector<Ply>* validPlys = new vector<Ply>();
+    validPlys->reserve(N_NEXT);
     for (int r = 0; r < N_ROW; r++) {
         for (int c = 0; c < N_COL; c++) {
             Cube cube = this->cubes[r][c];
             if (cube.color != Color::Red) continue;
             // horizontal: (r, c) -> (r, c + 1)
             if ((c + 1 < N_COL) && (this->cubes[r][c + 1].color != Color::Red)) {
-                Ply ply(cube.num, Direction::Horizontal);
-                validPlys.push_back(ply);
+                validPlys->push_back(Ply::getPly(cube.num, Direction::Horizontal));
             }
             // vertical: (r, c) -> (r + 1, c)
             if ((r + 1 < N_ROW) && (this->cubes[r + 1][c].color != Color::Red)) {
-                Ply ply(cube.num, Direction::Vertical);
-                validPlys.push_back(ply);
+                validPlys->push_back(Ply::getPly(cube.num, Direction::Vertical));
             }
             // diagonal: (r, c) -> (r + 1, c + 1)
             if ((r + 1 < N_ROW && c + 1 < N_COL) &&
                 this->cubes[r + 1][c + 1].color != Color::Red) {
-                Ply ply(cube.num, Direction::Diagonal);
-                validPlys.push_back(ply);
+                validPlys->push_back(Ply::getPly(cube.num, Direction::Diagonal));
             }
         }
     }

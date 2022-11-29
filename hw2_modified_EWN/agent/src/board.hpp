@@ -1,5 +1,6 @@
 #include <array>
 #include <fstream>
+#include <map>
 #include <vector>
 #define N_ROW 6
 #define N_COL 7
@@ -26,11 +27,17 @@ enum class Direction { Horizontal, Vertical, Diagonal };
 
 // Ply
 class Ply {
+   private:
+    const static map<pair<char, Direction>, Ply> plyInstances;
+    Ply(char num, Direction dir) : num(num), dir(dir) {}
+
    public:
     char num;
     Direction dir;
-    Ply(char num, Direction dir) : num(num), dir(dir) {}
+    static map<pair<char, Direction>, Ply> initPlyInstances();
+    static const Ply& getPly(char num, Direction dir);
 };
+
 ostream& operator<<(ostream& os, Ply ply);
 
 // Board
@@ -51,7 +58,7 @@ class Board {
     void swap(int r1, int c1, int r2, int c2);
     void flip();
     Color getWinner() const;
-    vector<Ply> getNextPly() const;
+    vector<Ply>* getNextPly() const;
     void playRand();
 };
 

@@ -31,10 +31,11 @@ int main() {
 
     // test code
     cerr << initialBoard << endl;
-    vector<Ply> validPlys = initialBoard.getNextPly();
-    for (Ply ply : validPlys) {
+    vector<Ply>* validPlys = initialBoard.getNextPly();
+    for (Ply ply : (*validPlys)) {
         cerr << ply << endl;
     }
+    delete validPlys;
 
     return 0;
 }
