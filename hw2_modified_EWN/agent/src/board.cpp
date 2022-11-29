@@ -134,24 +134,32 @@ Color Board::getWinner() const {
     return (redCnt == 0 ? Color::Blue : Color::Red);
 }
 
-vector<Ply>* Board::getNextPly() const {
+vector<Ply>* Board::getNextPly(Color nextTurn) const {
     vector<Ply>* validPlys = new vector<Ply>();
     validPlys->reserve(N_NEXT);
     for (int r = 0; r < N_ROW; r++) {
         for (int c = 0; c < N_COL; c++) {
             Cube cube = this->cubes[r][c];
-            if (cube.color != Color::Red) continue;
-            // horizontal: (r, c) -> (r, c + 1)
-            if ((c + 1 < N_COL) && (this->cubes[r][c + 1].color != Color::Red)) {
+            if (cube.color != nextTurn) continue;
+            // horizontal: (r, c) -> Red (r, c + 1), Blue (r, c - 1)
+            if (((nextTurn == Color::Red) && (c + 1 < N_COL) &&
+                 (this->cubes[r][c + 1].color != nextTurn)) ||
+                ((nextTurn == Color::Blue) && (c - 1 >= 0) &&
+                 (this->cubes[r][c - 1].color != nextTurn))) {
                 validPlys->push_back(Ply::getPly(cube.num, Direction::Horizontal));
             }
-            // vertical: (r, c) -> (r + 1, c)
-            if ((r + 1 < N_ROW) && (this->cubes[r + 1][c].color != Color::Red)) {
+            // vertical: (r, c) -> Red (r + 1, c), Blue (r - 1, c)
+            if (((nextTurn == Color::Red) && (r + 1 < N_ROW) &&
+                 (this->cubes[r + 1][c].color != nextTurn)) ||
+                ((nextTurn == Color::Blue) && (r - 1 >= 0) &&
+                 this->cubes[r - 1][c].color != nextTurn)) {
                 validPlys->push_back(Ply::getPly(cube.num, Direction::Vertical));
             }
-            // diagonal: (r, c) -> (r + 1, c + 1)
-            if ((r + 1 < N_ROW && c + 1 < N_COL) &&
-                this->cubes[r + 1][c + 1].color != Color::Red) {
+            // diagonal: (r, c) -> Red (r + 1, c + 1), Blue (r - 1, c - 1)
+            if (((nextTurn == Color::Red) && (r + 1 < N_ROW && c + 1 < N_COL) &&
+                 (this->cubes[r + 1][c + 1].color != nextTurn)) ||
+                ((nextTurn == Color::Blue) && (r - 1 >= 0) && (c - 1 >= 0) &&
+                 (this->cubes[r - 1][c - 1].color != nextTurn))) {
                 validPlys->push_back(Ply::getPly(cube.num, Direction::Diagonal));
             }
         }

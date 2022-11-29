@@ -31,11 +31,18 @@ int main() {
 
     // test code
     cerr << initialBoard << endl;
-    vector<Ply>* validPlys = initialBoard.getNextPly();
-    for (Ply ply : (*validPlys)) {
+    vector<Ply>* redValidPlys = initialBoard.getNextPly(Color::Red);
+    for (Ply ply : (*redValidPlys)) {
         cerr << ply << endl;
     }
-    delete validPlys;
+    cerr << endl;
+
+    vector<Ply>* blueValidPlys = initialBoard.getNextPly(Color::Blue);
+    for (Ply ply : (*blueValidPlys)) {
+        cerr << ply << endl;
+    }
+    delete redValidPlys;
+    delete blueValidPlys;
 
     return 0;
 }
