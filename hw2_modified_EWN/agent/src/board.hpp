@@ -58,7 +58,7 @@ class Board {
     void swap(int r1, int c1, int r2, int c2);
     void flip();
     Color getWinner() const;
-    vector<Ply>* getNextPly(Color color) const;
+    vector<Ply>* getAllValidPly() const;
     void playRand();
 };
 
