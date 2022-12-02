@@ -19,57 +19,43 @@ void Cube::flipColor() {
         this->color = Color::Red;
 }
 
-map<pair<char, Direction>, Ply> Ply::initPlyInstances() {
-    map<pair<char, Direction>, Ply> instances;
+map<tuple<int, int, char, Direction>, Ply> Ply::initPlyInstances() {
+    map<tuple<int, int, char, Direction>, Ply> instances;
     Direction directions[] = {Direction::Horizontal, Direction::Vertical,
                               Direction::Diagonal};
-    for (int i = 0; i < 6; i++) {
-        for (Direction& dir : directions) {
-            instances.insert(make_pair(make_pair('0' + i, dir), Ply('0' + i, dir)));
+    for (int r = 0; r < N_ROW; r++) {
+        for (int c = 0; c < N_COL; c++) {
+            for (int num = 0; num < 6; num++) {
+                for (Direction& dir : directions) {
+                    instances.insert(make_pair(make_tuple(r, c, '0' + num, dir),
+                                               Ply(r, c, '0' + num, dir)));
+                }
+            }
         }
     }
     return instances;
 }
 
-const map<pair<char, Direction>, Ply> Ply::plyInstances = Ply::initPlyInstances();
+const map<tuple<int, int, char, Direction>, Ply> Ply::plyInstances =
+    Ply::initPlyInstances();
 
-const Ply& Ply::getPly(char num, Direction dir) {
-    return plyInstances.at(make_pair(num, dir));
+const Ply& Ply::getPly(int r, int c, char num, Direction dir) {
+    return plyInstances.at(make_tuple(r, c, num, dir));
 }
 
 ostream& operator<<(ostream& os, Ply ply) {
+    os << "(" << ply.row << ", " << ply.col << ") " << ply.num << " ";
     switch (ply.dir) {
         case Direction::Horizontal:
-            return (os << ply.num << " horizontal");
+            return (os << "horizontal");
         case Direction::Vertical:
-            return (os << ply.num << " vertical");
+            return (os << "vertical");
         case Direction::Diagonal:
-            return (os << ply.num << " diagonal");
+            return (os << "diagonal");
     }
 }
 
-pair<int, int> Board::getCubePos(const Cube& cube) const {
-    int r = -1, c = -1;
-    if (cube.color == Color::Red) {
-        r = this->redCubeRow[cube.num - '0'];
-        c = this->redCubeCol[cube.num - '0'];
-    } else if (cube.color == Color::Blue) {
-        r = this->blueCubeRow[cube.num - '0'];
-        c = this->blueCubeCol[cube.num - '0'];
-    }
-    return make_pair(r, c);
-}
-
-void Board::setCube(int r, int c, Cube cube) {
-    this->cubes[r][c] = cube;
-    if (cube.color == Color::Red) {
-        this->redCubeRow[cube.num - '0'] = r;
-        this->redCubeCol[cube.num - '0'] = c;
-    } else if (cube.color == Color::Blue) {
-        this->blueCubeRow[cube.num - '0'] = r;
-        this->blueCubeCol[cube.num - '0'] = c;
-    }
-}
+void Board::setCube(int r, int c, Cube cube) { this->cubes[r][c] = cube; }
 
 void Board::swap(int r1, int c1, int r2, int c2) {
     Cube temp = cubes[r1][c1];
@@ -93,15 +79,7 @@ void Board::flip() {
     // exchange colors
     for (int r = 0; r < N_ROW; r++) {
         for (int c = 0; c < N_COL; c++) {
-            Cube& cube = this->cubes[r][c];
-            if (cube.color == Color::Blue) {
-                this->redCubeRow[cube.num - '0'] = r;
-                this->redCubeCol[cube.num - '0'] = c;
-            } else if (cube.color == Color::Red) {
-                this->blueCubeRow[cube.num - '0'] = r;
-                this->blueCubeCol[cube.num - '0'] = c;
-            }
-            cube.flipColor();
+            this->cubes[r][c].flipColor();
         }
     }
 }
@@ -146,21 +124,21 @@ vector<Ply>* Board::getAllValidPly() const {
                  (this->cubes[r][c + 1].color != this->nextTurn)) ||
                 ((this->nextTurn == Color::Blue) && (c - 1 >= 0) &&
                  (this->cubes[r][c - 1].color != this->nextTurn))) {
-                validPlys->push_back(Ply::getPly(cube.num, Direction::Horizontal));
+                validPlys->push_back(Ply::getPly(r, c, cube.num, Direction::Horizontal));
             }
             // vertical: (r, c) -> Red (r + 1, c), Blue (r - 1, c)
             if (((this->nextTurn == Color::Red) && (r + 1 < N_ROW) &&
                  (this->cubes[r + 1][c].color != this->nextTurn)) ||
                 ((this->nextTurn == Color::Blue) && (r - 1 >= 0) &&
                  this->cubes[r - 1][c].color != this->nextTurn)) {
-                validPlys->push_back(Ply::getPly(cube.num, Direction::Vertical));
+                validPlys->push_back(Ply::getPly(r, c, cube.num, Direction::Vertical));
             }
             // diagonal: (r, c) -> Red (r + 1, c + 1), Blue (r - 1, c - 1)
             if (((this->nextTurn == Color::Red) && (r + 1 < N_ROW && c + 1 < N_COL) &&
                  (this->cubes[r + 1][c + 1].color != this->nextTurn)) ||
                 ((this->nextTurn == Color::Blue) && (r - 1 >= 0) && (c - 1 >= 0) &&
                  (this->cubes[r - 1][c - 1].color != this->nextTurn))) {
-                validPlys->push_back(Ply::getPly(cube.num, Direction::Diagonal));
+                validPlys->push_back(Ply::getPly(r, c, cube.num, Direction::Diagonal));
             }
         }
     }
@@ -174,16 +152,6 @@ ostream& operator<<(ostream& os, Board board) {
     for (int r = 0; r < N_ROW; r++) {
         for (int c = 0; c < N_COL; c++) {
             os << setw(4) << board.get(r, c);
-        }
-        os << endl;
-    }
-
-    // cube positions
-    Color colors[2] = {Color::Red, Color::Blue};
-    for (int c = 0; c < 2; c++) {
-        for (int i = 0; i < 6; i++) {
-            pair<int, int> cubePos = board.getCubePos(Cube(colors[c], '0' + i));
-            os << "(" << cubePos.first << ", " << cubePos.second << ") ";
         }
         os << endl;
     }

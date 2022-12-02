@@ -17,7 +17,7 @@ void setPlayer(Board& board) {
     char player = getchar();
     if (player == 'f') {
         board.setNextTurn(Color::Red);
-    } else if (player == 'b') {
+    } else if (player == 's') {
         // flip the board
         board.flip();
         board.setNextTurn(Color::Blue);

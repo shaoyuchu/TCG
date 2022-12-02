@@ -28,14 +28,17 @@ enum class Direction { Horizontal, Vertical, Diagonal };
 // Ply
 class Ply {
    private:
-    const static map<pair<char, Direction>, Ply> plyInstances;
-    Ply(char num, Direction dir) : num(num), dir(dir) {}
+    const static map<tuple<int, int, char, Direction>, Ply> plyInstances;
+    Ply(int row, int col, char num, Direction dir)
+        : row(row), col(col), num(num), dir(dir) {}
 
    public:
+    int row;
+    int col;
     char num;
     Direction dir;
-    static map<pair<char, Direction>, Ply> initPlyInstances();
-    static const Ply& getPly(char num, Direction dir);
+    static map<tuple<int, int, char, Direction>, Ply> initPlyInstances();
+    static const Ply& getPly(int r, int c, char num, Direction dir);
 };
 
 ostream& operator<<(ostream& os, Ply ply);
@@ -44,15 +47,10 @@ ostream& operator<<(ostream& os, Ply ply);
 class Board {
    private:
     array<array<Cube, N_COL>, N_ROW> cubes;
-    array<int, 6> redCubeRow = {-1, -1, -1, -1, -1, -1};
-    array<int, 6> redCubeCol = {-1, -1, -1, -1, -1, -1};
-    array<int, 6> blueCubeRow = {-1, -1, -1, -1, -1, -1};
-    array<int, 6> blueCubeCol = {-1, -1, -1, -1, -1, -1};
     Color nextTurn = Color::Red;
 
    public:
     Cube& get(int r, int c) { return this->cubes[r][c]; }
-    pair<int, int> getCubePos(const Cube& cube) const;
     void setCube(int r, int c, Cube cube);
     void setNextTurn(Color nextTurn) { this->nextTurn = nextTurn; }
     void swap(int r1, int c1, int r2, int c2);
