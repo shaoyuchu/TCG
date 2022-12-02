@@ -32,7 +32,6 @@ Direction char2Direction(char directionChar) {
 
 void readPlyAndApply(Board& initialBoard) {
     char num = getchar(), dir = getchar();
-    cerr << "Apply input ply " << num << " " << dir << endl;
     if (num == '?' && dir == '?') {
         initialBoard.applyPly(Ply::getPly(0, 0, 0, Direction::None));
     } else {
@@ -77,7 +76,6 @@ void writePlyAndApply(Ply& ply, Board& board) {
     flush(cout);
 
     board.applyPly(ply);
-    cerr << "Apply ply " << ply << endl;
 }
 
 int main() {
@@ -87,7 +85,6 @@ int main() {
         readAndSetPlayer(initialBoard);
 
         while (!initialBoard.isCompleted()) {
-            cerr << endl << initialBoard;
             if (initialBoard.getNextTurn() == Color::Red) {
                 Ply bestPly = getBestPly(initialBoard, 10000);
                 writePlyAndApply(bestPly, initialBoard);

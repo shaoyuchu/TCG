@@ -15,6 +15,7 @@ ostream& operator<<(ostream& os, Color color) {
         case Color::Empty:
             return (os << "Empty");
     }
+    return os;
 }
 
 ostream& operator<<(ostream& os, Cube cube) {
@@ -27,6 +28,7 @@ ostream& operator<<(ostream& os, Cube cube) {
             return (os << "_"
                        << "_");
     }
+    return os;
 }
 
 void Cube::flipColor() {
@@ -75,6 +77,7 @@ ostream& operator<<(ostream& os, Ply ply) {
         case Direction::None:
             return (os << "none");
     }
+    return os;
 }
 
 void Board::swap(int r1, int c1, int r2, int c2) {
