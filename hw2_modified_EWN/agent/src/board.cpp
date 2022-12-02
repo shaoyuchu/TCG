@@ -2,6 +2,8 @@
 
 #include <assert.h>
 
+#include "random/rand_gen.hpp"
+
 ostream& operator<<(ostream& os, Cube cube) {
     switch (cube.color) {
         case Color::Red:
@@ -114,9 +116,9 @@ Color Board::getWinner() const {
     const Cube lowerRight = this->cubes.back().back();
     if (upperLeft.color == Color::Blue && lowerRight.color == Color::Red) {
         if (upperLeft.num < lowerRight.num)
-            return Color::Red;
-        else if (upperLeft.num > lowerRight.num)
             return Color::Blue;
+        else if (upperLeft.num > lowerRight.num)
+            return Color::Red;
         return Color::Empty;
     }
 
@@ -125,9 +127,8 @@ Color Board::getWinner() const {
     return (this->nextTurn == Color::Red ? Color::Blue : Color::Red);
 }
 
-vector<Ply>* Board::getAllValidPly() const {
-    vector<Ply>* validPlys = new vector<Ply>();
-    validPlys->reserve(N_NEXT);
+vector<Ply>* Board::getAllValidPly() {
+    this->validPlys.clear();
     for (int r = 0; r < N_ROW; r++) {
         for (int c = 0; c < N_COL; c++) {
             Cube cube = this->cubes[r][c];
@@ -137,25 +138,28 @@ vector<Ply>* Board::getAllValidPly() const {
                  (this->cubes[r][c + 1].color != this->nextTurn)) ||
                 ((this->nextTurn == Color::Blue) && (c - 1 >= 0) &&
                  (this->cubes[r][c - 1].color != this->nextTurn))) {
-                validPlys->push_back(Ply::getPly(r, c, cube.num, Direction::Horizontal));
+                this->validPlys.push_back(
+                    Ply::getPly(r, c, cube.num, Direction::Horizontal));
             }
             // vertical: (r, c) -> Red (r + 1, c), Blue (r - 1, c)
             if (((this->nextTurn == Color::Red) && (r + 1 < N_ROW) &&
                  (this->cubes[r + 1][c].color != this->nextTurn)) ||
                 ((this->nextTurn == Color::Blue) && (r - 1 >= 0) &&
                  this->cubes[r - 1][c].color != this->nextTurn)) {
-                validPlys->push_back(Ply::getPly(r, c, cube.num, Direction::Vertical));
+                this->validPlys.push_back(
+                    Ply::getPly(r, c, cube.num, Direction::Vertical));
             }
             // diagonal: (r, c) -> Red (r + 1, c + 1), Blue (r - 1, c - 1)
             if (((this->nextTurn == Color::Red) && (r + 1 < N_ROW && c + 1 < N_COL) &&
                  (this->cubes[r + 1][c + 1].color != this->nextTurn)) ||
                 ((this->nextTurn == Color::Blue) && (r - 1 >= 0) && (c - 1 >= 0) &&
                  (this->cubes[r - 1][c - 1].color != this->nextTurn))) {
-                validPlys->push_back(Ply::getPly(r, c, cube.num, Direction::Diagonal));
+                this->validPlys.push_back(
+                    Ply::getPly(r, c, cube.num, Direction::Diagonal));
             }
         }
     }
-    return validPlys;
+    return &(this->validPlys);
 }
 
 void Board::applyPly(const Ply ply) {
@@ -178,7 +182,14 @@ void Board::applyPly(const Ply ply) {
     this->flipNextTurn();
 }
 
-void Board::playRand() {}
+Color Board::playRandTillEnd() {
+    while (!this->isCompleted()) {
+        vector<Ply>* validPlys = this->getAllValidPly();
+        Ply& randPly = validPlys->at(PcgRandGen::getRandNum(validPlys->size()));
+        this->applyPly(randPly);
+    }
+    return this->getWinner();
+}
 
 ostream& operator<<(ostream& os, Board board) {
     // board

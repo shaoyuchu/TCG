@@ -1,6 +1,7 @@
 #include <array>
 #include <fstream>
 #include <map>
+#include <tuple>
 #include <vector>
 #define N_ROW 6
 #define N_COL 7
@@ -47,19 +48,21 @@ ostream& operator<<(ostream& os, Ply ply);
 class Board {
    private:
     array<array<Cube, N_COL>, N_ROW> cubes;
+    vector<Ply> validPlys;
     Color nextTurn = Color::Red;
     void swap(int r1, int c1, int r2, int c2);
 
    public:
+    Board() { this->validPlys.reserve(18); }
     Cube& get(int r, int c) { return this->cubes[r][c]; }
     void setCube(int r, int c, Cube cube) { this->cubes[r][c] = cube; }
     void flipNextTurn();
     void flip();
     bool isCompleted() const;
     Color getWinner() const;
-    vector<Ply>* getAllValidPly() const;
+    vector<Ply>* getAllValidPly();
     void applyPly(const Ply ply);
-    void playRand();
+    Color playRandTillEnd();
 };
 
 ostream& operator<<(ostream& os, Board board);

@@ -36,10 +36,7 @@ int main() {
     }
     cerr << endl;
 
-    initialBoard.applyPly(validPlys->at(6));
-    cerr << initialBoard << endl;
-
-    delete validPlys;
+    Color winner = initialBoard.playRandTillEnd();
 
     return 0;
 }
