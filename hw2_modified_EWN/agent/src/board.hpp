@@ -48,15 +48,17 @@ class Board {
    private:
     array<array<Cube, N_COL>, N_ROW> cubes;
     Color nextTurn = Color::Red;
+    void swap(int r1, int c1, int r2, int c2);
 
    public:
     Cube& get(int r, int c) { return this->cubes[r][c]; }
-    void setCube(int r, int c, Cube cube);
-    void setNextTurn(Color nextTurn) { this->nextTurn = nextTurn; }
-    void swap(int r1, int c1, int r2, int c2);
+    void setCube(int r, int c, Cube cube) { this->cubes[r][c] = cube; }
+    void flipNextTurn();
     void flip();
+    bool isCompleted() const;
     Color getWinner() const;
     vector<Ply>* getAllValidPly() const;
+    void applyPly(const Ply ply);
     void playRand();
 };
 

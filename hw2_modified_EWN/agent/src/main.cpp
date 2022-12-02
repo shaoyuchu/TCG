@@ -15,12 +15,11 @@ void setInitialPosition(Board& board) {
 void setPlayer(Board& board) {
     // always play as the Red
     char player = getchar();
-    if (player == 'f') {
-        board.setNextTurn(Color::Red);
-    } else if (player == 's') {
+
+    if (player == 's') {
         // flip the board
         board.flip();
-        board.setNextTurn(Color::Blue);
+        board.flipNextTurn();
     }
 }
 
@@ -36,6 +35,10 @@ int main() {
         cerr << ply << endl;
     }
     cerr << endl;
+
+    initialBoard.applyPly(validPlys->at(6));
+    cerr << initialBoard << endl;
+
     delete validPlys;
 
     return 0;

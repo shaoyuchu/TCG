@@ -1,5 +1,7 @@
 #include "board.hpp"
 
+#include <assert.h>
+
 ostream& operator<<(ostream& os, Cube cube) {
     switch (cube.color) {
         case Color::Red:
@@ -55,12 +57,14 @@ ostream& operator<<(ostream& os, Ply ply) {
     }
 }
 
-void Board::setCube(int r, int c, Cube cube) { this->cubes[r][c] = cube; }
-
 void Board::swap(int r1, int c1, int r2, int c2) {
     Cube temp = cubes[r1][c1];
     this->setCube(r1, c1, this->cubes[r2][c2]);
     this->setCube(r2, c2, temp);
+}
+
+void Board::flipNextTurn() {
+    this->nextTurn = (this->nextTurn == Color::Red ? Color::Blue : Color::Red);
 }
 
 void Board::flip() {
@@ -84,32 +88,41 @@ void Board::flip() {
     }
 }
 
+bool Board::isCompleted() const {
+    // both colors have reached the corner
+    const Cube upperLeft = this->cubes.front().front();
+    const Cube lowerRight = this->cubes.back().back();
+    if (upperLeft.color == Color::Blue && lowerRight.color == Color::Red) return true;
+
+    // all red/blue cubes are captured
+    int redCnt = 0, blueCnt = 0;
+    for (const auto& row : this->cubes) {
+        for (const auto& cube : row) {
+            if (cube.color == Color::Red)
+                redCnt += 1;
+            else if (cube.color == Color::Blue)
+                blueCnt += 1;
+        }
+    }
+    return (redCnt == 0 || blueCnt == 0);
+}
+
+// should only apply to boards that are completed
 Color Board::getWinner() const {
     // both colors have reached the corner
-    Cube upperLeft = this->cubes.front().front();
-    Cube lowerRight = this->cubes.back().back();
+    const Cube upperLeft = this->cubes.front().front();
+    const Cube lowerRight = this->cubes.back().back();
     if (upperLeft.color == Color::Blue && lowerRight.color == Color::Red) {
         if (upperLeft.num < lowerRight.num)
-            return Color::Blue;
-        else if (upperLeft.num > lowerRight.num)
             return Color::Red;
+        else if (upperLeft.num > lowerRight.num)
+            return Color::Blue;
         return Color::Empty;
     }
 
     // all red/blue cubes are captured
-    unsigned redCnt = 0, blueCnt = 0;
-    for (const array<Cube, N_COL>& row : this->cubes) {
-        for (const Cube& c : row) {
-            Color color = c.color;
-            if (color == Color::Red)
-                redCnt += 1;
-            else if (color == Color::Blue)
-                blueCnt += 1;
-
-            if (redCnt > 0 && blueCnt > 0) return Color::Empty;
-        }
-    }
-    return (redCnt == 0 ? Color::Blue : Color::Red);
+    // the previous player must be the winner
+    return (this->nextTurn == Color::Red ? Color::Blue : Color::Red);
 }
 
 vector<Ply>* Board::getAllValidPly() const {
@@ -143,6 +156,26 @@ vector<Ply>* Board::getAllValidPly() const {
         }
     }
     return validPlys;
+}
+
+void Board::applyPly(const Ply ply) {
+    // move the cube
+    Cube cubeToMove = this->cubes[ply.row][ply.col];
+    assert(cubeToMove.color == this->nextTurn);
+    assert(cubeToMove.num == ply.num);
+    int destRow = (this->nextTurn == Color::Red ? ply.row + 1 : ply.row - 1);
+    int destCol = (this->nextTurn == Color::Red ? ply.col + 1 : ply.col - 1);
+    if (ply.dir == Direction::Horizontal) {
+        this->cubes[ply.row][destCol] = cubeToMove;
+    } else if (ply.dir == Direction::Vertical) {
+        this->cubes[destRow][ply.col] = cubeToMove;
+    } else if (ply.dir == Direction::Diagonal) {
+        this->cubes[destRow][destCol] = cubeToMove;
+    }
+    this->cubes[ply.row][ply.col] = Cube();
+
+    // update this->nextTurn
+    this->flipNextTurn();
 }
 
 void Board::playRand() {}
