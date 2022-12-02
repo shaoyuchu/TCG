@@ -2,7 +2,20 @@
 
 #include <assert.h>
 
+#include <iomanip>
+
 #include "random/rand_gen.hpp"
+
+ostream& operator<<(ostream& os, Color color) {
+    switch (color) {
+        case Color::Red:
+            return (os << "Red");
+        case Color::Blue:
+            return (os << "Blue");
+        case Color::Empty:
+            return (os << "Empty");
+    }
+}
 
 ostream& operator<<(ostream& os, Cube cube) {
     switch (cube.color) {
@@ -37,6 +50,9 @@ map<tuple<int, int, char, Direction>, Ply> Ply::initPlyInstances() {
             }
         }
     }
+
+    Ply pass(0, 0, 0, Direction::None);
+    instances.insert(make_pair(make_tuple(0, 0, 0, Direction::None), pass));
     return instances;
 }
 
@@ -56,6 +72,8 @@ ostream& operator<<(ostream& os, Ply ply) {
             return (os << "vertical");
         case Direction::Diagonal:
             return (os << "diagonal");
+        case Direction::None:
+            return (os << "none");
     }
 }
 
@@ -129,6 +147,7 @@ Color Board::getWinner() const {
 
 vector<Ply>* Board::getAllValidPly() {
     this->validPlys.clear();
+    this->validPlys.push_back(Ply::getPly(0, 0, 0, Direction::None));
     for (int r = 0; r < N_ROW; r++) {
         for (int c = 0; c < N_COL; c++) {
             Cube cube = this->cubes[r][c];
@@ -162,33 +181,51 @@ vector<Ply>* Board::getAllValidPly() {
     return &(this->validPlys);
 }
 
-void Board::applyPly(const Ply ply) {
+void Board::applyPly(const Ply& ply) {
     // move the cube
-    Cube cubeToMove = this->cubes[ply.row][ply.col];
-    assert(cubeToMove.color == this->nextTurn);
-    assert(cubeToMove.num == ply.num);
-    int destRow = (this->nextTurn == Color::Red ? ply.row + 1 : ply.row - 1);
-    int destCol = (this->nextTurn == Color::Red ? ply.col + 1 : ply.col - 1);
-    if (ply.dir == Direction::Horizontal) {
-        this->cubes[ply.row][destCol] = cubeToMove;
-    } else if (ply.dir == Direction::Vertical) {
-        this->cubes[destRow][ply.col] = cubeToMove;
-    } else if (ply.dir == Direction::Diagonal) {
-        this->cubes[destRow][destCol] = cubeToMove;
+    if (ply.dir != Direction::None) {
+        Cube cubeToMove = this->cubes[ply.row][ply.col];
+        assert(cubeToMove.color == this->nextTurn);
+        assert(cubeToMove.num == ply.num);
+        int destRow = (this->nextTurn == Color::Red ? ply.row + 1 : ply.row - 1);
+        int destCol = (this->nextTurn == Color::Red ? ply.col + 1 : ply.col - 1);
+        if (ply.dir == Direction::Horizontal) {
+            this->cubes[ply.row][destCol] = cubeToMove;
+        } else if (ply.dir == Direction::Vertical) {
+            this->cubes[destRow][ply.col] = cubeToMove;
+        } else if (ply.dir == Direction::Diagonal) {
+            this->cubes[destRow][destCol] = cubeToMove;
+        }
+        this->cubes[ply.row][ply.col] = Cube();
     }
-    this->cubes[ply.row][ply.col] = Cube();
 
     // update this->nextTurn
     this->flipNextTurn();
 }
 
-Color Board::playRandTillEnd() {
-    while (!this->isCompleted()) {
-        vector<Ply>* validPlys = this->getAllValidPly();
-        Ply& randPly = validPlys->at(PcgRandGen::getRandNum(validPlys->size()));
-        this->applyPly(randPly);
+void Board::applyPly(char num, Direction dir) {
+    if (dir == Direction::None) return;
+    for (int r = 0; r < N_ROW; r++) {
+        for (int c = 0; c < N_COL; c++) {
+            Cube& cube = this->cubes[r][c];
+            if (cube.num == num && cube.color == this->nextTurn) {
+                Ply ply = Ply::getPly(r, c, num, dir);
+                this->applyPly(ply);
+                return;
+            }
+        }
     }
-    return this->getWinner();
+}
+
+Color Board::getRandomPlayWinner() const {
+    Board copiedBoard(*this);
+    while (!copiedBoard.isCompleted()) {
+        vector<Ply>* validPlys = copiedBoard.getAllValidPly();
+        unsigned int randNum = PcgRandGen::getRandNum(validPlys->size());
+        Ply& randPly = validPlys->at(randNum);
+        copiedBoard.applyPly(randPly);
+    }
+    return copiedBoard.getWinner();
 }
 
 ostream& operator<<(ostream& os, Board board) {

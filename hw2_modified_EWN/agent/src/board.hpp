@@ -11,6 +11,8 @@ using namespace std;
 // Color
 enum class Color { Red, Blue, Empty };
 
+ostream& operator<<(ostream& os, Color color);
+
 // Cube
 class Cube {
    public:
@@ -24,7 +26,7 @@ class Cube {
 ostream& operator<<(ostream& os, Cube cube);
 
 // Direction
-enum class Direction { Horizontal, Vertical, Diagonal };
+enum class Direction { Horizontal, Vertical, Diagonal, None };
 
 // Ply
 class Ply {
@@ -55,14 +57,16 @@ class Board {
    public:
     Board() { this->validPlys.reserve(18); }
     Cube& get(int r, int c) { return this->cubes[r][c]; }
+    Color getNextTurn() { return this->nextTurn; }
     void setCube(int r, int c, Cube cube) { this->cubes[r][c] = cube; }
     void flipNextTurn();
     void flip();
     bool isCompleted() const;
     Color getWinner() const;
     vector<Ply>* getAllValidPly();
-    void applyPly(const Ply ply);
-    Color playRandTillEnd();
+    void applyPly(const Ply& ply);
+    void applyPly(char num, Direction dir);
+    Color getRandomPlayWinner() const;
 };
 
 ostream& operator<<(ostream& os, Board board);
