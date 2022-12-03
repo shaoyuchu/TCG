@@ -11,6 +11,9 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.cpp
 	@mkdir -p $(@D)
 	$(CC) $(CFLAGS) -c $^ -o $@
 
+profile: CFLAGS += -pg
+profile: $(TARGET)
+
 clean:
 	rm -rf $(OBJDIR)
 	rm -rf $(TARGET)

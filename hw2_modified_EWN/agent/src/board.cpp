@@ -125,9 +125,10 @@ bool Board::isCompleted() const {
                 redCnt += 1;
             else if (cube.color == Color::Blue)
                 blueCnt += 1;
+            if (redCnt > 0 && blueCnt > 0) return false;
         }
     }
-    return (redCnt == 0 || blueCnt == 0);
+    return true;
 }
 
 // should only apply to boards that are completed
@@ -152,7 +153,7 @@ vector<Ply>* Board::getAllValidPly() {
     this->validPlys.clear();
     for (int r = 0; r < N_ROW; r++) {
         for (int c = 0; c < N_COL; c++) {
-            Cube cube = this->cubes[r][c];
+            Cube& cube = this->cubes[r][c];
             if (cube.color != this->nextTurn) continue;
             // horizontal: (r, c) -> Red (r, c + 1), Blue (r, c - 1)
             if (((this->nextTurn == Color::Red) && (c + 1 < N_COL) &&
