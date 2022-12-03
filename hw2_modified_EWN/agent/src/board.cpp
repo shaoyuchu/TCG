@@ -150,7 +150,6 @@ Color Board::getWinner() const {
 
 vector<Ply>* Board::getAllValidPly() {
     this->validPlys.clear();
-    this->validPlys.push_back(Ply::getPly(0, 0, 0, Direction::None));
     for (int r = 0; r < N_ROW; r++) {
         for (int c = 0; c < N_COL; c++) {
             Cube cube = this->cubes[r][c];
@@ -180,6 +179,10 @@ vector<Ply>* Board::getAllValidPly() {
                     Ply::getPly(r, c, cube.num, Direction::Diagonal));
             }
         }
+    }
+    // allow pass only if there is no other legal move
+    if (this->validPlys.empty()) {
+        this->validPlys.push_back(Ply::getPly(0, 0, 0, Direction::None));
     }
     return &(this->validPlys);
 }

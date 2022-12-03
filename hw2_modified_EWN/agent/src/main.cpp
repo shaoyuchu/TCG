@@ -55,7 +55,7 @@ Ply& getBestPly(Board board, int simCnt) {
             else if (winner == Color::Blue)
                 score -= 1;
         }
-        if (score >= maxScore) {
+        if (score > maxScore) {
             maxScore = score;
             bestPly = validPlys->at(i);
         }
