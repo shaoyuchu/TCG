@@ -1,10 +1,10 @@
 #include "mcts.hpp"
 
+#include <assert.h>
 #include <float.h>
 #include <math.h>
 #include <time.h>
 
-#include <array>
 #include <iostream>
 
 Node::Node(Board board, Ply& ply, Node* parent) : board(board), ply(ply), parent(parent) {
