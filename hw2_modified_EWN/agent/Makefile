@@ -4,7 +4,7 @@ SRCDIR = src
 OBJDIR = obj
 TARGET = main.out
 
-$(TARGET): $(OBJDIR)/board.o $(OBJDIR)/main.o
+$(TARGET): $(OBJDIR)/board.o $(OBJDIR)/main.o $(OBJDIR)/mcts.o
 	$(CC) $(CFLAGS) $^ -o $@
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.cpp

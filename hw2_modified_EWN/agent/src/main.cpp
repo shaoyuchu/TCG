@@ -1,7 +1,10 @@
-#include <climits>
+#include <limits.h>
+
 #include <iostream>
 
 #include "board.hpp"
+#include "mcts.hpp"
+#define SECOND_PER_MOVE 3.0
 using namespace std;
 
 void readAndSetInitialPosition(Board& board) {
@@ -86,7 +89,8 @@ int main() {
 
         while (!initialBoard.isCompleted()) {
             if (initialBoard.getNextTurn() == Color::Red) {
-                Ply bestPly = getBestPly(initialBoard, 10000);
+                MCTS mcts(initialBoard);
+                Ply bestPly = mcts.getBestPly(SECOND_PER_MOVE);
                 writePlyAndApply(bestPly, initialBoard);
             } else {
                 readPlyAndApply(initialBoard);
