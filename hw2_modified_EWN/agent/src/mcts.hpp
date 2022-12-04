@@ -21,6 +21,8 @@ class Node {
     void updateCSqrtLogSimCnt();
     void updateSqrtSimCnt();
     void updateAvgScore();
+    void expandChildren();
+    void runSimOnChildren(int trialCnt);
 
    public:
     Node(Board board) : board(board) {}
@@ -36,7 +38,7 @@ class Node {
     ldbl getAvgScore() const { return this->avgScore; }
     ldbl getUcb() const;
     void expandAndRunSim(int trialCnt);
-    Node* getChildWithLargestUcb();
+    Node* getChildWithLargestUcb() const;
 };
 
 ostream& operator<<(ostream& os, Node node);
@@ -44,7 +46,8 @@ ostream& operator<<(ostream& os, Node node);
 class MCTS {
    private:
     Node* root = NULL;
-    Node* selectPV();
+    Node* selectPV() const;
+    Node* getMaxAvgScoreDep1Node() const;
 
    public:
     MCTS(Board board) { this->root = new Node(board); }

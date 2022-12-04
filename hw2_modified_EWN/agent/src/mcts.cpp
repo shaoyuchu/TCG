@@ -28,46 +28,38 @@ void Node::updateAvgScore() {
     this->avgScore = (ldbl)(this->winCnt - this->loseCnt) / (ldbl)(this->simCnt);
 }
 
-ldbl Node::getUcb() const {
-    // parent: max node
-    if (this->depth % 2)
-        return this->avgScore + (this->parent->cSqrtLogSimCnt / this->sqrtSimCnt);
-
-    // parent: min node
-    return (ldbl)0 - this->avgScore;
-}
-
-void Node::expandAndRunSim(int trialCnt) {
+void Node::expandChildren() {
     vector<Ply>* validPlys = this->board.getAllValidPly();
-
     for (Ply& ply : (*validPlys)) {
-        // create a new node
         Node* newChild = new Node(this->board, ply, this);
         newChild->board.applyPly(ply);
         this->children.push_back(newChild);
+    }
+}
 
-        // run `trialCnt` simulations on the new node
+void Node::runSimOnChildren(int trialCnt) {
+    // simulation
+    for (Node* child : this->children) {
         for (int i = 0; i < trialCnt; i++) {
-            Color winner = newChild->board.getRandomPlayWinner();
+            Color winner = child->board.getRandomPlayWinner();
             if (winner == Color::Red)
-                newChild->winCnt += 1;
+                child->winCnt += 1;
             else if (winner == Color::Blue)
-                newChild->loseCnt += 1;
+                child->loseCnt += 1;
         }
-        newChild->simCnt = trialCnt;
-        newChild->updateCSqrtLogSimCnt();
-        newChild->updateSqrtSimCnt();
-        newChild->updateAvgScore();
+        child->simCnt = trialCnt;
+        child->updateCSqrtLogSimCnt();
+        child->updateSqrtSimCnt();
+        child->updateAvgScore();
         this->simCnt += trialCnt;
-        this->winCnt += newChild->winCnt;
-        this->loseCnt += newChild->loseCnt;
+        this->winCnt += child->winCnt;
+        this->loseCnt += child->loseCnt;
     }
     this->updateCSqrtLogSimCnt();
     this->updateSqrtSimCnt();
     this->updateAvgScore();
 
     // back propagation
-    // update ancestors' simCnt, winCnt, loseCnt, cSqrtLogSimCnt, sqrtSimCnt, avgScore
     Node* current = this;
     while (current->parent != NULL) {
         current = current->parent;
@@ -80,7 +72,21 @@ void Node::expandAndRunSim(int trialCnt) {
     }
 }
 
-Node* Node::getChildWithLargestUcb() {
+ldbl Node::getUcb() const {
+    // parent: max node
+    if (this->depth % 2)
+        return this->avgScore + (this->parent->cSqrtLogSimCnt / this->sqrtSimCnt);
+
+    // parent: min node
+    return (ldbl)0 - this->avgScore;
+}
+
+void Node::expandAndRunSim(int trialCnt) {
+    this->expandChildren();
+    this->runSimOnChildren(trialCnt);
+}
+
+Node* Node::getChildWithLargestUcb() const {
     assert(!this->children.empty());
     Node* bestChild = this->children[0];
     ldbl bestUcb = this->children[0]->getUcb();
@@ -109,12 +115,26 @@ MCTS::~MCTS() {
     }
 }
 
-Node* MCTS::selectPV() {
+Node* MCTS::selectPV() const {
     Node* current = this->root;
     while (!current->getChildren().empty()) {
         current = current->getChildWithLargestUcb();
     }
     return current;
+}
+
+Node* MCTS::getMaxAvgScoreDep1Node() const {
+    vector<Node*> children = this->root->getChildren();
+    ldbl bestAvgScore = children[0]->getAvgScore();
+    Node* bestChild = children[0];
+    for (Node* child : children) {
+        ldbl avgScore = child->getAvgScore();
+        if (avgScore > bestAvgScore) {
+            bestAvgScore = avgScore;
+            bestChild = child;
+        }
+    }
+    return bestChild;
 }
 
 Ply& MCTS::getBestPly(double timeLimitInSec) {
@@ -135,15 +155,6 @@ Ply& MCTS::getBestPly(double timeLimitInSec) {
     } while (executedTime < timeLimitInSec);
 
     // pick the ply with the highest average score
-    vector<Node*> children = this->root->getChildren();
-    ldbl bestAvgScore = children[0]->getAvgScore();
-    Node* bestChild = children[0];
-    for (Node* child : children) {
-        ldbl avgScore = child->getAvgScore();
-        if (avgScore > bestAvgScore) {
-            bestAvgScore = avgScore;
-            bestChild = child;
-        }
-    }
-    return bestChild->getPly();
+    Node* maxAvgScoreDep1Node = this->getMaxAvgScoreDep1Node();
+    return maxAvgScoreDep1Node->getPly();
 }
