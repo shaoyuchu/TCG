@@ -45,12 +45,16 @@ ostream& operator<<(ostream& os, Node node);
 
 class MCTS {
    private:
+    int nodeCnt = 0;
+    int leafCnt = 0;
+    int totalLeafDepth = 0;
+    int maxDepth = 0;
     Node* root = NULL;
     Node* selectPV() const;
     Node* getMaxAvgScoreDep1Node() const;
 
    public:
-    MCTS(Board board) { this->root = new Node(board); }
+    MCTS(Board board);
     ~MCTS();
     Ply& getBestPly(double timeLimitInSec);
 };

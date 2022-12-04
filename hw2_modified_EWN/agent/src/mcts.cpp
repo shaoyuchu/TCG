@@ -108,7 +108,20 @@ ostream& operator<<(ostream& os, Node node) {
     return os;
 }
 
+MCTS::MCTS(Board board) {
+    this->root = new Node(board);
+    this->nodeCnt = 1;
+    this->leafCnt = 1;
+}
+
 MCTS::~MCTS() {
+    cerr << "Total number of nodes: " << this->nodeCnt << endl;
+    cerr << "Total number of simulations: " << this->nodeCnt * N_TRIAL_PER_SIM << endl;
+    cerr << "Average depth of leaves: "
+         << (double)this->totalLeafDepth / (double)this->leafCnt << endl;
+    cerr << "Max depth: " << maxDepth << endl;
+    cerr << endl;
+
     if (this->root != NULL) {
         this->root->deleteChildren();
         delete this->root;
@@ -147,6 +160,15 @@ Ply& MCTS::getBestPly(double timeLimitInSec) {
     do {
         Node* pvLeaf = this->selectPV();
         pvLeaf->expandAndRunSim(N_TRIAL_PER_SIM);
+
+        // update statistics
+        int pvDepth = pvLeaf->getDepth();
+        int newExpandedNodeCnt = pvLeaf->getChildren().size();
+        this->nodeCnt += newExpandedNodeCnt;
+        this->leafCnt += newExpandedNodeCnt - 1;
+        this->totalLeafDepth -= pvDepth;
+        this->totalLeafDepth += (pvDepth + 1) * newExpandedNodeCnt;
+        this->maxDepth = max(this->maxDepth, pvDepth + 1);
 
         // update executedTime
         clock_gettime(CLOCK_REALTIME, &endTime);
