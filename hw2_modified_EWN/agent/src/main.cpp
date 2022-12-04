@@ -4,7 +4,7 @@
 
 #include "board.hpp"
 #include "mcts.hpp"
-#define SECOND_PER_MOVE 3.0
+#define SECOND_PER_MOVE 9.5
 using namespace std;
 
 void readAndSetInitialPosition(Board& board) {

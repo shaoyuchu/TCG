@@ -101,10 +101,9 @@ Node* Node::getChildWithLargestUcb() const {
 }
 
 ostream& operator<<(ostream& os, Node node) {
-    os << "{" << node.getPly() << "} [" << node.getDepth()
-       << "] Win: " << node.getWinCnt() << " Lose: " << node.getLoseCnt()
-       << " Total Simulation: " << node.getSimCnt()
-       << " Average Score: " << node.getAvgScore();
+    os << "{" << node.ply << "} [" << node.depth << "] Win: " << node.winCnt
+       << " Lose: " << node.loseCnt << " Total Simulation: " << node.simCnt
+       << " Average Score: " << node.avgScore;
     return os;
 }
 
@@ -130,18 +129,18 @@ MCTS::~MCTS() {
 
 Node* MCTS::selectPV() const {
     Node* current = this->root;
-    while (!current->getChildren().empty()) {
+    while (!current->children.empty()) {
         current = current->getChildWithLargestUcb();
     }
     return current;
 }
 
 Node* MCTS::getMaxAvgScoreDep1Node() const {
-    vector<Node*> children = this->root->getChildren();
-    ldbl bestAvgScore = children[0]->getAvgScore();
+    vector<Node*> children = this->root->children;
+    ldbl bestAvgScore = children[0]->avgScore;
     Node* bestChild = children[0];
     for (Node* child : children) {
-        ldbl avgScore = child->getAvgScore();
+        ldbl avgScore = child->avgScore;
         if (avgScore > bestAvgScore) {
             bestAvgScore = avgScore;
             bestChild = child;
@@ -162,8 +161,8 @@ Ply& MCTS::getBestPly(double timeLimitInSec) {
         pvLeaf->expandAndRunSim(N_TRIAL_PER_SIM);
 
         // update statistics
-        int pvDepth = pvLeaf->getDepth();
-        int newExpandedNodeCnt = pvLeaf->getChildren().size();
+        int pvDepth = pvLeaf->depth;
+        int newExpandedNodeCnt = pvLeaf->children.size();
         this->nodeCnt += newExpandedNodeCnt;
         this->leafCnt += newExpandedNodeCnt - 1;
         this->totalLeafDepth -= pvDepth;
@@ -178,5 +177,5 @@ Ply& MCTS::getBestPly(double timeLimitInSec) {
 
     // pick the ply with the highest average score
     Node* maxAvgScoreDep1Node = this->getMaxAvgScoreDep1Node();
-    return maxAvgScoreDep1Node->getPly();
+    return maxAvgScoreDep1Node->ply;
 }

@@ -6,6 +6,9 @@
 typedef long double ldbl;
 
 class Node {
+    friend class MCTS;
+    friend ostream& operator<<(ostream& os, Node node);
+
    private:
     Board board;
     Ply ply = Ply::getPly(0, 0, 0, Direction::None);
@@ -28,14 +31,6 @@ class Node {
     Node(Board board) : board(board) {}
     Node(Board board, Ply& ply, Node* parent);
     void deleteChildren();
-    Ply& getPly() { return this->ply; }
-    Node* getParent() const { return this->parent; }
-    vector<Node*>& getChildren() { return this->children; }
-    int getDepth() const { return this->depth; }
-    int getSimCnt() const { return this->simCnt; }
-    int getWinCnt() const { return this->winCnt; }
-    int getLoseCnt() const { return this->loseCnt; }
-    ldbl getAvgScore() const { return this->avgScore; }
     ldbl getUcb() const;
     void expandAndRunSim(int trialCnt);
     Node* getChildWithLargestUcb() const;
