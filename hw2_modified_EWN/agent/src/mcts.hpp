@@ -1,7 +1,7 @@
 #pragma once
 #include "board.hpp"
 #define EXPLORATION_CONST 0.1
-#define RAVE_RATIO_DECAY_RATE 0.00001
+#define RAVE_RATIO_DECAY_RATE 0.001
 #define N_TRIAL_PER_SIM 100
 
 typedef long double ldbl;
@@ -21,13 +21,13 @@ class Node {
     int loseCnt = 0;
     ldbl cSqrtLogSimCnt = 0;
     ldbl sqrtSimCnt = 0;
-    ldbl avgScore = 0;  // (winCnt - loseCnt) / simCnt
+    ldbl avgScore = 0;
     int amafSimCnt = 0;
     int amafWinCnt = 0;
     int amafLoseCnt = 0;
     ldbl amafCSqrtLogSimCnt = 0;
     ldbl amafSqrtSimCnt = 0;
-    ldbl amafAvgScore = 0;  // (amafWinCnt - amafLoseCnt) / simCnt
+    ldbl amafAvgScore = 0;
     void updateCompositeStat();
     void updateAmafCompositeStat();
     void expandChildren();
