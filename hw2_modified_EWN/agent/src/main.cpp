@@ -67,15 +67,15 @@ Ply& getBestPly(Board board, int simCnt) {
 }
 
 void writePlyAndApply(Ply& ply, Board& board) {
+    char num = ply.num;
+    char dir = 0;
     if (ply.dir == Direction::None) {
-        cout << "??";
-    } else if (ply.dir == Direction::Vertical) {
-        cout << ply.num << '0';
-    } else if (ply.dir == Direction::Horizontal) {
-        cout << ply.num << '1';
-    } else if (ply.dir == Direction::Diagonal) {
-        cout << ply.num << '2';
+        num = '?';
+        dir = '?';
+    } else {
+        dir = static_cast<int>(ply.dir) + '0';
     }
+    cout << num << dir;
     flush(cout);
 
     board.applyPly(ply);

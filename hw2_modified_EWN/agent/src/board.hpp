@@ -27,7 +27,7 @@ class Cube {
 ostream& operator<<(ostream& os, Cube cube);
 
 // Direction
-enum class Direction { Horizontal, Vertical, Diagonal, None };
+enum class Direction { Vertical, Horizontal, Diagonal, None };
 
 // Ply
 class Ply {

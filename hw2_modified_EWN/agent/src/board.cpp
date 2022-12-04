@@ -40,7 +40,7 @@ void Cube::flipColor() {
 
 map<tuple<int, int, char, Direction>, Ply> Ply::initPlyInstances() {
     map<tuple<int, int, char, Direction>, Ply> instances;
-    Direction directions[] = {Direction::Horizontal, Direction::Vertical,
+    Direction directions[] = {Direction::Vertical, Direction::Horizontal,
                               Direction::Diagonal};
     for (int r = 0; r < N_ROW; r++) {
         for (int c = 0; c < N_COL; c++) {
@@ -68,10 +68,10 @@ const Ply& Ply::getPly(int r, int c, char num, Direction dir) {
 ostream& operator<<(ostream& os, Ply ply) {
     os << "(" << ply.row << ", " << ply.col << ") " << ply.num << " ";
     switch (ply.dir) {
-        case Direction::Horizontal:
-            return (os << "horizontal");
         case Direction::Vertical:
             return (os << "vertical");
+        case Direction::Horizontal:
+            return (os << "horizontal");
         case Direction::Diagonal:
             return (os << "diagonal");
         case Direction::None:
@@ -91,16 +91,16 @@ void Board::flipNextTurn() {
 }
 
 void Board::flip() {
-    // horizontal flip
-    for (int r = 0; r < N_ROW; r++) {
-        for (int c = 0; c < N_COL / 2; c++) {
-            this->swap(r, c, r, N_COL - c - 1);
-        }
-    }
     // vertical flip
     for (int c = 0; c < N_COL; c++) {
         for (int r = 0; r < N_ROW / 2; r++) {
             this->swap(r, c, N_ROW - 1 - r, c);
+        }
+    }
+    // horizontal flip
+    for (int r = 0; r < N_ROW; r++) {
+        for (int c = 0; c < N_COL / 2; c++) {
+            this->swap(r, c, r, N_COL - c - 1);
         }
     }
     // exchange colors
@@ -155,14 +155,6 @@ vector<Ply>* Board::getAllValidPly() {
         for (int c = 0; c < N_COL; c++) {
             Cube& cube = this->cubes[r][c];
             if (cube.color != this->nextTurn) continue;
-            // horizontal: (r, c) -> Red (r, c + 1), Blue (r, c - 1)
-            if (((this->nextTurn == Color::Red) && (c + 1 < N_COL) &&
-                 (this->cubes[r][c + 1].color != this->nextTurn)) ||
-                ((this->nextTurn == Color::Blue) && (c - 1 >= 0) &&
-                 (this->cubes[r][c - 1].color != this->nextTurn))) {
-                this->validPlys.push_back(
-                    Ply::getPly(r, c, cube.num, Direction::Horizontal));
-            }
             // vertical: (r, c) -> Red (r + 1, c), Blue (r - 1, c)
             if (((this->nextTurn == Color::Red) && (r + 1 < N_ROW) &&
                  (this->cubes[r + 1][c].color != this->nextTurn)) ||
@@ -170,6 +162,14 @@ vector<Ply>* Board::getAllValidPly() {
                  this->cubes[r - 1][c].color != this->nextTurn)) {
                 this->validPlys.push_back(
                     Ply::getPly(r, c, cube.num, Direction::Vertical));
+            }
+            // horizontal: (r, c) -> Red (r, c + 1), Blue (r, c - 1)
+            if (((this->nextTurn == Color::Red) && (c + 1 < N_COL) &&
+                 (this->cubes[r][c + 1].color != this->nextTurn)) ||
+                ((this->nextTurn == Color::Blue) && (c - 1 >= 0) &&
+                 (this->cubes[r][c - 1].color != this->nextTurn))) {
+                this->validPlys.push_back(
+                    Ply::getPly(r, c, cube.num, Direction::Horizontal));
             }
             // diagonal: (r, c) -> Red (r + 1, c + 1), Blue (r - 1, c - 1)
             if (((this->nextTurn == Color::Red) && (r + 1 < N_ROW && c + 1 < N_COL) &&
@@ -196,10 +196,10 @@ void Board::applyPly(const Ply& ply) {
         assert(cubeToMove.num == ply.num);
         int destRow = (this->nextTurn == Color::Red ? ply.row + 1 : ply.row - 1);
         int destCol = (this->nextTurn == Color::Red ? ply.col + 1 : ply.col - 1);
-        if (ply.dir == Direction::Horizontal) {
-            this->cubes[ply.row][destCol] = cubeToMove;
-        } else if (ply.dir == Direction::Vertical) {
+        if (ply.dir == Direction::Vertical) {
             this->cubes[destRow][ply.col] = cubeToMove;
+        } else if (ply.dir == Direction::Horizontal) {
+            this->cubes[ply.row][destCol] = cubeToMove;
         } else if (ply.dir == Direction::Diagonal) {
             this->cubes[destRow][destCol] = cubeToMove;
         }
