@@ -82,11 +82,12 @@ void writePlyAndApply(Ply& ply, Board& board) {
 }
 
 int main() {
-    while (true) {
+    for (int roundId = 0;; roundId++) {
+        if (roundId > 0 && getchar() != 'y') break;
+
         Board initialBoard;
         readAndSetInitialPosition(initialBoard);
         readAndSetPlayer(initialBoard);
-
         while (!initialBoard.isCompleted()) {
             if (initialBoard.getNextTurn() == Color::Red) {
                 MCTS mcts(initialBoard);
@@ -96,7 +97,6 @@ int main() {
                 readPlyAndApply(initialBoard);
             }
         }
-        if (getchar() != 'y') break;
     }
 
     return 0;
