@@ -114,12 +114,8 @@ MCTS::MCTS(Board board) {
 }
 
 MCTS::~MCTS() {
-    cerr << "Total number of nodes: " << this->nodeCnt << endl;
-    cerr << "Total number of simulations: " << this->nodeCnt * N_TRIAL_PER_SIM << endl;
-    cerr << "Average depth of leaves: "
-         << (double)this->totalLeafDepth / (double)this->leafCnt << endl;
-    cerr << "Max depth: " << maxDepth << endl;
-    cerr << endl;
+    cerr << this->nodeCnt << "," << (double)this->totalLeafDepth / (double)this->leafCnt
+         << "," << this->maxDepth << endl;
 
     if (this->root != NULL) {
         this->root->deleteChildren();
