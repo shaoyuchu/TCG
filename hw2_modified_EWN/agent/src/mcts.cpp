@@ -18,13 +18,9 @@ void Node::deleteChildren() {
     }
 }
 
-void Node::updateCSqrtLogSimCnt() {
+void Node::updateCompositeStat() {
     this->cSqrtLogSimCnt = (ldbl)EXPLORATION_CONST * sqrt(log10l(this->simCnt));
-}
-
-void Node::updateSqrtSimCnt() { this->sqrtSimCnt = sqrt(this->simCnt); }
-
-void Node::updateAvgScore() {
+    this->sqrtSimCnt = sqrt(this->simCnt);
     this->avgScore = (ldbl)(this->winCnt - this->loseCnt) / (ldbl)(this->simCnt);
 }
 
@@ -48,16 +44,12 @@ void Node::runSimOnChildren(int trialCnt) {
                 child->loseCnt += 1;
         }
         child->simCnt = trialCnt;
-        child->updateCSqrtLogSimCnt();
-        child->updateSqrtSimCnt();
-        child->updateAvgScore();
+        child->updateCompositeStat();
         this->simCnt += trialCnt;
         this->winCnt += child->winCnt;
         this->loseCnt += child->loseCnt;
     }
-    this->updateCSqrtLogSimCnt();
-    this->updateSqrtSimCnt();
-    this->updateAvgScore();
+    this->updateCompositeStat();
 
     // back propagation
     Node* current = this;
@@ -66,9 +58,7 @@ void Node::runSimOnChildren(int trialCnt) {
         current->simCnt += this->simCnt;
         current->winCnt += this->winCnt;
         current->loseCnt += this->loseCnt;
-        current->updateCSqrtLogSimCnt();
-        current->updateSqrtSimCnt();
-        current->updateAvgScore();
+        current->updateCompositeStat();
     }
 }
 

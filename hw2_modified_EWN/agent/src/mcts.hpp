@@ -1,6 +1,7 @@
 #pragma once
 #include "board.hpp"
 #define EXPLORATION_CONST 0.5
+#define AMAF_RATIO 0.2
 #define N_TRIAL_PER_SIM 100
 
 typedef long double ldbl;
@@ -21,9 +22,7 @@ class Node {
     ldbl cSqrtLogSimCnt = 0;
     ldbl sqrtSimCnt = 0;
     ldbl avgScore = 0;  // (winCnt - loseCnt) / simCnt
-    void updateCSqrtLogSimCnt();
-    void updateSqrtSimCnt();
-    void updateAvgScore();
+    void updateCompositeStat();
     void expandChildren();
     void runSimOnChildren(int trialCnt);
 
