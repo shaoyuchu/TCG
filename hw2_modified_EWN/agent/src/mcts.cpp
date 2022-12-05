@@ -194,6 +194,9 @@ Ply& MCTS::getBestPly(double timeLimitInSec) {
 
     // generate all valid plys
     this->root->expandAndRunSim(N_TRIAL_PER_SIM);
+    if (this->root->children.size() == 1) {
+        return this->root->children[0]->ply;
+    }
     do {
         Node* pvLeaf = this->selectPV();
         pvLeaf->expandAndRunSim(N_TRIAL_PER_SIM);
