@@ -245,3 +245,18 @@ ostream& operator<<(ostream& os, Board board) {
     }
     return os;
 }
+
+int Board::getTotalDistanceToCorner() const {
+    int totalDistance = 0;
+    for (int r = 0; r < N_ROW; r++) {
+        for (int c = 0; c < N_COL; c++) {
+            Color color = this->cubes[r][c].color;
+            if (color == Color::Red) {
+                totalDistance += (N_ROW - 1 - r + N_COL - 1 - c);
+            } else if (color == Color::Blue) {
+                totalDistance += (r + c);
+            }
+        }
+    }
+    return totalDistance;
+}

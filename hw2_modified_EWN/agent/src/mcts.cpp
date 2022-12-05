@@ -157,7 +157,8 @@ MCTS::MCTS(Board board) {
 
 MCTS::~MCTS() {
     cerr << this->nodeCnt << "," << (double)this->totalLeafDepth / (double)this->leafCnt
-         << "," << this->maxDepth << endl;
+         << "," << this->maxDepth << ", " << this->root->board.getTotalDistanceToCorner()
+         << endl;
 
     if (this->root != NULL) {
         this->root->deleteChildren();

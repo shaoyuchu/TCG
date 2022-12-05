@@ -1,6 +1,6 @@
 #pragma once
 #include "board.hpp"
-#define EXPLORATION_CONST 0.1
+#define EXPLORATION_CONST 1.5
 #define RAVE_RATIO_DECAY_RATE 0.001
 #define N_TRIAL_PER_SIM 100
 
