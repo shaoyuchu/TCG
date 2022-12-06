@@ -124,6 +124,19 @@ ldbl Node::getUcb() const {
 }
 
 void Node::expandAndRunSim(int trialCnt) {
+    if (this->board.isCompleted()) {
+        // terminal position: directly add the simulation result
+        Color winner = this->board.getWinner();
+        if (winner == Color::Red) {
+            this->addActualSimRes(trialCnt, trialCnt, 0);
+        } else if (winner == Color::Blue) {
+            this->addActualSimRes(trialCnt, 0, trialCnt);
+        } else if (winner == Color::Empty) {
+            this->addActualSimRes(trialCnt, 0, 0);
+        }
+        return;
+    }
+
     this->expandChildren();
     this->runSimOnChildren(trialCnt);
 }
@@ -157,7 +170,7 @@ MCTS::MCTS(Board board) {
 
 MCTS::~MCTS() {
     cerr << this->nodeCnt << "," << (double)this->totalLeafDepth / (double)this->leafCnt
-         << "," << this->maxDepth << ", " << this->root->board.getTotalDistanceToCorner()
+         << "," << this->maxDepth << "," << this->root->board.getTotalDistanceToCorner()
          << endl;
 
     if (this->root != NULL) {
