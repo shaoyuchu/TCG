@@ -84,16 +84,28 @@ void Node::amafUpdate() {
     Node* prev = NULL;
     Node* current = this;
     int curNextTurn = (this->board.getNextTurn() == Color::Red ? 0 : 1);
+    int cumulativeVirtualSimCnt = 0;
+    int cumulativeVirtualWinCnt = 0, cumulativeVirtualLoseCnt = 0;
     while (current != NULL) {
-        // update AMAF statistics in children
-        for (Node* child : current->children) {
-            if (child == prev || child->ply.dir == Direction::None) continue;
-            if (plyHistory[curNextTurn][child->ply.row][child->ply.col]
-                          [child->ply.num - '0'][static_cast<int>(child->ply.dir)]) {
-                child->addVirtualSimRes(this->simCnt, this->winCnt, this->loseCnt);
-                child->updateAmafCompositeStat();
+        if (current != this) {
+            // update AMAF statistics in children
+            for (Node* child : current->children) {
+                if (child == prev || child->ply.dir == Direction::None) continue;
+                if (plyHistory[curNextTurn][child->ply.row][child->ply.col]
+                              [child->ply.num - '0'][static_cast<int>(child->ply.dir)]) {
+                    child->addVirtualSimRes(this->simCnt, this->winCnt, this->loseCnt);
+                    child->updateAmafCompositeStat();
+                    cumulativeVirtualSimCnt += this->simCnt;
+                    cumulativeVirtualWinCnt += this->winCnt;
+                    cumulativeVirtualLoseCnt += this->loseCnt;
+                }
             }
+            // collect the added virtual simulation results
+            current->addVirtualSimRes(cumulativeVirtualSimCnt, cumulativeVirtualWinCnt,
+                                      cumulativeVirtualLoseCnt);
+            current->updateAmafCompositeStat();
         }
+
         // add current ply to plyHistory
         if (current->ply.dir != Direction::None) {
             plyHistory[1 - curNextTurn][current->ply.row][current->ply.col]
@@ -169,9 +181,9 @@ MCTS::MCTS(Board board) {
 }
 
 MCTS::~MCTS() {
-    cerr << this->nodeCnt << "," << (double)this->totalLeafDepth / (double)this->leafCnt
-         << "," << this->maxDepth << "," << this->root->board.getTotalDistanceToCorner()
-         << endl;
+    cerr << this->nodeCnt << "," << this->root->simCnt << "," << this->root->amafSimCnt
+         << "," << (double)this->totalLeafDepth / (double)this->leafCnt << ","
+         << this->maxDepth << "," << this->root->board.getTotalDistanceToCorner() << endl;
 
     if (this->root != NULL) {
         this->root->deleteChildren();
