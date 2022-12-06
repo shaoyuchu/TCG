@@ -7,6 +7,8 @@
 
 #include <iostream>
 
+ldbl Node::explorationConst = OPENING_EXPLORATION_CONST;
+
 Node::Node(Board board, Ply& ply, Node* parent) : board(board), ply(ply), parent(parent) {
     this->depth = parent->depth + 1;
 }
@@ -19,14 +21,14 @@ void Node::deleteChildren() {
 }
 
 void Node::updateCompositeStat() {
-    this->cSqrtLogSimCnt = (ldbl)EXPLORATION_CONST * sqrt(log10l(this->simCnt));
+    this->cSqrtLogSimCnt = Node::explorationConst * sqrt(log10l(this->simCnt));
     this->sqrtSimCnt = sqrt(this->simCnt);
     this->avgScore = (ldbl)(this->winCnt - this->loseCnt) / (ldbl)(this->simCnt);
     this->updateAmafCompositeStat();
 }
 
 void Node::updateAmafCompositeStat() {
-    this->amafCSqrtLogSimCnt = (ldbl)EXPLORATION_CONST * sqrt(log10l(this->amafSimCnt));
+    this->amafCSqrtLogSimCnt = Node::explorationConst * sqrt(log10l(this->amafSimCnt));
     this->amafSqrtSimCnt = sqrt(this->amafSimCnt);
     this->amafAvgScore =
         (ldbl)(this->amafWinCnt - this->amafLoseCnt) / (ldbl)(this->amafSimCnt);
@@ -178,6 +180,10 @@ MCTS::MCTS(Board board) {
     this->root = new Node(board);
     this->nodeCnt = 1;
     this->leafCnt = 1;
+    int totalDistanceToCorner = this->root->board.getTotalDistanceToCorner();
+    Node::explorationConst =
+        (totalDistanceToCorner > TOTAL_DISTANCE_THRES ? OPENING_EXPLORATION_CONST
+                                                      : ENDING_EXPLORATION_CONST);
 }
 
 MCTS::~MCTS() {

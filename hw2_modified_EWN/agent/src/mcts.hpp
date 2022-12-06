@@ -1,6 +1,8 @@
 #pragma once
 #include "board.hpp"
-#define EXPLORATION_CONST 1.0
+#define OPENING_EXPLORATION_CONST 1.5
+#define ENDING_EXPLORATION_CONST 0.1
+#define TOTAL_DISTANCE_THRES 80
 #define RAVE_RATIO_DECAY_RATE 0.001
 #define N_TRIAL_PER_SIM 100
 
@@ -11,6 +13,7 @@ class Node {
     friend ostream& operator<<(ostream& os, Node node);
 
    private:
+    static ldbl explorationConst;
     Board board;
     Ply ply = Ply::getPly(0, 0, 0, Direction::None);
     Node* parent = NULL;

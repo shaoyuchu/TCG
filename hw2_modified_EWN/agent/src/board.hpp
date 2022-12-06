@@ -7,7 +7,6 @@
 #define N_ROW 6
 #define N_COL 7
 #define N_NEXT 18
-#define MAX_MOVE 116
 using namespace std;
 
 // Color
