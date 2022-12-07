@@ -143,15 +143,16 @@ void Node::amafUpdate() {
 ldbl Node::getUcb() const {
     ldbl actualScoreRatio =
         min((ldbl)1, (ldbl)this->simCnt * (ldbl)RAVE_RATIO_DECAY_RATE);
+    ldbl scoreTerm = actualScoreRatio * this->avgScore +
+                     ((ldbl)1 - actualScoreRatio) * this->amafAvgScore;
+    ldbl explorationTerm = (this->parent->cSqrtLogSimCnt / this->sqrtSimCnt);
+
+    // parent: max node
     if (this->depth % 2) {
-        // parent: max node
-        return actualScoreRatio * this->avgScore +
-               ((ldbl)1 - actualScoreRatio) * this->amafAvgScore +
-               (this->parent->cSqrtLogSimCnt / this->sqrtSimCnt);
+        return scoreTerm + explorationTerm;
     }
     // parent: min node
-    return actualScoreRatio * ((ldbl)0 - this->avgScore) +
-           ((ldbl)1 - actualScoreRatio) * ((ldbl)0 - this->amafAvgScore);
+    return -scoreTerm + explorationTerm;
 }
 
 void Node::expandAndRunSim(int trialCnt) {
