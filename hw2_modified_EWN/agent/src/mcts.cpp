@@ -181,9 +181,11 @@ MCTS::MCTS(Board board) {
     this->nodeCnt = 1;
     this->leafCnt = 1;
     int totalDistanceToCorner = this->root->board.getTotalDistanceToCorner();
-    Node::explorationConst =
-        (totalDistanceToCorner > TOTAL_DISTANCE_THRES ? OPENING_EXPLORATION_CONST
-                                                      : ENDING_EXPLORATION_CONST);
+    if (totalDistanceToCorner < TOTAL_DISTANCE_THRES1 &&
+        totalDistanceToCorner >= TOTAL_DISTANCE_THRES2)
+        Node::explorationConst = MIDDLE_EXPLORATION_CONST;
+    else if (totalDistanceToCorner < TOTAL_DISTANCE_THRES2)
+        Node::explorationConst = ENDING_EXPLORATION_CONST;
 }
 
 MCTS::~MCTS() {
