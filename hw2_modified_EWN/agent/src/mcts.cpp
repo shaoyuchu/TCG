@@ -272,3 +272,47 @@ Ply& MCTS::getBestPly(double timeLimitInSec) {
     Node* maxAvgScoreDep1Node = this->getMaxAvgScoreDep1Node();
     return maxAvgScoreDep1Node->ply;
 }
+
+PureMonteCarlo::~PureMonteCarlo() { cerr << this->simCnt << endl; }
+
+Ply& PureMonteCarlo::getBestPly(double timeLimitInSec) {
+    struct timespec startTime, endTime;
+    double executedTime = 0;
+    clock_gettime(CLOCK_REALTIME, &startTime);
+
+    vector<Ply>* validPlys = board.getAllValidPly();
+    array<int, 18> totalScore = {0};
+    int simCntPerRound = N_TRIAL_PER_SIM * validPlys->size();
+    if (validPlys->size() == 1) return validPlys->at(0);
+    do {
+        // run simulation
+        for (int i = 0; i < validPlys->size(); i++) {
+            Board copiedBoard(board);
+            copiedBoard.applyPly(validPlys->at(i));
+            for (int simId = 0; simId < N_TRIAL_PER_SIM; simId++) {
+                Color winner = copiedBoard.getRandomPlayWinner();
+                if (winner == Color::Red)
+                    totalScore[i] += 1;
+                else if (winner == Color::Blue)
+                    totalScore[i] -= 1;
+            }
+        }
+        this->simCnt += simCntPerRound;
+
+        // update executedTime
+        clock_gettime(CLOCK_REALTIME, &endTime);
+        executedTime = (double)(endTime.tv_sec - startTime.tv_sec) +
+                       (double)(endTime.tv_nsec - startTime.tv_nsec) * 1e-9;
+    } while (executedTime < timeLimitInSec);
+
+    // get the ply with the highest score
+    int highestScore = totalScore[0];
+    Ply& bestPly = validPlys->at(0);
+    for (int i = 1; i < validPlys->size(); i++) {
+        if (totalScore[i] > highestScore) {
+            highestScore = totalScore[i];
+            bestPly = validPlys->at(i);
+        }
+    }
+    return bestPly;
+}

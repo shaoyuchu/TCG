@@ -74,10 +74,10 @@ class MCTS {
 class PureMonteCarlo {
    private:
     Board board;
+    int simCnt = 0;
 
    public:
     PureMonteCarlo(Board board) : board(board) {}
-    Ply getBestPly(double timeLimitInSec) {
-        return Ply::getPly(0, 0, 0, Direction::None);
-    }
+    ~PureMonteCarlo();
+    Ply& getBestPly(double timeLimitInSec);
 };

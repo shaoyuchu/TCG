@@ -42,30 +42,6 @@ void readPlyAndApply(Board& initialBoard) {
     }
 }
 
-Ply& getBestPly(Board board, int simCnt) {
-    vector<Ply>* validPlys = board.getAllValidPly();
-
-    int maxScore = INT_MIN;
-    Ply& bestPly = validPlys->at(0);
-    for (int i = 0; i < validPlys->size(); i++) {
-        Board copiedBoard(board);
-        copiedBoard.applyPly(validPlys->at(i));
-        int score = 0;
-        for (int i = 0; i < simCnt; i++) {
-            Color winner = copiedBoard.getRandomPlayWinner();
-            if (winner == Color::Red)
-                score += 1;
-            else if (winner == Color::Blue)
-                score -= 1;
-        }
-        if (score > maxScore) {
-            maxScore = score;
-            bestPly = validPlys->at(i);
-        }
-    }
-    return bestPly;
-}
-
 void writePlyAndApply(Ply& ply, Board& board) {
     char num = ply.num;
     char dir = 0;
