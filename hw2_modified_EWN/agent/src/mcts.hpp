@@ -1,4 +1,6 @@
 #pragma once
+#include <mutex>
+
 #include "board.hpp"
 #define OPENING_EXPLORATION_CONST 5.0
 #define MIDDLE_EXPLORATION_CONST 0.5
@@ -6,6 +8,7 @@
 #define TOTAL_DISTANCE_THRES1 105
 #define TOTAL_DISTANCE_THRES2 80
 #define RAVE_RATIO_DECAY_RATE 0.0001
+#define N_THREAD 4
 #define N_TRIAL_PER_SIM 100
 
 typedef long double ldbl;
@@ -31,9 +34,11 @@ class Node {
     int amafWinCnt = 0;
     int amafLoseCnt = 0;
     ldbl amafAvgScore = 0;
+    mutex simResLock;
     void updateCompositeStat();
     void updateAmafCompositeStat();
     void expandChildren();
+    void runSimulation(int trialCnt);
     void runSimOnChildren(int trialCnt);
     void amafUpdate();
     void addActualSimRes(int simCnt, int winCnt, int loseCnt);

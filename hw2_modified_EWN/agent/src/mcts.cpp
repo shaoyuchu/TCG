@@ -1,11 +1,11 @@
 #include "mcts.hpp"
 
-#include <assert.h>
 #include <float.h>
 #include <math.h>
 #include <time.h>
 
 #include <iostream>
+#include <thread>
 
 ldbl Node::explorationConst = OPENING_EXPLORATION_CONST;
 
@@ -41,15 +41,37 @@ void Node::expandChildren() {
     }
 }
 
+void Node::runSimulation(int trialCnt) {
+    int winCnt = 0, loseCnt = 0;
+    for (int i = 0; i < trialCnt; i++) {
+        Color winner = this->board.getRandomPlayWinner();
+        if (winner == Color::Red)
+            winCnt++;
+        else if (winner == Color::Blue)
+            loseCnt++;
+    }
+    while (1) {
+        if (this->simResLock.try_lock()) {
+            this->addActualSimRes(trialCnt, winCnt, loseCnt);
+            this->simResLock.unlock();
+            break;
+        }
+    }
+}
+
 void Node::runSimOnChildren(int trialCnt) {
+    int trialPerThread = trialCnt / N_THREAD;
+    thread* threads[N_THREAD];
+
     // simulation
     for (Node* child : this->children) {
-        for (int i = 0; i < trialCnt; i++) {
-            Color winner = child->board.getRandomPlayWinner();
-            if (winner == Color::Red)
-                child->addActualSimRes(1, 1, 0);
-            else if (winner == Color::Blue)
-                child->addActualSimRes(1, 0, 1);
+        child->simResLock.unlock();
+        for (int th = 0; th < N_THREAD; th++) {
+            threads[th] = new thread(&Node::runSimulation, child, trialPerThread);
+        }
+        for (int th = 0; th < N_THREAD; th++) {
+            threads[th]->join();
+            delete threads[th];
         }
         child->updateCompositeStat();
         this->addActualSimRes(trialCnt, child->winCnt, child->loseCnt);
@@ -151,7 +173,6 @@ void Node::expandAndRunSim(int trialCnt) {
 }
 
 Node* Node::getChildWithLargestUcb() const {
-    assert(!this->children.empty());
     Node* bestChild = this->children[0];
     ldbl bestUcb = this->children[0]->getUcb();
     for (Node* child : this->children) {
