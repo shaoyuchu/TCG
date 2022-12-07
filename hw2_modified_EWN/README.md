@@ -1,16 +1,15 @@
 # Theory of Computer Games Homework 2
 
-Written by 朱紹瑜 (Student ID: R11922047)
-
 ## How to Execute My Program?
 
 ### 1. Compile the Agent, the Game, and Baseline Programs
 
 ```bash
+cd ./agent
 make
-cd game
+cd ../game
 make
-cd baseline
+cd ../baseline
 make
 cd ..
 ```
@@ -18,10 +17,10 @@ cd ..
 ### 2. Run the program
 
 ```bash
-./game/game -p0 ./main.out -p1 <baseline-program> -r <number-of-rounds>
+./game/game -p0 ./agent/main.out -p1 <baseline-program> -r <number-of-rounds>
 ```
 
-For example, to compete against the `greedy` baseline for 10 rounds, run `./game/game -p0 main.out -p1 ./baseline/greedy -r 10`.
+For example, to compete against the `greedy` baseline for 10 rounds, run `./game/game -p0 ./agent/main.out -p1 ./baseline/greedy -r 10`.
 
 ## Algorithms, Heuristics, and Other Techniques
 
