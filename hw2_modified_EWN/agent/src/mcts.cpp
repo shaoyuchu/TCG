@@ -89,16 +89,16 @@ void Node::runSimOnChildren(int trialCnt) {
 }
 
 void Node::addActualSimRes(int simCnt, int winCnt, int loseCnt) {
-    this->simCnt += simCnt;
-    this->winCnt += winCnt;
-    this->loseCnt += loseCnt;
+    this->simCnt += (ll)simCnt;
+    this->winCnt += (ll)winCnt;
+    this->loseCnt += (ll)loseCnt;
     this->addVirtualSimRes(simCnt, winCnt, loseCnt);
 }
 
 void Node::addVirtualSimRes(int simCnt, int winCnt, int loseCnt) {
-    this->amafSimCnt += simCnt;
-    this->amafWinCnt += winCnt;
-    this->amafLoseCnt += loseCnt;
+    this->amafSimCnt += (ll)simCnt;
+    this->amafWinCnt += (ll)winCnt;
+    this->amafLoseCnt += (ll)loseCnt;
 }
 
 void Node::amafUpdate() {

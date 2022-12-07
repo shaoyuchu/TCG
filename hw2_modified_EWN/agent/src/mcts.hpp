@@ -12,6 +12,7 @@
 #define N_TRIAL_PER_SIM 100
 
 typedef long double ldbl;
+typedef long long ll;
 
 class Node {
     friend class MCTS;
@@ -24,15 +25,15 @@ class Node {
     Node* parent = NULL;
     vector<Node*> children;
     int depth = 0;
-    int simCnt = 0;
-    int winCnt = 0;
-    int loseCnt = 0;
+    ll simCnt = 0;
+    ll winCnt = 0;
+    ll loseCnt = 0;
     ldbl cSqrtLogSimCnt = 0;
     ldbl sqrtSimCnt = 0;
     ldbl avgScore = 0;
-    int amafSimCnt = 0;
-    int amafWinCnt = 0;
-    int amafLoseCnt = 0;
+    ll amafSimCnt = 0;
+    ll amafWinCnt = 0;
+    ll amafLoseCnt = 0;
     ldbl amafAvgScore = 0;
     mutex simResLock;
     void updateCompositeStat();
@@ -74,7 +75,7 @@ class MCTS {
 class PureMonteCarlo {
    private:
     Board board;
-    int simCnt = 0;
+    ll simCnt = 0;
 
    public:
     PureMonteCarlo(Board board) : board(board) {}
