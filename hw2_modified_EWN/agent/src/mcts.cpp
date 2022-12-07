@@ -205,9 +205,10 @@ MCTS::MCTS(Board board) {
 }
 
 MCTS::~MCTS() {
-    cerr << this->nodeCnt << "," << this->root->simCnt << "," << this->root->amafSimCnt
-         << "," << (double)this->totalLeafDepth / (double)this->leafCnt << ","
-         << this->maxDepth << "," << this->root->board.getTotalDistanceToCorner() << endl;
+    cerr << this->nodeCnt << "," << this->root->simCnt << "," << this->root->avgScore
+         << "," << this->root->amafSimCnt << "," << this->root->amafAvgScore << ","
+         << (double)this->totalLeafDepth / (double)this->leafCnt << "," << this->maxDepth
+         << "," << this->root->board.getTotalDistanceToCorner() << endl;
 
     if (this->root != NULL) {
         this->root->deleteChildren();
