@@ -28,8 +28,6 @@ void Node::updateCompositeStat() {
 }
 
 void Node::updateAmafCompositeStat() {
-    this->amafCSqrtLogSimCnt = Node::explorationConst * sqrt(log10l(this->amafSimCnt));
-    this->amafSqrtSimCnt = sqrt(this->amafSimCnt);
     this->amafAvgScore =
         (ldbl)(this->amafWinCnt - this->amafLoseCnt) / (ldbl)(this->amafSimCnt);
 }
@@ -121,20 +119,17 @@ void Node::amafUpdate() {
 }
 
 ldbl Node::getUcb() const {
-    ldbl actualScore = 0, amafScore = 0;
     ldbl actualScoreRatio =
         min((ldbl)1, (ldbl)this->simCnt * (ldbl)RAVE_RATIO_DECAY_RATE);
     if (this->depth % 2) {
         // parent: max node
-        actualScore = this->avgScore + (this->parent->cSqrtLogSimCnt / this->sqrtSimCnt);
-        amafScore = this->amafAvgScore +
-                    (this->parent->amafCSqrtLogSimCnt / this->amafSqrtSimCnt);
-    } else {
-        // parent: min node
-        actualScore = (ldbl)0 - this->avgScore;
-        amafScore = (ldbl)0 - this->amafAvgScore;
+        return actualScoreRatio * this->avgScore +
+               ((ldbl)1 - actualScoreRatio) * this->amafAvgScore +
+               (this->parent->cSqrtLogSimCnt / this->sqrtSimCnt);
     }
-    return actualScoreRatio * actualScore + ((ldbl)1 - actualScoreRatio) * amafScore;
+    // parent: min node
+    return actualScoreRatio * ((ldbl)0 - this->avgScore) +
+           ((ldbl)1 - actualScoreRatio) * ((ldbl)0 - this->amafAvgScore);
 }
 
 void Node::expandAndRunSim(int trialCnt) {

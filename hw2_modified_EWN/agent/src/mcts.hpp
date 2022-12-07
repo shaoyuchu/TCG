@@ -30,8 +30,6 @@ class Node {
     int amafSimCnt = 0;
     int amafWinCnt = 0;
     int amafLoseCnt = 0;
-    ldbl amafCSqrtLogSimCnt = 0;
-    ldbl amafSqrtSimCnt = 0;
     ldbl amafAvgScore = 0;
     void updateCompositeStat();
     void updateAmafCompositeStat();
