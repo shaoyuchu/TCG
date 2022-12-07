@@ -156,8 +156,8 @@ ldbl Node::getUcb() const {
 }
 
 void Node::expandAndRunSim(int trialCnt) {
+    // terminal position: directly add the simulation result
     if (this->board.isCompleted()) {
-        // terminal position: directly add the simulation result
         Color winner = this->board.getWinner();
         if (winner == Color::Red) {
             this->addActualSimRes(trialCnt, trialCnt, 0);
@@ -165,6 +165,15 @@ void Node::expandAndRunSim(int trialCnt) {
             this->addActualSimRes(trialCnt, 0, trialCnt);
         } else if (winner == Color::Empty) {
             this->addActualSimRes(trialCnt, 0, 0);
+        }
+        this->updateCompositeStat();
+
+        // back propagation
+        Node* current = this;
+        while (current->parent != NULL) {
+            current = current->parent;
+            current->addActualSimRes(this->simCnt, this->winCnt, this->loseCnt);
+            current->updateCompositeStat();
         }
         return;
     }
