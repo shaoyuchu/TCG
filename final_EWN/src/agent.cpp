@@ -8,6 +8,10 @@
 #include "solver.hpp"
 using namespace std;
 
+const string Agent::cellNames[N_CELL] = {
+    "A1", "B1", "C1", "D1", "E1", "A2", "B2", "C2", "D2", "E2", "A3", "B3", "C3",
+    "D3", "E3", "A4", "B4", "C4", "D4", "E4", "A5", "B5", "C5", "D5", "E5"};
+
 void Agent::shuffle(array<int, 6>& order) {
     for (int s = 0; s < 20; s++) {
         int i = rand() % 6;
@@ -59,11 +63,21 @@ void Agent::init(const char* data[], char* response) {
 }
 
 void Agent::get(const char* data[], char* response) {
-    Board board;
-    board.setNextTurn((!strcmp(data[1], "R")) ? Color::Red : Color::Blue);
-    this->setCubes(&data[3], board);
-
-    cerr << board.toString() << endl;
     int dice = stoi(data[2]);
-    // TODO: invoke solver.getBestPly(dice)
+    cerr << "Dice: " << dice << endl;
+
+    Board board;
+    Color nextTurn = (!strcmp(data[1], "R")) ? Color::Red : Color::Blue;
+    board.setNextTurn(nextTurn);
+    this->setCubes(&data[3], board);
+    cerr << board.toString() << endl;
+
+    Solver solver(board);
+    Ply bestPly = solver.getBestPly(dice);
+    cerr << "Final Decision: " << bestPly.toString() << endl;
+
+    int src = board.getCellByCubeId(bestPly.getCubeId());
+    int dest = (nextTurn == Color::Red ? src + bestPly.getDir() : src - bestPly.getDir());
+    sprintf(response, "%s %s", Agent::cellNames[src].c_str(),
+            Agent::cellNames[dest].c_str());
 }

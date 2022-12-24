@@ -1,11 +1,16 @@
 #include "solver.hpp"
 
 #include <assert.h>
+#include <stdlib.h>
+
+#include <iostream>
+using namespace std;
 
 Ply Solver::getBestPly(int dice) {
-    vector<Ply> validPlys;
-    this->board.generateMove(validPlys, dice);
-    assert(!validPlys.empty());
+    vector<Ply> legalPlys;
+    this->board.generateMoves(legalPlys, dice);
+    assert(!legalPlys.empty());
+
     // TODO: replace random with NegaScout
-    return validPlys[0];
+    return legalPlys[rand() % legalPlys.size()];
 }

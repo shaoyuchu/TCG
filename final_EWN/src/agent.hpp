@@ -7,6 +7,7 @@ using namespace std;
 class Agent {
    private:
     int timeLimit;
+    const static string cellNames[N_CELL];
     void shuffle(array<int, 6>& order);
     void setCubes(const char* data[], Board& board);
 

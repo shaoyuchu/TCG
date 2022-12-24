@@ -6,5 +6,6 @@ class Solver {
     Board board;
 
    public:
+    Solver(Board& board) : board(board) {}
     Ply getBestPly(int dice);
 };
