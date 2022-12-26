@@ -97,6 +97,12 @@ void Board::generateMoves(vector<Ply>& result, int dice) const {
     }
 }
 
+array<bool, 12> Board::cubeExist() const {
+    array<bool, 12> result;
+    for (int i = 0; i < 12; i++) result[i] = this->bitboards[i].any();
+    return result;
+}
+
 string Board::toString() const {
     string result;
     int index = 0;
