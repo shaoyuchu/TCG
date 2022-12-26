@@ -49,9 +49,9 @@ class Board {
     Board() {}
     void setCube(int cubeId, int position);
     void setNextTurn(Color color) { this->nextTurn = color; }
-    Color getNextTurn(int dice) const { return this->nextTurn; }
+    Color getNextTurn() const { return this->nextTurn; }
     int getCellByCubeId(int cubeId) const;
     void generateMoves(vector<Ply>& result, int dice) const;
-    array<bool, 12> cubeExist() const;
+    bitset<12> cubeExist() const;
     string toString() const;
 };
