@@ -30,10 +30,10 @@ void Solver::initCubeCoverages(array<bool, 6> current, int next,
 }
 
 array<int, 6> Solver::computeCubeCoverage(array<bool, 6>& current) {
-    array<int, 6> result = {1, 1, 1, 1, 1, 1};
+    array<int, 6> result = {0};
     int zeroCount = 0;
     for (int i = 0; i < 6; i++) {
-        if (current[i]) result[i] += zeroCount;
+        if (current[i]) result[i] += (zeroCount + 1);
         zeroCount = (current[i] ? 0 : zeroCount + 1);
     }
     zeroCount = 0;
