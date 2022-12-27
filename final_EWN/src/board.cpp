@@ -103,6 +103,18 @@ bitset<12> Board::cubeExist() const {
     return result;
 }
 
+void Board::applyPly(Ply& ply) {
+    this->bitboards[ply.cubeId] =
+        (this->nextTurn == Color::Blue ? this->bitboards[ply.cubeId] >> ply.dir
+                                       : this->bitboards[ply.cubeId] << ply.dir);
+    Bitboard mask(this->bitboards[ply.cubeId]);
+    mask.flip();
+    for (int i = 0; i < N_CUBE; i++) {
+        if (i == ply.cubeId) continue;
+        this->bitboards[i] &= mask;
+    }
+}
+
 string Board::toString() const {
     string result;
     int index = 0;

@@ -70,11 +70,11 @@ void Agent::get(const char* data[], char* response) {
     Color nextTurn = (!strcmp(data[1], "R")) ? Color::Red : Color::Blue;
     board.setNextTurn(nextTurn);
     this->setCubes(&data[3], board);
-    cerr << board.toString() << endl;
+    cerr << board.toString();
 
     Solver solver;
     Ply bestPly = solver.getBestPly(board, dice);
-    cerr << "Final Decision: " << bestPly.toString() << endl;
+    cerr << "Final Decision: " << bestPly.toString() << endl << endl;
 
     int src = board.getCellByCubeId(bestPly.getCubeId());
     int dest = (nextTurn == Color::Red ? src + bestPly.getDir() : src - bestPly.getDir());

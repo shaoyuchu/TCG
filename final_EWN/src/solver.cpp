@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <stdlib.h>
 
+#include <climits>
 #include <iostream>
 using namespace std;
 
@@ -62,13 +63,13 @@ int Solver::evalAbsPos(const Board& board) {
     for (int i = 0; i < 6; i++) {
         if (blueCubeCoverage[i] == 0) continue;
         int pieceVal =
-            1 << (4 - Solver::dist2TargetCorner[N_CELL - 1 - board.getCellByCubeId(i)]);
+            2 << (4 - Solver::dist2TargetCorner[N_CELL - 1 - board.getCellByCubeId(i)]);
         blueVal += (pieceVal * blueCubeCoverage[i]);
     }
     // red
     for (int i = 0; i < 6; i++) {
         if (redCubeCoverage[i] == 0) continue;
-        int pieceVal = 1 << (4 - Solver::dist2TargetCorner[board.getCellByCubeId(i + 6)]);
+        int pieceVal = 2 << (4 - Solver::dist2TargetCorner[board.getCellByCubeId(i + 6)]);
         redVal += (pieceVal * redCubeCoverage[i]);
     }
     return (board.getNextTurn() == Color::Blue ? blueVal - redVal : redVal - blueVal);
@@ -84,8 +85,20 @@ Ply Solver::getBestPly(Board& board, int dice) {
     vector<Ply> legalPlys;
     board.generateMoves(legalPlys, dice);
     assert(!legalPlys.empty());
-    this->evalAbsPos(board);
 
-    // TODO: replace random with NegaScout
-    return legalPlys[rand() % legalPlys.size()];
+    int maxScore = INT_MIN;
+    Ply& bestPly = legalPlys[0];
+    for (Ply& ply : legalPlys) {
+        Board newBoard(board);
+        newBoard.applyPly(ply);
+        int newBoardScore = this->evaluateBoard(newBoard);
+        if (newBoardScore > maxScore) {
+            maxScore = newBoardScore;
+            bestPly = ply;
+        }
+
+        cerr << "apply ply " << ply.toString() << " gets score " << newBoardScore << endl;
+        cerr << newBoard.toString();
+    }
+    return bestPly;
 }

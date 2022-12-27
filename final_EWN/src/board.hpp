@@ -53,5 +53,6 @@ class Board {
     int getCellByCubeId(int cubeId) const;
     void generateMoves(vector<Ply>& result, int dice) const;
     bitset<12> cubeExist() const;
+    void applyPly(Ply& ply);
     string toString() const;
 };
