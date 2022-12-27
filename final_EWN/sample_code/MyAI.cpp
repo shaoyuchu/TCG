@@ -146,7 +146,10 @@ void MyAI::Set_board(char* position)
 			i += 1;
 		}
 		// 1~6: blue pieces; 7~12: red pieces
-		this->board[position[index + 1] - '1'][position[index] - 'A'] = i + 1;
+		if (i < PIECE_NUM * 2)
+		{
+			this->board[position[index + 1] - '1'][position[index] - 'A'] = i + 1;
+		}
 	}
 	fprintf(stderr, "\nThe current board:\n");
 	this->Print_chessboard();
