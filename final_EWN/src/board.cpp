@@ -80,8 +80,8 @@ int Board::getCellByCubeId(int cubeId) const {
 void Board::generateMoves(vector<Ply>& result, int dice) const {
     pair<int, int> movableCubes = getMovableCubes(dice);
     int movableCubeArr[2] = {movableCubes.first, movableCubes.second};
-    Direction directions[3] = {Direction::Vertical, Direction::Horizontal,
-                               Direction::Diagonal};
+    Direction directions[] = {Direction::Vertical, Direction::Horizontal,
+                              Direction::Diagonal};
 
     for (int i = 0; i < 2; i++) {
         int cubeId = movableCubeArr[i];
@@ -112,6 +112,31 @@ void Board::applyPly(Ply& ply) {
     for (int i = 0; i < N_CUBE; i++) {
         if (i == ply.cubeId) continue;
         this->bitboards[i] &= mask;
+    }
+}
+
+void Board::getCapturableCubes(vector<int>& result, int cubeId) const {
+    if (this->bitboards[cubeId].none()) return;
+
+    Color movingColor = (cubeId >= 0 && cubeId < 6) ? Color::Blue : Color::Red;
+    Direction directions[] = {Direction::Vertical, Direction::Horizontal,
+                              Direction::Diagonal};
+    vector<Bitboard> moveResults;
+    for (Direction& dir : directions) {
+        if ((this->bitboards[cubeId] & Board::getMoveMask(movingColor, dir)).any()) {
+            moveResults.push_back((movingColor == Color::Blue
+                                       ? this->bitboards[cubeId] >> dir
+                                       : this->bitboards[cubeId] << dir));
+        }
+    }
+
+    for (int i = 0; i < N_CUBE; i++) {
+        for (Bitboard& moveResult : moveResults) {
+            if ((this->bitboards[i] & moveResult).any()) {
+                result.push_back(i);
+                break;
+            }
+        }
     }
 }
 

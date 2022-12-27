@@ -3,7 +3,7 @@
 #include <assert.h>
 #include <stdlib.h>
 
-#include <climits>
+#include <cfloat>
 #include <iostream>
 using namespace std;
 
@@ -51,35 +51,49 @@ array<int, 6> Solver::computeCubeCoverage(bitset<12>& current) {
     return result;
 }
 
-int Solver::evalAbsPos(const Board& board) {
+double Solver::evaluateBoard(const Board& board) {
     bitset<12> cubeExist = board.cubeExist();
     bitset<12> blueCubeExist = cubeExist & bitset<12>(63);
     bitset<12> redCubeExist = cubeExist >> 6;
     array<int, 6> blueCubeCoverage = Solver::cubeCoverage.at(blueCubeExist);
     array<int, 6> redCubeCoverage = Solver::cubeCoverage.at(redCubeExist);
+    int pieceValues[12] = {0};
 
-    int blueVal = 0, redVal = 0;
+    double blueVal = 0, redVal = 0;
     // blue
     for (int i = 0; i < 6; i++) {
         if (blueCubeCoverage[i] == 0) continue;
         int pieceVal =
             2 << (4 - Solver::dist2TargetCorner[N_CELL - 1 - board.getCellByCubeId(i)]);
         blueVal += (pieceVal * blueCubeCoverage[i]);
+        pieceValues[i] = pieceVal;
     }
     // red
     for (int i = 0; i < 6; i++) {
         if (redCubeCoverage[i] == 0) continue;
         int pieceVal = 2 << (4 - Solver::dist2TargetCorner[board.getCellByCubeId(i + 6)]);
         redVal += (pieceVal * redCubeCoverage[i]);
+        pieceValues[i + 6] = pieceVal;
     }
-    return (board.getNextTurn() == Color::Blue ? ATTACK_FACTOR * blueVal - redVal
-                                               : ATTACK_FACTOR * redVal - blueVal);
-}
 
-int Solver::evalThreat(const Board& board) { return 0; }
+    double threatVal = 0;
+    int oppoCubeStartingId = (board.getNextTurn() == Color::Blue ? 6 : 0);
+    for (int i = oppoCubeStartingId; i < oppoCubeStartingId + 6; i++) {
+        vector<int> capturableCubes;
+        board.getCapturableCubes(capturableCubes, i);
+        int maxPieceVal = 0;
+        for (int& capturableCube : capturableCubes) {
+            if ((board.getNextTurn() == Color::Blue && capturableCube < 6) ||
+                (board.getNextTurn() == Color::Red && capturableCube >= 6)) {
+                maxPieceVal = max(maxPieceVal, pieceValues[capturableCube]);
+            }
+        }
+        threatVal += maxPieceVal;
+    }
 
-int Solver::evaluateBoard(const Board& board) {
-    return this->evalAbsPos(board) - this->evalThreat(board);
+    return (board.getNextTurn() == Color::Blue
+                ? ATTACK_FACTOR * blueVal - redVal - THREAT_FACTOR * threatVal
+                : ATTACK_FACTOR * redVal - blueVal - THREAT_FACTOR * threatVal);
 }
 
 Ply Solver::getBestPly(Board& board, int dice) {
@@ -87,12 +101,12 @@ Ply Solver::getBestPly(Board& board, int dice) {
     board.generateMoves(legalPlys, dice);
     assert(!legalPlys.empty());
 
-    int maxScore = INT_MIN;
+    double maxScore = -DBL_MAX;
     Ply& bestPly = legalPlys[0];
     for (Ply& ply : legalPlys) {
         Board newBoard(board);
         newBoard.applyPly(ply);
-        int newBoardScore = this->evaluateBoard(newBoard);
+        double newBoardScore = this->evaluateBoard(newBoard);
         if (newBoardScore > maxScore) {
             maxScore = newBoardScore;
             bestPly = ply;

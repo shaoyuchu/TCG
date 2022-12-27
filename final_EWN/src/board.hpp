@@ -54,5 +54,6 @@ class Board {
     void generateMoves(vector<Ply>& result, int dice) const;
     bitset<12> cubeExist() const;
     void applyPly(Ply& ply);
+    void getCapturableCubes(vector<int>& result, int cubeId) const;
     string toString() const;
 };

@@ -64,6 +64,7 @@ void Agent::init(const char* data[], char* response) {
 
 void Agent::get(const char* data[], char* response) {
     int dice = stoi(data[2]);
+    cerr << "-------------------------" << endl;
     cerr << "Dice: " << dice << endl;
 
     Board board;
@@ -74,7 +75,7 @@ void Agent::get(const char* data[], char* response) {
 
     Solver solver;
     Ply bestPly = solver.getBestPly(board, dice);
-    cerr << "Final Decision: " << bestPly.toString() << endl << endl;
+    cerr << "Final Decision: " << bestPly.toString() << endl;
 
     int src = board.getCellByCubeId(bestPly.getCubeId());
     int dest = (nextTurn == Color::Red ? src + bestPly.getDir() : src - bestPly.getDir());
