@@ -2,6 +2,7 @@
 #include <unordered_map>
 
 #include "board.hpp"
+#define ATTACK_FACTOR 2
 
 class Solver {
    private:

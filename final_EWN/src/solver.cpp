@@ -72,7 +72,8 @@ int Solver::evalAbsPos(const Board& board) {
         int pieceVal = 2 << (4 - Solver::dist2TargetCorner[board.getCellByCubeId(i + 6)]);
         redVal += (pieceVal * redCubeCoverage[i]);
     }
-    return (board.getNextTurn() == Color::Blue ? blueVal - redVal : redVal - blueVal);
+    return (board.getNextTurn() == Color::Blue ? ATTACK_FACTOR * blueVal - redVal
+                                               : ATTACK_FACTOR * redVal - blueVal);
 }
 
 int Solver::evalThreat(const Board& board) { return 0; }
