@@ -76,6 +76,21 @@ int Board::getCellByCubeId(int cubeId) const {
     return -1;
 }
 
+// if the board is a terminal board, return the winner
+// otherwise, return `None`
+Color Board::getWinner() const {
+    Bitboard allBlue(0), allRed(0);
+    for (int i = 0; i < 6; i++) {
+        if (this->bitboards[i].test(0)) return Color::Blue;
+        if (this->bitboards[i + 6].test(N_CELL - 1)) return Color::Red;
+        allBlue |= this->bitboards[i];
+        allRed |= this->bitboards[i + 6];
+    }
+    if (allBlue.none()) return Color::Red;
+    if (allRed.none()) return Color::Blue;
+    return Color::None;
+}
+
 // generate moves and append the moves to `result`
 void Board::generateMoves(vector<Ply>& result, int dice) const {
     pair<int, int> movableCubes = getMovableCubes(dice);
@@ -113,6 +128,7 @@ void Board::applyPly(Ply& ply) {
         if (i == ply.cubeId) continue;
         this->bitboards[i] &= mask;
     }
+    this->nextTurn = (this->nextTurn == Color::Blue ? Color::Red : Color::Blue);
 }
 
 void Board::getCapturableCubes(vector<int>& result, int cubeId) const {

@@ -10,7 +10,7 @@
 #define N_CUBE 12
 using namespace std;
 
-enum Color { Blue, Red };
+enum Color { Blue, Red, None };
 
 enum Direction { Vertical = 5, Horizontal = 1, Diagonal = 6 };
 
@@ -51,6 +51,7 @@ class Board {
     void setNextTurn(Color color) { this->nextTurn = color; }
     Color getNextTurn() const { return this->nextTurn; }
     int getCellByCubeId(int cubeId) const;
+    Color getWinner() const;
     void generateMoves(vector<Ply>& result, int dice) const;
     bitset<12> cubeExist() const;
     void applyPly(Ply& ply);

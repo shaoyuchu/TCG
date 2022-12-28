@@ -1,6 +1,5 @@
 #include "solver.hpp"
 
-#include <assert.h>
 #include <stdlib.h>
 
 #include <cfloat>
@@ -77,21 +76,21 @@ double Solver::evaluateBoard(const Board& board) {
     }
 
     double threatVal = 0;
-    int oppoCubeStartingId = (board.getNextTurn() == Color::Blue ? 6 : 0);
+    int oppoCubeStartingId = (this->nextTurn == Color::Blue ? 6 : 0);
     for (int i = oppoCubeStartingId; i < oppoCubeStartingId + 6; i++) {
         vector<int> capturableCubes;
         board.getCapturableCubes(capturableCubes, i);
         int maxPieceVal = 0;
         for (int& capturableCube : capturableCubes) {
-            if ((board.getNextTurn() == Color::Blue && capturableCube < 6) ||
-                (board.getNextTurn() == Color::Red && capturableCube >= 6)) {
+            if ((this->nextTurn == Color::Blue && capturableCube < 6) ||
+                (this->nextTurn == Color::Red && capturableCube >= 6)) {
                 maxPieceVal = max(maxPieceVal, pieceValues[capturableCube]);
             }
         }
         threatVal += maxPieceVal;
     }
 
-    return (board.getNextTurn() == Color::Blue
+    return (this->nextTurn == Color::Blue
                 ? ATTACK_FACTOR * blueVal - redVal - THREAT_FACTOR * threatVal
                 : ATTACK_FACTOR * redVal - blueVal - THREAT_FACTOR * threatVal);
 }
@@ -99,18 +98,55 @@ double Solver::evaluateBoard(const Board& board) {
 Ply Solver::getBestPly(int dice) {
     vector<Ply> legalPlys;
     this->baseBoard.generateMoves(legalPlys, dice);
-    assert(!legalPlys.empty());
 
     double maxScore = -DBL_MAX;
     Ply& bestPly = legalPlys[0];
     for (Ply& ply : legalPlys) {
         Board newBoard(this->baseBoard);
         newBoard.applyPly(ply);
-        double newBoardScore = this->evaluateBoard(newBoard);
+        double newBoardScore = this->star0(newBoard, -DBL_MAX, DBL_MAX, 0, MAX_DEPTH);
         if (newBoardScore > maxScore) {
             maxScore = newBoardScore;
             bestPly = ply;
         }
     }
     return bestPly;
+}
+
+double Solver::star0(Board board, double alpha, double beta, int currentDepth,
+                     int remainingDepth) {
+    double total = 0;
+    for (int dice = 1; dice <= 6; dice++) {
+        total += negaScout(board, dice, -DBL_MAX, DBL_MAX, currentDepth, remainingDepth);
+    }
+    return (total / 6);
+}
+
+double Solver::negaScout(Board board, int dice, double alpha, double beta,
+                         int currentDepth, int remainingDepth) {
+    // TODO: time control
+    // terminal node, remaining depth = 0
+    if (board.getWinner() != Color::None || remainingDepth == 0) {
+        double utility = this->evaluateBoard(board);
+        return (currentDepth % 2 ? -utility : utility);
+    }
+
+    vector<Ply> legalPlys;
+    board.generateMoves(legalPlys, dice);
+    double lowerBound = -DBL_MAX, upperBound = beta;
+    for (Ply& ply : legalPlys) {
+        Board newBoard(board);
+        newBoard.applyPly(ply);
+        double searchResult = -this->star0(newBoard, -upperBound, -max(alpha, lowerBound),
+                                           currentDepth + 1, remainingDepth - 1);
+        if (searchResult > lowerBound) {
+            lowerBound = (upperBound == beta || searchResult >= beta)
+                             ? searchResult
+                             : -this->star0(newBoard, -beta, -searchResult,
+                                            currentDepth + 1, remainingDepth - 1);
+        }
+        if (lowerBound == DBL_MAX || lowerBound >= beta) return lowerBound;
+        upperBound = max(alpha, lowerBound) + 1;
+    }
+    return lowerBound;
 }
