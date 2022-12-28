@@ -73,8 +73,8 @@ void Agent::get(const char* data[], char* response) {
     this->setCubes(&data[3], board);
     cerr << board.toString();
 
-    Solver solver;
-    Ply bestPly = solver.getBestPly(board, dice);
+    Solver solver(board);
+    Ply bestPly = solver.getBestPly(dice);
     cerr << "Final Decision: " << bestPly.toString() << endl;
 
     int src = board.getCellByCubeId(bestPly.getCubeId());

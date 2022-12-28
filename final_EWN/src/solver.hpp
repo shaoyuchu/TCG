@@ -7,6 +7,7 @@
 
 class Solver {
    private:
+    Board baseBoard;
     const static unordered_map<bitset<12>, array<int, 6>> cubeCoverage;
     const static array<int, N_CELL> dist2TargetCorner;
     static unordered_map<bitset<12>, array<int, 6>> initCubeCoverages();
@@ -16,5 +17,6 @@ class Solver {
     double evaluateBoard(const Board& board);
 
    public:
-    Ply getBestPly(Board& board, int dice);
+    Solver(Board& board) : baseBoard(board) {}
+    Ply getBestPly(int dice);
 };

@@ -96,24 +96,21 @@ double Solver::evaluateBoard(const Board& board) {
                 : ATTACK_FACTOR * redVal - blueVal - THREAT_FACTOR * threatVal);
 }
 
-Ply Solver::getBestPly(Board& board, int dice) {
+Ply Solver::getBestPly(int dice) {
     vector<Ply> legalPlys;
-    board.generateMoves(legalPlys, dice);
+    this->baseBoard.generateMoves(legalPlys, dice);
     assert(!legalPlys.empty());
 
     double maxScore = -DBL_MAX;
     Ply& bestPly = legalPlys[0];
     for (Ply& ply : legalPlys) {
-        Board newBoard(board);
+        Board newBoard(this->baseBoard);
         newBoard.applyPly(ply);
         double newBoardScore = this->evaluateBoard(newBoard);
         if (newBoardScore > maxScore) {
             maxScore = newBoardScore;
             bestPly = ply;
         }
-
-        cerr << "apply ply " << ply.toString() << " gets score " << newBoardScore << endl;
-        cerr << newBoard.toString();
     }
     return bestPly;
 }
