@@ -4,7 +4,7 @@
 #include "board.hpp"
 #define ATTACK_FACTOR 2.0
 #define THREAT_FACTOR 0.05
-#define MAX_DEPTH 4
+#define MAX_DEPTH 3
 
 class Solver {
    private:
