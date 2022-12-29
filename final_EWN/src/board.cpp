@@ -95,8 +95,11 @@ Color Board::getWinner() const {
 void Board::generateMoves(vector<Ply>& result, int dice) const {
     pair<int, int> movableCubes = getMovableCubes(dice);
     int movableCubeArr[2] = {movableCubes.first, movableCubes.second};
-    Direction directions[] = {Direction::Vertical, Direction::Horizontal,
-                              Direction::Diagonal};
+    Direction directions[] = {
+        Direction::Diagonal,
+        Direction::Vertical,
+        Direction::Horizontal,
+    };
 
     for (int i = 0; i < 2; i++) {
         int cubeId = movableCubeArr[i];
