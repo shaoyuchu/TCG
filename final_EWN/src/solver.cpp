@@ -98,6 +98,7 @@ double Solver::evaluateBoard(const Board& board) {
 Ply Solver::getBestPly(int dice) {
     vector<Ply> legalPlys;
     this->baseBoard.generateMoves(legalPlys, dice);
+    if (legalPlys.size() == 1) return legalPlys[0];
 
     double maxScore = -DBL_MAX;
     Ply& bestPly = legalPlys[0];
@@ -137,13 +138,13 @@ double Solver::negaScout(Board board, int dice, double alpha, double beta,
     for (Ply& ply : legalPlys) {
         Board newBoard(board);
         newBoard.applyPly(ply);
-        double searchResult = this->star0(newBoard, -upperBound, -max(alpha, lowerBound),
+        double searchResult = this->star0(newBoard, max(alpha, lowerBound), upperBound,
                                           currentDepth + 1, remainingDepth - 1);
         if (searchResult > lowerBound) {
             lowerBound = (upperBound == beta || searchResult >= beta)
                              ? searchResult
-                             : this->star0(newBoard, -beta, -searchResult,
-                                           currentDepth + 1, remainingDepth - 1);
+                             : this->star0(newBoard, searchResult, beta, currentDepth + 1,
+                                           remainingDepth - 1);
         }
         if (lowerBound == DBL_MAX || lowerBound >= beta) return lowerBound;
         upperBound = max(alpha, lowerBound) + 1;
