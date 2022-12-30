@@ -119,7 +119,7 @@ double Solver::star0(Board board, double alpha, double beta, int currentDepth,
     for (int dice = 1; dice <= 6; dice++) {
         total += -negaScout(board, dice, -DBL_MAX, DBL_MAX, currentDepth, remainingDepth);
     }
-    return (total / 6);
+    return (total / (double)6);
 }
 
 double Solver::negaScout(Board board, int dice, double alpha, double beta,
