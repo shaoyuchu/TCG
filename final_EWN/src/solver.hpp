@@ -17,10 +17,14 @@ class Solver {
                                   unordered_map<bitset<12>, array<int, 6>>& result);
     static array<int, 6> computeCubeCoverage(bitset<12>& current);
     double evaluateBoard(const Board& board);
-    double star0(Board board, double alpha, double beta, int currentDepth,
+    double star0(Board& board, double alpha, double beta, int currentDepth,
                  int remainingDepth);
-    double negaScout(Board board, int dice, double alpha, double beta, int currentDepth,
+    double negaScout(Board& board, int dice, double alpha, double beta, int currentDepth,
                      int remainingDepth);
+    double star0Max(Board& board, double alpha, double beta, int depth);
+    double star0Min(Board& board, double alpha, double beta, int depth);
+    double negaScoutMax(Board& board, int dice, double alpha, double beta, int depth);
+    double negaScoutMin(Board& board, int dice, double alpha, double beta, int depth);
 
    public:
     Solver(Board& board) : baseBoard(board), nextTurn(board.getNextTurn()) {}
