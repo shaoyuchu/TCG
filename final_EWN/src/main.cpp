@@ -46,10 +46,9 @@ int main() {
         // execute command
         write[0] = '\0';
         if (executeCommand(data[0], data, write, agent)) break;
-        strcat(write, "\n");
 
         // write output to stdout
-        fprintf(stdout, "%s", write);
+        fprintf(stdout, "%s\n", write);
         fflush(stdout);
     }
 
