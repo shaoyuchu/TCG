@@ -105,7 +105,7 @@ Ply Solver::getBestPly(int dice) {
     for (Ply& ply : legalPlys) {
         Board newBoard(this->baseBoard);
         newBoard.applyPly(ply);
-        double newBoardScore = this->star0Min(newBoard, -DBL_MAX, DBL_MAX, MAX_DEPTH);
+        double newBoardScore = this->star0Max(newBoard, -DBL_MAX, DBL_MAX, MAX_DEPTH);
         if (newBoardScore > maxScore) {
             maxScore = newBoardScore;
             bestPly = ply;
