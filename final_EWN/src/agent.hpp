@@ -1,5 +1,6 @@
 #pragma once
 #include <array>
+#include <cstring>
 
 #include "board.hpp"
 using namespace std;

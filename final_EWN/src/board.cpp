@@ -137,7 +137,7 @@ void Board::applyPly(Ply& ply) {
 void Board::getCapturableCubes(vector<int>& result, int cubeId) const {
     if (this->bitboards[cubeId].none()) return;
 
-    Color movingColor = (cubeId >= 0 && cubeId < 6) ? Color::Blue : Color::Red;
+    Color movingColor = (cubeId < 6 ? Color::Blue : Color::Red);
     Direction directions[] = {Direction::Vertical, Direction::Horizontal,
                               Direction::Diagonal};
     vector<Bitboard> moveResults;
