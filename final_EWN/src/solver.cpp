@@ -82,10 +82,8 @@ double Solver::evaluateBoard(const Board& board) {
         board.getCapturableCubes(capturableCubes, i);
         int maxPieceVal = 0;
         for (int& capturableCube : capturableCubes) {
-            if ((this->nextTurn == Color::Blue && capturableCube < 6) ||
-                (this->nextTurn == Color::Red && capturableCube >= 6)) {
-                maxPieceVal = max(maxPieceVal, pieceValues[capturableCube]);
-            }
+            if (pieceValues[capturableCube] > maxPieceVal)
+                maxPieceVal = pieceValues[capturableCube];
         }
         threatVal += maxPieceVal;
     }

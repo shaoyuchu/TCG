@@ -50,6 +50,40 @@ map<tuple<Color, Direction>, Bitboard> Board::initMoveMasks() {
     return result;
 }
 
+unordered_map<Bitboard, Bitboard> Board::initBlueDests() {
+    unordered_map<Bitboard, Bitboard> result;
+    for (int r = 0; r < BOARD_SIZE; r++) {
+        for (int c = 0; c < BOARD_SIZE; c++) {
+            Bitboard current, dest;
+            current.set(r * BOARD_SIZE + c);
+            if (r > 0) dest.set((r - 1) * BOARD_SIZE + c);
+            if (c > 0) dest.set(r * BOARD_SIZE + c - 1);
+            if (r > 0 && c > 0) dest.set((r - 1) * BOARD_SIZE + c - 1);
+            result.insert(make_pair(current, dest));
+        }
+    }
+    return result;
+}
+
+unordered_map<Bitboard, Bitboard> Board::initRedDests() {
+    unordered_map<Bitboard, Bitboard> result;
+    for (int r = 0; r < BOARD_SIZE; r++) {
+        for (int c = 0; c < BOARD_SIZE; c++) {
+            Bitboard current, dest;
+            current.set(r * BOARD_SIZE + c);
+            if (r < (BOARD_SIZE - 1)) dest.set((r + 1) * BOARD_SIZE + c);
+            if (c < (BOARD_SIZE - 1)) dest.set(r * BOARD_SIZE + c + 1);
+            if (r < (BOARD_SIZE - 1) && c < (BOARD_SIZE - 1))
+                dest.set((r + 1) * BOARD_SIZE + c + 1);
+            result.insert(make_pair(current, dest));
+        }
+    }
+    return result;
+}
+
+const unordered_map<Bitboard, Bitboard> Board::blueDests = Board::initBlueDests();
+const unordered_map<Bitboard, Bitboard> Board::redDests = Board::initRedDests();
+
 const map<tuple<Color, Direction>, Bitboard> Board::moveMasks = Board::initMoveMasks();
 
 const Bitboard& Board::getMoveMask(Color nextTurn, Direction dir) {
@@ -139,24 +173,12 @@ void Board::getCapturableCubes(vector<int>& result, int cubeId) const {
     if (this->bitboards[cubeId].none()) return;
 
     Color movingColor = (cubeId < 6 ? Color::Blue : Color::Red);
-    Direction directions[] = {Direction::Vertical, Direction::Horizontal,
-                              Direction::Diagonal};
-    vector<Bitboard> moveResults;
-    for (Direction& dir : directions) {
-        if ((this->bitboards[cubeId] & Board::getMoveMask(movingColor, dir)).any()) {
-            moveResults.push_back((movingColor == Color::Blue
-                                       ? this->bitboards[cubeId] >> dir
-                                       : this->bitboards[cubeId] << dir));
-        }
-    }
-
-    for (int i = 0; i < N_CUBE; i++) {
-        for (Bitboard& moveResult : moveResults) {
-            if ((this->bitboards[i] & moveResult).any()) {
-                result.push_back(i);
-                break;
-            }
-        }
+    const Bitboard& destCandidates =
+        (movingColor == Color::Blue ? Board::blueDests.at(this->bitboards[cubeId])
+                                    : Board::redDests.at(this->bitboards[cubeId]));
+    int oppoCubeStartingId = (movingColor == Color::Blue ? 6 : 0);
+    for (int i = oppoCubeStartingId; i < oppoCubeStartingId + 6; i++) {
+        if ((this->bitboards[i] & destCandidates).any()) result.push_back(i);
     }
 }
 

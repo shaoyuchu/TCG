@@ -4,6 +4,7 @@
 #include <map>
 #include <string>
 #include <tuple>
+#include <unordered_map>
 #include <vector>
 #define BOARD_SIZE 5
 #define N_CELL 25
@@ -38,8 +39,12 @@ class Board {
     Color nextTurn;
     array<Bitboard, N_CUBE> bitboards;
     const static map<tuple<Color, Direction>, Bitboard> moveMasks;
+    const static unordered_map<Bitboard, Bitboard> blueDests;
+    const static unordered_map<Bitboard, Bitboard> redDests;
 
     static map<tuple<Color, Direction>, Bitboard> initMoveMasks();
+    static unordered_map<Bitboard, Bitboard> initBlueDests();
+    static unordered_map<Bitboard, Bitboard> initRedDests();
     static const Bitboard& getMoveMask(Color nextTurn, Direction dir);
     int getCubeByCellId(int cellId) const;
     pair<int, int> getMovableCubes(int dice) const;
