@@ -5,6 +5,8 @@
 #define ATTACK_FACTOR 2.0
 #define THREAT_FACTOR 0.05
 #define MAX_DEPTH 4
+#define MAX_EVAL 396.0
+#define MIN_EVAL -396.0
 
 class Solver {
    private:
@@ -23,6 +25,8 @@ class Solver {
                      int remainingDepth);
     double star0Max(Board& board, double alpha, double beta, int depth);
     double star0Min(Board& board, double alpha, double beta, int depth);
+    double star05Max(Board& board, double alpha, double beta, int depth);
+    double star05Min(Board& board, double alpha, double beta, int depth);
     double negaScoutMax(Board& board, int dice, double alpha, double beta, int depth);
     double negaScoutMin(Board& board, int dice, double alpha, double beta, int depth);
 
