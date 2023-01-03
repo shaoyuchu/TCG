@@ -184,16 +184,26 @@ bitset<12> Board::cubeExist() const {
 }
 
 void Board::applyPly(Ply& ply) {
-    this->bitboards[ply.cubeId] =
-        (this->nextTurn == Color::Blue ? this->bitboards[ply.cubeId] >> ply.dir
-                                       : this->bitboards[ply.cubeId] << ply.dir);
-    Bitboard mask(this->bitboards[ply.cubeId]);
-    mask.flip();
+    // move the cube
+    int oriCell = this->getCellByCubeId(ply.cubeId);
+    int newCell = (this->nextTurn == Color::Blue ? oriCell - ply.dir : oriCell + ply.dir);
+    this->bitboards[ply.cubeId].reset(oriCell);
+    this->bitboards[ply.cubeId].set(newCell);
+    this->hash ^= (Board::cubePosHashKey[ply.cubeId][oriCell] ^
+                   Board::cubePosHashKey[ply.cubeId][newCell]);
+
+    // remove the cube originally occupying this cell
     for (int i = 0; i < N_CUBE; i++) {
-        if (i == ply.cubeId) continue;
-        this->bitboards[i] &= mask;
+        if (i != ply.cubeId && this->bitboards[i].test(newCell)) {
+            this->bitboards[i].reset(newCell);
+            this->hash ^= Board::cubePosHashKey[i][newCell];
+            break;
+        }
     }
+
+    // update nextTurn
     this->nextTurn = (this->nextTurn == Color::Blue ? Color::Red : Color::Blue);
+    this->hash ^= (Board::colorHashKey[0] ^ Board::colorHashKey[1]);
 }
 
 void Board::getCapturableCubes(vector<int>& result, int cubeId) const {
@@ -247,10 +257,10 @@ pair<int, int> Board::getMovableCubes(int dice) const {
 
 void Board::setCube(int cubeId, int position) {
     this->bitboards[cubeId].set(position);
-    this->zobristHash ^= Board::cubePosHashKey[cubeId][position];
+    this->hash ^= Board::cubePosHashKey[cubeId][position];
 }
 
 void Board::setNextTurn(Color color) {
     this->nextTurn = color;
-    this->zobristHash ^= Board::colorHashKey[color];
+    this->hash ^= Board::colorHashKey[color];
 }

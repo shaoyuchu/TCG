@@ -38,7 +38,7 @@ class Board {
    private:
     Color nextTurn;
     array<Bitboard, N_CUBE> bitboards;
-    size_t zobristHash;
+    size_t hash;
     const static map<tuple<Color, Direction>, Bitboard> moveMasks;
     const static unordered_map<Bitboard, Bitboard> blueDests;
     const static unordered_map<Bitboard, Bitboard> redDests;
@@ -56,7 +56,7 @@ class Board {
 
    public:
     const static string cubeNames[N_CUBE];
-    Board() : zobristHash(0) {}
+    Board() : hash(0) {}
     void setCube(int cubeId, int position);
     void setNextTurn(Color color);
     Color getNextTurn() const { return this->nextTurn; }
@@ -66,6 +66,6 @@ class Board {
     bitset<12> cubeExist() const;
     void applyPly(Ply& ply);
     void getCapturableCubes(vector<int>& result, int cubeId) const;
-    size_t hash() { return this->zobristHash; }
+    size_t getHash() { return this->hash; }
     string toString() const;
 };
