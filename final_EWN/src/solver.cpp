@@ -103,7 +103,7 @@ Ply Solver::getBestPly(int dice) {
     for (Ply& ply : legalPlys) {
         Board newBoard(this->baseBoard);
         newBoard.applyPly(ply);
-        double newBoardScore = this->star05Max(newBoard, -DBL_MAX, DBL_MAX, MAX_DEPTH);
+        double newBoardScore = this->star1Max(newBoard, -DBL_MAX, DBL_MAX, MAX_DEPTH);
         if (newBoardScore > maxScore) {
             maxScore = newBoardScore;
             bestPly = ply;
@@ -154,6 +154,44 @@ double Solver::star05Min(Board& board, double alpha, double beta, int depth) {
     return (total / (double)6);
 }
 
+double Solver::star1Max(Board& board, double alpha, double beta, int depth) {
+    double total = 0;
+    double windowLeft = (double)6 * (alpha - MAX_EVAL) + MAX_EVAL;
+    double windowRight = (double)6 * (beta - MIN_EVAL) + MIN_EVAL;
+    double lowerBound = MIN_EVAL, upperBound = MAX_EVAL;
+    for (int dice = 1; dice <= 6; dice++) {
+        double score = negaScoutMin(board, dice, max(windowLeft, MIN_EVAL),
+                                    min(windowRight, MAX_EVAL), depth);
+        lowerBound += (score - MIN_EVAL) / (double)6;
+        upperBound += (score - MAX_EVAL) / (double)6;
+        if (score >= windowRight) return lowerBound;
+        if (score <= windowLeft) return upperBound;
+        total += score;
+        windowLeft += MAX_EVAL - score;
+        windowRight += MIN_EVAL - score;
+    }
+    return (total / (double)6);
+}
+
+double Solver::star1Min(Board& board, double alpha, double beta, int depth) {
+    double total = 0;
+    double windowLeft = (double)6 * (alpha - MAX_EVAL) + MAX_EVAL;
+    double windowRight = (double)6 * (beta - MIN_EVAL) + MIN_EVAL;
+    double lowerBound = MIN_EVAL, upperBound = MAX_EVAL;
+    for (int dice = 1; dice <= 6; dice++) {
+        double score = negaScoutMax(board, dice, max(windowLeft, MIN_EVAL),
+                                    min(windowRight, MAX_EVAL), depth);
+        lowerBound += (score - MIN_EVAL) / (double)6;
+        upperBound += (score - MAX_EVAL) / (double)6;
+        if (score >= windowRight) return lowerBound;
+        if (score <= windowLeft) return upperBound;
+        total += score;
+        windowLeft += MAX_EVAL - score;
+        windowRight += MIN_EVAL - score;
+    }
+    return (total / (double)6);
+}
+
 double Solver::negaScoutMax(Board& board, int dice, double alpha, double beta,
                             int depth) {
     if (board.getWinner() != Color::None || depth == 0) {
@@ -164,18 +202,18 @@ double Solver::negaScoutMax(Board& board, int dice, double alpha, double beta,
     board.generateMoves(legalPlys, dice);
     Board firstNewBoard(board);
     firstNewBoard.applyPly(legalPlys[0]);
-    double lowerBound = this->star05Max(firstNewBoard, alpha, beta, depth - 1);
+    double lowerBound = this->star1Max(firstNewBoard, alpha, beta, depth - 1);
     if (lowerBound >= beta) return lowerBound;
 
     for (int i = 1; i < legalPlys.size(); i++) {
         Board newBoard(board);
         newBoard.applyPly(legalPlys[i]);
         double searchResult =
-            this->star05Max(newBoard, lowerBound, lowerBound + 1, depth - 1);
+            this->star1Max(newBoard, lowerBound, lowerBound + 1, depth - 1);
         if (searchResult > lowerBound) {
             lowerBound = (searchResult >= beta
                               ? searchResult
-                              : this->star05Max(newBoard, searchResult, beta, depth - 1));
+                              : this->star1Max(newBoard, searchResult, beta, depth - 1));
         }
         if (lowerBound >= beta) return lowerBound;
     }
@@ -192,19 +230,18 @@ double Solver::negaScoutMin(Board& board, int dice, double alpha, double beta,
     board.generateMoves(legalPlys, dice);
     Board firstNewBoard(board);
     firstNewBoard.applyPly(legalPlys[0]);
-    double upperBound = this->star05Min(firstNewBoard, alpha, beta, depth - 1);
+    double upperBound = this->star1Min(firstNewBoard, alpha, beta, depth - 1);
     if (upperBound <= alpha) return upperBound;
 
     for (int i = 1; i < legalPlys.size(); i++) {
         Board newBoard(board);
         newBoard.applyPly(legalPlys[i]);
         double searchResult =
-            this->star05Min(newBoard, upperBound - 1, upperBound, depth - 1);
+            this->star1Min(newBoard, upperBound - 1, upperBound, depth - 1);
         if (searchResult < upperBound) {
-            upperBound =
-                (searchResult <= alpha
-                     ? searchResult
-                     : this->star05Min(newBoard, alpha, searchResult, depth - 1));
+            upperBound = (searchResult <= alpha
+                              ? searchResult
+                              : this->star1Min(newBoard, alpha, searchResult, depth - 1));
         }
         if (upperBound <= alpha) return upperBound;
     }
