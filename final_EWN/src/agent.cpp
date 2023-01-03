@@ -82,3 +82,5 @@ void Agent::get(const char* data[], char* response) {
     sprintf(response, "%s %s", Agent::cellNames[src].c_str(),
             Agent::cellNames[dest].c_str());
 }
+
+void Agent::exit(const char* data[], char* response) { Solver::clearTp(); }

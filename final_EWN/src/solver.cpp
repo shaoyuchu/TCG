@@ -12,6 +12,9 @@ const unordered_map<bitset<12>, array<int, 6>> Solver::cubeCoverage =
 const array<int, N_CELL> Solver::dist2TargetCorner = {
     4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 4, 3, 2, 2, 2, 4, 3, 2, 1, 1, 4, 3, 2, 1, 0};
 
+map<size_t, tuple<int, double, double, double>> Solver::transpositionTable =
+    map<size_t, tuple<int, double, double, double>>();
+
 unordered_map<bitset<12>, array<int, 6>> Solver::initCubeCoverages() {
     unordered_map<bitset<12>, array<int, 6>> result;
     bitset<12> empty(0);
@@ -126,6 +129,11 @@ double Solver::star0Min(Board& board, double alpha, double beta, int depth) {
     return (total / (double)6);
 }
 
+tuple<int, double, double, double> Solver::lookupTp(Board& board, int dice) {
+    size_t key = board.getHash() ^ (size_t)dice;
+    return Solver::transpositionTable.at(key);
+}
+
 double Solver::star05Max(Board& board, double alpha, double beta, int depth) {
     double total = 0;
     double lowerBound = MIN_EVAL, upperBound = MAX_EVAL;
@@ -218,6 +226,13 @@ double Solver::negaScoutMax(Board& board, int dice, double alpha, double beta,
         if (lowerBound >= beta) return lowerBound;
     }
     return lowerBound;
+}
+
+void Solver::insertTp(Board& board, int dice, int depth, double alpha, double beta,
+                      double value) {
+    size_t key = board.getHash() ^ (size_t)dice;
+    Solver::transpositionTable.insert(
+        make_pair(key, make_tuple(depth, alpha, beta, value)));
 }
 
 double Solver::negaScoutMin(Board& board, int dice, double alpha, double beta,

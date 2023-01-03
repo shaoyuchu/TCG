@@ -20,4 +20,5 @@ class Agent {
     void boardSetting(const char* data[], char* response);
     void init(const char* data[], char* response);
     void get(const char* data[], char* response);
+    void exit(const char* data[], char* response);
 };

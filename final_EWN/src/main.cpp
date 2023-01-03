@@ -19,6 +19,7 @@ bool executeCommand(const char* commandName, const char* data[], char* response,
     } else if (!strcmp(commandName, "get")) {
         agent.get(data, response);
     } else if (!strcmp(commandName, "exit")) {
+        agent.get(data, response);
         return true;
     }
     return false;
