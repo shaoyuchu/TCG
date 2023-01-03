@@ -245,4 +245,12 @@ pair<int, int> Board::getMovableCubes(int dice) const {
     return make_pair(smallerCubeId, largerCubeId);
 }
 
-void Board::setCube(int cubeId, int position) { this->bitboards[cubeId].set(position); }
+void Board::setCube(int cubeId, int position) {
+    this->bitboards[cubeId].set(position);
+    this->zobristHash ^= Board::cubePosHashKey[cubeId][position];
+}
+
+void Board::setNextTurn(Color color) {
+    this->nextTurn = color;
+    this->zobristHash ^= Board::colorHashKey[color];
+}

@@ -11,7 +11,7 @@
 #define N_CUBE 12
 using namespace std;
 
-enum Color { Blue, Red, None };
+enum Color { Blue = 0, Red = 1, None };
 
 enum Direction { Vertical = 5, Horizontal = 1, Diagonal = 6 };
 
@@ -56,9 +56,9 @@ class Board {
 
    public:
     const static string cubeNames[N_CUBE];
-    Board() {}
+    Board() : zobristHash(0) {}
     void setCube(int cubeId, int position);
-    void setNextTurn(Color color) { this->nextTurn = color; }
+    void setNextTurn(Color color);
     Color getNextTurn() const { return this->nextTurn; }
     int getCellByCubeId(int cubeId) const;
     Color getWinner() const;
