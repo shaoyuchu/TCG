@@ -79,16 +79,18 @@ double Solver::evaluateBoard(const Board& board) {
     }
 
     double threatVal = 0;
-    int oppoCubeStartingId = (this->nextTurn == Color::Blue ? 6 : 0);
-    for (int i = oppoCubeStartingId; i < oppoCubeStartingId + 6; i++) {
+    int oppoCubeIdOffset = (this->nextTurn == Color::Blue ? 6 : 0);
+    array<int, 6>& oppoCoverage =
+        (this->nextTurn == Color::Blue ? blueCubeCoverage : redCubeCoverage);
+    for (int i = 0; i < 6; i++) {
         vector<int> capturableCubes;
-        board.getCapturableCubes(capturableCubes, i);
+        board.getCapturableCubes(capturableCubes, i + oppoCubeIdOffset);
         int maxPieceVal = 0;
         for (int& capturableCube : capturableCubes) {
             if (pieceValues[capturableCube] > maxPieceVal)
                 maxPieceVal = pieceValues[capturableCube];
         }
-        threatVal += maxPieceVal;
+        threatVal += (double)(maxPieceVal * oppoCoverage[i]);
     }
 
     return (this->nextTurn == Color::Blue

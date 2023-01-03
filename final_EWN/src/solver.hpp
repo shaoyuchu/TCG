@@ -19,7 +19,6 @@ class Solver {
     static void initCubeCoverages(bitset<12> current, int next,
                                   unordered_map<bitset<12>, array<int, 6>>& result);
     static array<int, 6> computeCubeCoverage(bitset<12>& current);
-    double evaluateBoard(const Board& board);
     static tuple<int, double, double, double> lookupTp(Board& board, int dice);
     static void insertTp(Board& board, int dice, int depth, double alpha, double beta,
                          double value);
@@ -39,5 +38,6 @@ class Solver {
    public:
     Solver(Board& board) : baseBoard(board), nextTurn(board.getNextTurn()) {}
     Ply getBestPly(int dice);
+    double evaluateBoard(const Board& board);
     static void clearTp() { Solver::transpositionTable.clear(); }
 };
