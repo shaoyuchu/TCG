@@ -12,8 +12,8 @@ const unordered_map<bitset<12>, array<int, 6>> Solver::cubeCoverage =
 const array<int, N_CELL> Solver::dist2TargetCorner = {
     4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 4, 3, 2, 2, 2, 4, 3, 2, 1, 1, 4, 3, 2, 1, 0};
 
-map<size_t, tuple<int, double, double, double>> Solver::transpositionTable =
-    map<size_t, tuple<int, double, double, double>>();
+unordered_map<size_t, tuple<int, double, double, double>> Solver::transpositionTable =
+    unordered_map<size_t, tuple<int, double, double, double>>();
 
 unordered_map<bitset<12>, array<int, 6>> Solver::initCubeCoverages() {
     unordered_map<bitset<12>, array<int, 6>> result;
@@ -131,7 +131,8 @@ double Solver::star0Min(Board& board, double alpha, double beta, int depth) {
     return (total / (double)6);
 }
 
-tuple<int, double, double, double> Solver::lookupTp(Board& board, int dice) {
+tuple<int, double, double, double> Solver::lookupTp(Board& board,
+                                                    int dice) throw(out_of_range) {
     size_t key = board.getHash() ^ (size_t)dice;
     return Solver::transpositionTable.at(key);
 }
@@ -207,26 +208,40 @@ double Solver::negaScoutMax(Board& board, int dice, double alpha, double beta,
     if (board.getWinner() != Color::None || depth == 0) {
         return this->evaluateBoard(board);
     }
+    try {
+        tuple<int, double, double, double> tpFound = this->lookupTp(board, dice);
+        int tDepth = get<0>(tpFound);
+        double tAlpha = get<1>(tpFound), tBeta = get<2>(tpFound);
+        double tValue = get<3>(tpFound);
+        if (depth <= tDepth && (tValue >= beta || ((alpha < tValue) && (tValue < beta) &&
+                                                   (tValue < tBeta)))) {
+            return tValue;
+        }
+    } catch (const out_of_range& except) {
+    }
 
     vector<Ply> legalPlys;
     board.generateMoves(legalPlys, dice);
     Board firstNewBoard(board);
     firstNewBoard.applyPly(legalPlys[0]);
     double lowerBound = this->star1Max(firstNewBoard, alpha, beta, depth - 1);
-    if (lowerBound >= beta) return lowerBound;
-
-    for (int i = 1; i < legalPlys.size(); i++) {
-        Board newBoard(board);
-        newBoard.applyPly(legalPlys[i]);
-        double searchResult =
-            this->star1Max(newBoard, lowerBound, lowerBound + 1, depth - 1);
-        if (searchResult > lowerBound) {
-            lowerBound = (searchResult >= beta
-                              ? searchResult
-                              : this->star1Max(newBoard, searchResult, beta, depth - 1));
+    if (lowerBound < beta) {
+        for (int i = 1; i < legalPlys.size(); i++) {
+            Board newBoard(board);
+            newBoard.applyPly(legalPlys[i]);
+            double searchResult =
+                this->star1Max(newBoard, lowerBound, lowerBound + 1, depth - 1);
+            if (searchResult > lowerBound) {
+                lowerBound =
+                    (searchResult >= beta
+                         ? searchResult
+                         : this->star1Max(newBoard, searchResult, beta, depth - 1));
+            } else {
+                break;
+            }
         }
-        if (lowerBound >= beta) return lowerBound;
     }
+    Solver::insertTp(board, dice, depth, alpha, beta, lowerBound);
     return lowerBound;
 }
 
@@ -242,25 +257,39 @@ double Solver::negaScoutMin(Board& board, int dice, double alpha, double beta,
     if (board.getWinner() != Color::None || depth == 0) {
         return this->evaluateBoard(board);
     }
+    try {
+        tuple<int, double, double, double> tpFound = this->lookupTp(board, dice);
+        int tDepth = get<0>(tpFound);
+        double tAlpha = get<1>(tpFound), tBeta = get<2>(tpFound);
+        double tValue = get<3>(tpFound);
+        if (depth <= tDepth && (tValue <= alpha || ((alpha < tValue) && (tValue < beta) &&
+                                                    (tValue > tAlpha)))) {
+            return tValue;
+        }
+    } catch (const out_of_range& except) {
+    }
 
     vector<Ply> legalPlys;
     board.generateMoves(legalPlys, dice);
     Board firstNewBoard(board);
     firstNewBoard.applyPly(legalPlys[0]);
     double upperBound = this->star1Min(firstNewBoard, alpha, beta, depth - 1);
-    if (upperBound <= alpha) return upperBound;
-
-    for (int i = 1; i < legalPlys.size(); i++) {
-        Board newBoard(board);
-        newBoard.applyPly(legalPlys[i]);
-        double searchResult =
-            this->star1Min(newBoard, upperBound - 1, upperBound, depth - 1);
-        if (searchResult < upperBound) {
-            upperBound = (searchResult <= alpha
-                              ? searchResult
-                              : this->star1Min(newBoard, alpha, searchResult, depth - 1));
+    if (upperBound > alpha) {
+        for (int i = 1; i < legalPlys.size(); i++) {
+            Board newBoard(board);
+            newBoard.applyPly(legalPlys[i]);
+            double searchResult =
+                this->star1Min(newBoard, upperBound - 1, upperBound, depth - 1);
+            if (searchResult < upperBound) {
+                upperBound =
+                    (searchResult <= alpha
+                         ? searchResult
+                         : this->star1Min(newBoard, alpha, searchResult, depth - 1));
+            } else {
+                break;
+            }
         }
-        if (upperBound <= alpha) return upperBound;
     }
+    Solver::insertTp(board, dice, depth, alpha, beta, upperBound);
     return upperBound;
 }

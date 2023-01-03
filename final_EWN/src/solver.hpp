@@ -6,20 +6,21 @@
 #define THREAT_FACTOR ((double)0.05)
 #define MAX_EVAL ((double)396.0)
 #define MIN_EVAL ((double)-396.0)
-#define MAX_DEPTH 4
+#define MAX_DEPTH 6
 
 class Solver {
    private:
     Board baseBoard;
     Color nextTurn;
-    static map<size_t, tuple<int, double, double, double>> transpositionTable;
+    static unordered_map<size_t, tuple<int, double, double, double>> transpositionTable;
     const static unordered_map<bitset<12>, array<int, 6>> cubeCoverage;
     const static array<int, N_CELL> dist2TargetCorner;
     static unordered_map<bitset<12>, array<int, 6>> initCubeCoverages();
     static void initCubeCoverages(bitset<12> current, int next,
                                   unordered_map<bitset<12>, array<int, 6>>& result);
     static array<int, 6> computeCubeCoverage(bitset<12>& current);
-    static tuple<int, double, double, double> lookupTp(Board& board, int dice);
+    static tuple<int, double, double, double> lookupTp(Board& board,
+                                                       int dice) throw(out_of_range);
     static void insertTp(Board& board, int dice, int depth, double alpha, double beta,
                          double value);
     double star0(Board& board, double alpha, double beta, int currentDepth,
