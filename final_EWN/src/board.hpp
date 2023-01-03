@@ -38,13 +38,18 @@ class Board {
    private:
     Color nextTurn;
     array<Bitboard, N_CUBE> bitboards;
+    size_t zobristHash;
     const static map<tuple<Color, Direction>, Bitboard> moveMasks;
     const static unordered_map<Bitboard, Bitboard> blueDests;
     const static unordered_map<Bitboard, Bitboard> redDests;
+    const static array<array<size_t, N_CELL>, N_CUBE> cubePosHashKey;
+    const static array<size_t, 2> colorHashKey;
 
     static map<tuple<Color, Direction>, Bitboard> initMoveMasks();
     static unordered_map<Bitboard, Bitboard> initBlueDests();
     static unordered_map<Bitboard, Bitboard> initRedDests();
+    static array<array<size_t, N_CELL>, N_CUBE> initCubePosHashKey();
+    static array<size_t, 2> initColorHashKey();
     static const Bitboard& getMoveMask(Color nextTurn, Direction dir);
     int getCubeByCellId(int cellId) const;
     pair<int, int> getMovableCubes(int dice) const;
@@ -61,5 +66,6 @@ class Board {
     bitset<12> cubeExist() const;
     void applyPly(Ply& ply);
     void getCapturableCubes(vector<int>& result, int cubeId) const;
+    size_t hash() { return this->zobristHash; }
     string toString() const;
 };

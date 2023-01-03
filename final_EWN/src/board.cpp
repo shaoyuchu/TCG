@@ -2,6 +2,7 @@
 
 #include <cassert>
 #include <iostream>
+#include <random>
 using namespace std;
 
 map<tuple<int, Direction>, Ply> Ply::initPlyInstances() {
@@ -81,10 +82,36 @@ unordered_map<Bitboard, Bitboard> Board::initRedDests() {
     return result;
 }
 
+array<array<size_t, N_CELL>, N_CUBE> Board::initCubePosHashKey() {
+    array<array<size_t, N_CELL>, N_CUBE> result;
+    random_device rd;
+    mt19937 gen(rd());
+    uniform_int_distribution<unsigned long> randGen;
+    for (int i = 0; i < N_CUBE; i++) {
+        for (int j = 0; j < N_CELL; j++) result[i][j] = randGen(gen);
+    }
+    return result;
+}
+
+array<size_t, 2> Board::initColorHashKey() {
+    array<size_t, 2> result;
+    random_device rd;
+    mt19937 gen(rd());
+    uniform_int_distribution<unsigned long> randGen;
+    for (int i = 0; i < 2; i++) result[i] = randGen(gen);
+    return result;
+}
+
 const unordered_map<Bitboard, Bitboard> Board::blueDests = Board::initBlueDests();
+
 const unordered_map<Bitboard, Bitboard> Board::redDests = Board::initRedDests();
 
 const map<tuple<Color, Direction>, Bitboard> Board::moveMasks = Board::initMoveMasks();
+
+const array<array<size_t, N_CELL>, N_CUBE> Board::cubePosHashKey =
+    Board::initCubePosHashKey();
+
+const array<size_t, 2> Board::colorHashKey = Board::initColorHashKey();
 
 const Bitboard& Board::getMoveMask(Color nextTurn, Direction dir) {
     return Board::moveMasks.at(make_tuple(nextTurn, dir));
