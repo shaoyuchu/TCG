@@ -130,9 +130,9 @@ double Solver::star05Max(Board& board, double alpha, double beta, int depth) {
     double total = 0;
     double lowerBound = MIN_EVAL, upperBound = MAX_EVAL;
     for (int dice = 1; dice <= 6; dice++) {
-        double score = negaScoutMin(board, dice, -DBL_MAX, DBL_MAX, depth);
-        lowerBound += (score - MIN_EVAL) / 6;
-        upperBound += (score - MAX_EVAL) / 6;
+        double score = negaScoutMin(board, dice, MIN_EVAL, MAX_EVAL, depth);
+        lowerBound += (score - MIN_EVAL) / (double)6;
+        upperBound += (score - MAX_EVAL) / (double)6;
         if (lowerBound >= beta) return lowerBound;
         if (upperBound <= alpha) return upperBound;
         total += score;
@@ -144,9 +144,9 @@ double Solver::star05Min(Board& board, double alpha, double beta, int depth) {
     double total = 0;
     double lowerBound = MIN_EVAL, upperBound = MAX_EVAL;
     for (int dice = 1; dice <= 6; dice++) {
-        double score = negaScoutMax(board, dice, -DBL_MAX, DBL_MAX, depth);
-        lowerBound += (score - MIN_EVAL) / 6;
-        upperBound += (score - MAX_EVAL) / 6;
+        double score = negaScoutMax(board, dice, MIN_EVAL, MAX_EVAL, depth);
+        lowerBound += (score - MIN_EVAL) / (double)6;
+        upperBound += (score - MAX_EVAL) / (double)6;
         if (lowerBound >= beta) return lowerBound;
         if (upperBound <= alpha) return upperBound;
         total += score;
