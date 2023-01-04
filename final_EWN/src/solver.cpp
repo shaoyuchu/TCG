@@ -101,20 +101,53 @@ double Solver::evaluateBoard(const Board& board) {
 Ply Solver::getBestPly(int dice) {
     vector<Ply> legalPlys;
     this->baseBoard.generateMoves(legalPlys, dice);
+    for (Ply& ply : legalPlys) cerr << ply.toString() << endl;
     if (legalPlys.size() == 1) return legalPlys[0];
 
-    double maxScore = -DBL_MAX;
-    Ply& bestPly = legalPlys[0];
-    for (Ply& ply : legalPlys) {
-        Board newBoard(this->baseBoard);
-        newBoard.applyPly(ply);
-        double newBoardScore = this->star1Max(newBoard, -DBL_MAX, DBL_MAX, MAX_DEPTH);
-        if (newBoardScore > maxScore) {
-            maxScore = newBoardScore;
-            bestPly = ply;
+    // first round
+    int curDepBestPlyId = 0;
+    int curDepBestScore = MIN_EVAL;
+    double scores[6];
+    Board nextBoard[6];
+    for (int i = 0; i < legalPlys.size(); i++) {
+        nextBoard[i] = this->baseBoard;
+        nextBoard[i].applyPly(legalPlys[i]);
+        scores[i] = this->star1Max(nextBoard[i], -DBL_MAX, DBL_MAX, MIN_DEPTH);
+        if (scores[i] > curDepBestScore) {
+            curDepBestScore = scores[i];
+            curDepBestPlyId = i;
         }
     }
-    return bestPly;
+    cerr << "Dep" << MIN_DEPTH << ":";
+    for (int i = 0; i < legalPlys.size(); i++) cerr << " " << scores[i];
+    cerr << "\n";
+    int bestPlyId = curDepBestPlyId;
+
+    // TODO: add time control
+    int nextDepth = MIN_DEPTH + 2;
+    while (nextDepth <= MAX_DEPTH) {
+        curDepBestScore = MIN_EVAL;
+        for (int i = 0; i < legalPlys.size(); i++) {
+            double newScore = this->star1Max(nextBoard[i], scores[i] - IDAS_THRES,
+                                             scores[i] + IDAS_THRES, nextDepth);
+            if (newScore <= scores[i] - IDAS_THRES) {
+                newScore = this->star1Max(nextBoard[i], -DBL_MAX, newScore, nextDepth);
+            } else if (newScore >= scores[i] + IDAS_THRES) {
+                newScore = this->star1Max(nextBoard[i], newScore, DBL_MAX, nextDepth);
+            }
+            scores[i] = newScore;
+            if (scores[i] > curDepBestScore) {
+                curDepBestScore = scores[i];
+                curDepBestPlyId = i;
+            }
+        }
+        cerr << "Dep" << nextDepth << ":";
+        for (int i = 0; i < legalPlys.size(); i++) cerr << " " << scores[i];
+        cerr << "\n";
+        nextDepth += 2;
+        bestPlyId = curDepBestPlyId;
+    }
+    return legalPlys[bestPlyId];
 }
 
 double Solver::star0Max(Board& board, double alpha, double beta, int depth) {

@@ -6,7 +6,9 @@
 #define THREAT_FACTOR ((double)0.05)
 #define MAX_EVAL ((double)396.0)
 #define MIN_EVAL ((double)-396.0)
-#define MAX_DEPTH 4
+#define MIN_DEPTH 2
+#define MAX_DEPTH 6
+#define IDAS_THRES ((double)5.0)
 
 class Solver {
    private:
@@ -23,10 +25,6 @@ class Solver {
                                                        int dice) throw(out_of_range);
     static void insertTp(Board& board, int dice, int depth, double alpha, double beta,
                          double value);
-    double star0(Board& board, double alpha, double beta, int currentDepth,
-                 int remainingDepth);
-    double negaScout(Board& board, int dice, double alpha, double beta, int currentDepth,
-                     int remainingDepth);
     double star0Max(Board& board, double alpha, double beta, int depth);
     double star0Min(Board& board, double alpha, double beta, int depth);
     double star05Max(Board& board, double alpha, double beta, int depth);
