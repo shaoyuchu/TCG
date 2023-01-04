@@ -80,7 +80,7 @@ void Agent::get(const char* data[], char* response) {
     cerr << board.toString();
 
     Solver solver(board);
-    Ply bestPly = solver.getBestPly(dice);
+    Ply bestPly = solver.getBestPly(dice, this->timeLimitInSec - this->timeUsedInSec);
     cerr << "Final Decision: " << bestPly.toString() << endl;
 
     int src = board.getCellByCubeId(bestPly.getCubeId());

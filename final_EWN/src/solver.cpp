@@ -14,6 +14,10 @@ const unordered_map<bitset<12>, array<int, 6>> Solver::cubeCoverage =
 const array<int, N_CELL> Solver::dist2TargetCorner = {
     4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 4, 3, 2, 2, 2, 4, 3, 2, 1, 1, 4, 3, 2, 1, 0};
 
+array<double, MAX_TOTAL_DEPTH> Solver::totalTimeUsage = {0};
+
+array<int, MAX_TOTAL_DEPTH> Solver::totalCallCnt = {0};
+
 unordered_map<size_t, tuple<int, double, double, double>> Solver::transpositionTable =
     unordered_map<size_t, tuple<int, double, double, double>>();
 
@@ -100,7 +104,7 @@ double Solver::evaluateBoard(const Board& board) {
                 : ATTACK_FACTOR * redVal - blueVal - THREAT_FACTOR * threatVal);
 }
 
-Ply Solver::getBestPly(int dice) {
+Ply Solver::getBestPly(int dice, double remainingSec) {
     Solver::getCount++;
     vector<Ply> legalPlys;
     this->baseBoard.generateMoves(legalPlys, dice);
@@ -112,7 +116,9 @@ Ply Solver::getBestPly(int dice) {
     int curDepBestScore = MIN_EVAL;
     double scores[6];
     Board nextBoard[6];
+    struct timespec startTime, endTime;
     for (int i = 0; i < legalPlys.size(); i++) {
+        clock_gettime(CLOCK_REALTIME, &startTime);
         nextBoard[i] = this->baseBoard;
         nextBoard[i].applyPly(legalPlys[i]);
         scores[i] = this->star1Max(nextBoard[i], -DBL_MAX, DBL_MAX, MIN_DEPTH);
@@ -120,22 +126,30 @@ Ply Solver::getBestPly(int dice) {
             curDepBestScore = scores[i];
             curDepBestPlyId = i;
         }
+        clock_gettime(CLOCK_REALTIME, &endTime);
+        Solver::totalTimeUsage[MIN_DEPTH] +=
+            (double)(endTime.tv_sec - startTime.tv_sec) +
+            (double)(endTime.tv_nsec - startTime.tv_nsec) * 1e-9;
+        Solver::totalCallCnt[MIN_DEPTH] += 1;
     }
     cerr << "Dep" << MIN_DEPTH << ":";
     for (int i = 0; i < legalPlys.size(); i++) cerr << " " << scores[i];
-    cerr << "\n";
+    cerr << endl;
     int bestPlyId = curDepBestPlyId;
 
-    // TODO: add time control
     int nextDepth = MIN_DEPTH + 2;
     int maxDepth =
         (Solver::getCount <= OPEN_PLY_COUNT
              ? OPEN_MAX_DEPTH
              : (Solver::getCount <= (OPEN_PLY_COUNT + MIDDLE_PLY_COUNT) ? MIDDLE_MAX_DEPTH
                                                                         : END_MAX_DEPTH));
-    while (nextDepth <= maxDepth) {
+    while (nextDepth <= maxDepth && (Solver::totalCallCnt[nextDepth] == 0 ||
+                                     remainingSec > ((Solver::totalTimeUsage[nextDepth] /
+                                                      Solver::totalCallCnt[nextDepth]) *
+                                                     (double)legalPlys.size()))) {
         curDepBestScore = MIN_EVAL;
         for (int i = 0; i < legalPlys.size(); i++) {
+            clock_gettime(CLOCK_REALTIME, &startTime);
             double newScore = this->star1Max(nextBoard[i], scores[i] - IDAS_THRES,
                                              scores[i] + IDAS_THRES, nextDepth);
             if (newScore <= scores[i] - IDAS_THRES) {
@@ -148,10 +162,15 @@ Ply Solver::getBestPly(int dice) {
                 curDepBestScore = scores[i];
                 curDepBestPlyId = i;
             }
+            clock_gettime(CLOCK_REALTIME, &endTime);
+            Solver::totalTimeUsage[nextDepth] +=
+                (double)(endTime.tv_sec - startTime.tv_sec) +
+                (double)(endTime.tv_nsec - startTime.tv_nsec) * 1e-9;
+            Solver::totalCallCnt[nextDepth] += 1;
         }
         cerr << "Dep" << nextDepth << ":";
         for (int i = 0; i < legalPlys.size(); i++) cerr << " " << scores[i];
-        cerr << "\n";
+        cerr << endl;
         nextDepth += 2;
         bestPlyId = curDepBestPlyId;
     }
