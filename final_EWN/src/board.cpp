@@ -102,6 +102,15 @@ array<size_t, 2> Board::initColorHashKey() {
     return result;
 }
 
+array<size_t, 6> Board::initDiceHashKey() {
+    array<size_t, 6> result;
+    random_device rd;
+    mt19937 gen(rd());
+    uniform_int_distribution<unsigned long> randGen;
+    for (int i = 0; i < 6; i++) result[i] = randGen(gen);
+    return result;
+}
+
 const unordered_map<Bitboard, Bitboard> Board::blueDests = Board::initBlueDests();
 
 const unordered_map<Bitboard, Bitboard> Board::redDests = Board::initRedDests();
@@ -112,6 +121,8 @@ const array<array<size_t, N_CELL>, N_CUBE> Board::cubePosHashKey =
     Board::initCubePosHashKey();
 
 const array<size_t, 2> Board::colorHashKey = Board::initColorHashKey();
+
+const array<size_t, 6> Board::diceHashKey = Board::initDiceHashKey();
 
 const Bitboard& Board::getMoveMask(Color nextTurn, Direction dir) {
     return Board::moveMasks.at(make_tuple(nextTurn, dir));
@@ -217,6 +228,11 @@ void Board::getCapturableCubes(vector<int>& result, int cubeId) const {
     for (int i = oppoCubeStartingId; i < oppoCubeStartingId + 6; i++) {
         if ((this->bitboards[i] & destCandidates).any()) result.push_back(i);
     }
+}
+
+size_t Board::getHash(int dice) const {
+    assert(dice >= 1 && dice <= 6);
+    return (this->hash ^ Board::diceHashKey[dice - 1]);
 }
 
 string Board::toString() const {

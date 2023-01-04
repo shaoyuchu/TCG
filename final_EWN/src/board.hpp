@@ -44,12 +44,14 @@ class Board {
     const static unordered_map<Bitboard, Bitboard> redDests;
     const static array<array<size_t, N_CELL>, N_CUBE> cubePosHashKey;
     const static array<size_t, 2> colorHashKey;
+    const static array<size_t, 6> diceHashKey;
 
     static map<tuple<Color, Direction>, Bitboard> initMoveMasks();
     static unordered_map<Bitboard, Bitboard> initBlueDests();
     static unordered_map<Bitboard, Bitboard> initRedDests();
     static array<array<size_t, N_CELL>, N_CUBE> initCubePosHashKey();
     static array<size_t, 2> initColorHashKey();
+    static array<size_t, 6> initDiceHashKey();
     static const Bitboard& getMoveMask(Color nextTurn, Direction dir);
     int getCubeByCellId(int cellId) const;
     pair<int, int> getMovableCubes(int dice) const;
@@ -66,6 +68,6 @@ class Board {
     bitset<12> cubeExist() const;
     void applyPly(Ply& ply);
     void getCapturableCubes(vector<int>& result, int cubeId) const;
-    size_t getHash() { return this->hash; }
+    size_t getHash(int dice) const;
     string toString() const;
 };

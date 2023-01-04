@@ -6,7 +6,7 @@
 #define THREAT_FACTOR ((double)0.05)
 #define MAX_EVAL ((double)396.0)
 #define MIN_EVAL ((double)-396.0)
-#define MAX_DEPTH 6
+#define MAX_DEPTH 4
 
 class Solver {
    private:

@@ -133,8 +133,7 @@ double Solver::star0Min(Board& board, double alpha, double beta, int depth) {
 
 tuple<int, double, double, double> Solver::lookupTp(Board& board,
                                                     int dice) throw(out_of_range) {
-    size_t key = board.getHash() ^ (size_t)dice;
-    return Solver::transpositionTable.at(key);
+    return Solver::transpositionTable.at(board.getHash(dice));
 }
 
 double Solver::star05Max(Board& board, double alpha, double beta, int depth) {
@@ -255,9 +254,8 @@ double Solver::negaScoutMax(Board& board, int dice, double alpha, double beta,
 
 void Solver::insertTp(Board& board, int dice, int depth, double alpha, double beta,
                       double value) {
-    size_t key = board.getHash() ^ (size_t)dice;
     Solver::transpositionTable.insert(
-        make_pair(key, make_tuple(depth, alpha, beta, value)));
+        make_pair(board.getHash(dice), make_tuple(depth, alpha, beta, value)));
 }
 
 double Solver::negaScoutMin(Board& board, int dice, double alpha, double beta,
