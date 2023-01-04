@@ -245,9 +245,8 @@ double Solver::negaScoutMax(Board& board, int dice, double alpha, double beta,
                     (searchResult >= beta
                          ? searchResult
                          : this->star1Max(newBoard, searchResult, beta, depth - 1));
-            } else {
-                break;
             }
+            if (lowerBound >= beta) break;
         }
     }
     Solver::insertTp(board, dice, depth, alpha, beta, lowerBound);
@@ -303,9 +302,8 @@ double Solver::negaScoutMin(Board& board, int dice, double alpha, double beta,
                     (searchResult <= alpha
                          ? searchResult
                          : this->star1Min(newBoard, alpha, searchResult, depth - 1));
-            } else {
-                break;
             }
+            if (upperBound <= alpha) break;
         }
     }
     Solver::insertTp(board, dice, depth, alpha, beta, upperBound);
