@@ -96,5 +96,6 @@ void Agent::get(const char* data[], char* response) {
 
 void Agent::exit(const char* data[], char* response) {
     Solver::clearTp();
+    Solver::clearGetCount();
     this->timeUsedInSec = 0.0;
 }

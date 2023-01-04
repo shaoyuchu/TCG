@@ -6,6 +6,8 @@
 #include <iostream>
 using namespace std;
 
+int Solver::getCount = 0;
+
 const unordered_map<bitset<12>, array<int, 6>> Solver::cubeCoverage =
     Solver::initCubeCoverages();
 
@@ -99,6 +101,7 @@ double Solver::evaluateBoard(const Board& board) {
 }
 
 Ply Solver::getBestPly(int dice) {
+    Solver::getCount++;
     vector<Ply> legalPlys;
     this->baseBoard.generateMoves(legalPlys, dice);
     for (Ply& ply : legalPlys) cerr << ply.toString() << endl;
@@ -125,7 +128,12 @@ Ply Solver::getBestPly(int dice) {
 
     // TODO: add time control
     int nextDepth = MIN_DEPTH + 2;
-    while (nextDepth <= MAX_DEPTH) {
+    int maxDepth =
+        (Solver::getCount <= OPEN_PLY_COUNT
+             ? OPEN_MAX_DEPTH
+             : (Solver::getCount <= (OPEN_PLY_COUNT + MIDDLE_PLY_COUNT) ? MIDDLE_MAX_DEPTH
+                                                                        : END_MAX_DEPTH));
+    while (nextDepth <= maxDepth) {
         curDepBestScore = MIN_EVAL;
         for (int i = 0; i < legalPlys.size(); i++) {
             double newScore = this->star1Max(nextBoard[i], scores[i] - IDAS_THRES,

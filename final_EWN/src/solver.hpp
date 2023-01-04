@@ -7,13 +7,18 @@
 #define MAX_EVAL ((double)396.0)
 #define MIN_EVAL ((double)-396.0)
 #define MIN_DEPTH 2
-#define MAX_DEPTH 6
+#define OPEN_MAX_DEPTH 4
+#define MIDDLE_MAX_DEPTH 6
+#define END_MAX_DEPTH 6
+#define OPEN_PLY_COUNT 2
+#define MIDDLE_PLY_COUNT 4
 #define IDAS_THRES ((double)5.0)
 
 class Solver {
    private:
     Board baseBoard;
     Color nextTurn;
+    static int getCount;
     static unordered_map<size_t, tuple<int, double, double, double>> transpositionTable;
     const static unordered_map<bitset<12>, array<int, 6>> cubeCoverage;
     const static array<int, N_CELL> dist2TargetCorner;
@@ -39,4 +44,5 @@ class Solver {
     Ply getBestPly(int dice);
     double evaluateBoard(const Board& board);
     static void clearTp() { Solver::transpositionTable.clear(); }
+    static void clearGetCount() { Solver::getCount = 0; }
 };
