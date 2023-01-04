@@ -32,14 +32,17 @@ void Agent::setCubes(const char* data[], Board& board) {
     }
 }
 
-Agent::Agent() { srand(time(NULL)); }
+Agent::Agent() {
+    srand(time(NULL));
+    this->timeUsedInSec = 0.0;
+}
 
 void Agent::name(const char* data[], char* response) { strcpy(response, "MyAI"); }
 
 void Agent::version(const char* data[], char* response) { strcpy(response, "1.0.0"); }
 
 void Agent::timeSetting(const char* data[], char* response) {
-    this->timeLimit = stoi(data[1]);
+    this->timeLimitInSec = (double)stoi(data[1]);
     strcpy(response, "1");
 }
 
@@ -63,6 +66,9 @@ void Agent::init(const char* data[], char* response) {
 }
 
 void Agent::get(const char* data[], char* response) {
+    struct timespec startTime, endTime;
+    clock_gettime(CLOCK_REALTIME, &startTime);
+
     int dice = stoi(data[2]);
     cerr << "-------------------------" << endl;
     cerr << "Dice: " << dice << endl;
@@ -81,6 +87,14 @@ void Agent::get(const char* data[], char* response) {
     int dest = (nextTurn == Color::Red ? src + bestPly.getDir() : src - bestPly.getDir());
     sprintf(response, "%s %s", Agent::cellNames[src].c_str(),
             Agent::cellNames[dest].c_str());
+
+    clock_gettime(CLOCK_REALTIME, &endTime);
+    this->timeUsedInSec += ((double)(endTime.tv_sec - startTime.tv_sec) +
+                            (double)(endTime.tv_nsec - startTime.tv_nsec) * 1e-9);
+    cerr << this->timeUsedInSec << endl;
 }
 
-void Agent::exit(const char* data[], char* response) { Solver::clearTp(); }
+void Agent::exit(const char* data[], char* response) {
+    Solver::clearTp();
+    this->timeUsedInSec = 0.0;
+}
