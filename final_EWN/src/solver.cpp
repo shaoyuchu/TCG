@@ -213,9 +213,18 @@ double Solver::negaScoutMax(Board& board, int dice, double alpha, double beta,
         int tDepth = get<0>(tpFound);
         double tAlpha = get<1>(tpFound), tBeta = get<2>(tpFound);
         double tValue = get<3>(tpFound);
-        if (depth <= tDepth && (tValue >= beta || ((alpha < tValue) && (tValue < beta) &&
-                                                   (tValue < tBeta)))) {
-            return tValue;
+        if (depth <= tDepth) {
+            if (tAlpha < tValue && tValue < tBeta) {
+                return tValue;
+            } else if (tValue >= tBeta) {
+                // beta cut, lower bound
+                alpha = max(alpha, tValue);
+                if (alpha >= beta) return alpha;
+            } else {
+                // alpha cut, upper bound
+                beta = min(beta, tValue);
+                if (beta <= alpha) return beta;
+            }
         }
     } catch (const out_of_range& except) {
     }
@@ -262,9 +271,18 @@ double Solver::negaScoutMin(Board& board, int dice, double alpha, double beta,
         int tDepth = get<0>(tpFound);
         double tAlpha = get<1>(tpFound), tBeta = get<2>(tpFound);
         double tValue = get<3>(tpFound);
-        if (depth <= tDepth && (tValue <= alpha || ((alpha < tValue) && (tValue < beta) &&
-                                                    (tValue > tAlpha)))) {
-            return tValue;
+        if (depth <= tDepth) {
+            if (tAlpha < tValue && tValue < tBeta) {
+                return tValue;
+            } else if (tValue >= tBeta) {
+                // beta cut, lower bound
+                alpha = max(alpha, tValue);
+                if (alpha >= beta) return alpha;
+            } else {
+                // alpha cut, upper bound
+                beta = min(beta, tValue);
+                if (beta <= alpha) return beta;
+            }
         }
     } catch (const out_of_range& except) {
     }
