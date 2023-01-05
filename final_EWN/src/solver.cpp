@@ -191,8 +191,7 @@ double Solver::star0Min(Board& board, double alpha, double beta, int depth) {
     return (total / (double)6);
 }
 
-tuple<int, double, double, double> Solver::lookupTp(Board& board,
-                                                    int dice) throw(out_of_range) {
+tuple<int, double, double, double> Solver::lookupTp(Board& board, int dice) {
     return Solver::transpositionTable.at(board.getHash(dice));
 }
 

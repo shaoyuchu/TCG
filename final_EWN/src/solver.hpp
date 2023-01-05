@@ -1,4 +1,5 @@
 #pragma once
+#include <stdexcept>
 #include <unordered_map>
 
 #include "board.hpp"
@@ -29,8 +30,7 @@ class Solver {
     static void initCubeCoverages(bitset<12> current, int next,
                                   unordered_map<bitset<12>, array<int, 6>>& result);
     static array<int, 6> computeCubeCoverage(bitset<12>& current);
-    static tuple<int, double, double, double> lookupTp(Board& board,
-                                                       int dice) throw(out_of_range);
+    static tuple<int, double, double, double> lookupTp(Board& board, int dice);
     static void insertTp(Board& board, int dice, int depth, double alpha, double beta,
                          double value);
     double star0Max(Board& board, double alpha, double beta, int depth);
