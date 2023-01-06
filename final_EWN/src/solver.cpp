@@ -8,7 +8,7 @@ using namespace std;
 
 int Solver::getCount = 0;
 
-const unordered_map<bitset<12>, array<int, 6>> Solver::cubeCoverage =
+const unordered_map<bitset<12>, array<int, 6>> Solver::cubeMobility =
     Solver::initCubeCoverages();
 
 const array<int, N_CELL> Solver::dist2TargetCorner = {
@@ -63,31 +63,29 @@ double Solver::evaluateBoard(const Board& board) {
     bitset<12> cubeExist = board.cubeExist();
     bitset<12> blueCubeExist = cubeExist & bitset<12>(63);
     bitset<12> redCubeExist = cubeExist >> 6;
-    array<int, 6> blueCubeCoverage = Solver::cubeCoverage.at(blueCubeExist);
-    array<int, 6> redCubeCoverage = Solver::cubeCoverage.at(redCubeExist);
+    array<int, 6> blueCubeMobility = Solver::cubeMobility.at(blueCubeExist);
+    array<int, 6> redCubeMobility = Solver::cubeMobility.at(redCubeExist);
     int pieceValues[12] = {0};
 
     double blueVal = 0, redVal = 0;
-    // blue
     for (int i = 0; i < 6; i++) {
-        if (blueCubeCoverage[i] == 0) continue;
+        if (blueCubeMobility[i] == 0) continue;
         int pieceVal =
             2 << (4 - Solver::dist2TargetCorner[N_CELL - 1 - board.getCellByCubeId(i)]);
-        blueVal += (pieceVal * blueCubeCoverage[i]);
+        blueVal += (pieceVal * blueCubeMobility[i]);
         pieceValues[i] = pieceVal;
     }
-    // red
     for (int i = 0; i < 6; i++) {
-        if (redCubeCoverage[i] == 0) continue;
+        if (redCubeMobility[i] == 0) continue;
         int pieceVal = 2 << (4 - Solver::dist2TargetCorner[board.getCellByCubeId(i + 6)]);
-        redVal += (pieceVal * redCubeCoverage[i]);
+        redVal += (pieceVal * redCubeMobility[i]);
         pieceValues[i + 6] = pieceVal;
     }
 
     double threatVal = 0;
     int oppoCubeIdOffset = (this->nextTurn == Color::Blue ? 6 : 0);
     array<int, 6>& oppoCoverage =
-        (this->nextTurn == Color::Blue ? blueCubeCoverage : redCubeCoverage);
+        (this->nextTurn == Color::Blue ? blueCubeMobility : redCubeMobility);
     for (int i = 0; i < 6; i++) {
         vector<int> capturableCubes;
         board.getCapturableCubes(capturableCubes, i + oppoCubeIdOffset);

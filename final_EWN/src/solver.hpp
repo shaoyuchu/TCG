@@ -22,7 +22,7 @@ class Solver {
     Color nextTurn;
     static int getCount;
     static unordered_map<size_t, tuple<int, double, double, double>> transpositionTable;
-    const static unordered_map<bitset<12>, array<int, 6>> cubeCoverage;
+    const static unordered_map<bitset<12>, array<int, 6>> cubeMobility;
     const static array<int, N_CELL> dist2TargetCorner;
     static array<double, MAX_TOTAL_DEPTH> totalTimeUsage;
     static array<int, MAX_TOTAL_DEPTH> totalCallCnt;
