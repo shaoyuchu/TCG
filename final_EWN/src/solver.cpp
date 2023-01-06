@@ -116,9 +116,11 @@ Ply Solver::getBestPly(int dice, double remainingSec) {
     Board nextBoard[6];
     struct timespec startTime, endTime;
     for (int i = 0; i < legalPlys.size(); i++) {
-        clock_gettime(CLOCK_REALTIME, &startTime);
         nextBoard[i] = this->baseBoard;
         nextBoard[i].applyPly(legalPlys[i]);
+        if (nextBoard[i].getWinner() == this->nextTurn) return legalPlys[i];
+
+        clock_gettime(CLOCK_REALTIME, &startTime);
         scores[i] = this->star1Max(nextBoard[i], -DBL_MAX, DBL_MAX, MIN_DEPTH);
         if (scores[i] > curDepBestScore) {
             curDepBestScore = scores[i];
