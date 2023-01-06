@@ -136,7 +136,34 @@ Moreover, we set `MIN_DEPTH` and `MAX_DEPTH` to be different for each game stage
 
 ## 4.1 Search Depth
 
+We compare the performance and time usage of each fixed depth agent. Each agent play against the Depth 0 agent for 20 games. The results are show in the following table.
+
+|  | Depth = 0 | Depth = 1 | Depth = 2 | Depth = 3 | Depth = 4 | Depth = 5 | Depth = 6 |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| Win Rate | 0.45 | 0.7 | 0.45 | 0.65 | 0.75 | 0.7 | 0.8 |
+| average time usage (sec) | 0.00 | 0.01 | 0.05 | 0.29 | 2.06 | 16.19 | 134.02 |
+
+From the table, we can see that the average time spent for a complete round increases exponentially as the search depth increases. As for the win rate, agents that search deeper usually performs better than those that search shallower. However, the win rate is not strictly increasing.
+
 ## 4.1 Star0 vs. Star0.5 vs. Star1
+
+In this project, we implemented 3 different chance node search algorithms as follows:
+
+- Star0: chance node search with exhaustive enumeration without cuts
+- Star0.5: chance node search with cuts in between choices
+- Star1: chance node search with cuts inside choices using bounds from an arbitrary move ordering
+
+To compare the time usage of each algorithm, we take 2 open game board configuration, 2 middle game ones, and 2 end game ones. We set the depth to be fixed at 4, disable the transposition table, and compare the leaf nodes in the search tree.
+
+![https://i.imgur.com/WEtweOF.png](https://i.imgur.com/WEtweOF.png)
+
+|  | Open game 1 | Open game 2 | Middle game 1 | Middle game 2 | End game 1 | End game 2 |
+| --- | --- | --- | --- | --- | --- | --- |
+| Star0 | 4655928 (0%) | 6031164 (0%) | 16156128 (0%) | 7547142 (0%) | 2320152 (0%) | 477828 (0%) |
+| Star0.5 | 4654885 (-0.02%) | 6026691 (-0.07%) | 16097175 (-0.36%) | 7023990 (-6.93%) | 1674930 (27.81%) | 343747 (-28.06%) |
+| Star1 | 4134750 (-11.19%) | 5230117 (-13.28%) | 14032449 (-13.14%) | 6090856 (-19.30%) | 1617891 (-30.27%) | 273630 (-42.73%) |
+
+Comparing the three algorithms, we can see that the number of leaf nodes of Star0.5 is less than Star0 and that of Star1 is even further less. It is also worth mentioning that the improvement is much more significant in end game configurations. 
 
 ## 4.2 Transposition Table Performance
 
