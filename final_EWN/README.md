@@ -89,18 +89,44 @@ It is not always the case that we can reuse the value retrieved from the transpo
 Let `t_depth`, `t_alpha`, `t_beta`, `t_value` be the search depth, alpha value, beta value, and the search result of the previous search.  And let `depth`, `alpha`, and `beta` be the search depth, alpha value, and beta value of the current search.
 
 ```
-if t_depth < depth
+if t_depth < depth:
 	ignore the retrieved value
-else
-	if t_alpha < t_value < t_beta
+else:
+	if t_alpha < t_value < t_beta:
 		it should be an exact value, use it directly
-	else if t_value >= t_beta
+	else if t_value >= t_beta:
 		this introduces a lower bound, set alpha = max(alpha, t_value) 
-	else if t_value <= t_alpha
+	else if t_value <= t_alpha:
 		this introduces an upper bound, set beta = min(beta, t_value)
 ```
 
 ## 2.3 Iterative Deepening Aspiration Search and Time Control
+
+It is seldom the case that the evaluation value largely increase or decrease with 1 or 2 additional depth. Therefore, we can iteratively deepen our search and use the evaluation value of the shallow ones to modify our alpha/beta bounds. The process is as follows:
+
+Assume that there are $x$ legal moves.
+
+Let `score[i]` be the evaluation value of the board after applying move $i$.
+
+Let `MIN_DEPTH`, `MAX_DEPTH` be the minimum and search depth, respectively. And let `THRESH` be the window size.
+
+```
+for i = 1 to x:
+	score[i] = Star1(move[i], -inf, inf, MIN_DEPTH)
+
+next_depth = MIN_DEPTH + 2
+while the remaining time is enough for searching the next depth:
+	new_score = Star1(move[i], score[i] - THRESH, score[i] + THRESH, next_depth)
+	if new_score <= score[i] - THRESH:
+		new_score = Star1(move[i], -inf, new_score, next_depth)
+	else if new_score >= score[i] + THRESH:
+		new_score = Star1(move[i], new_score, inf, next_depth)
+	score[i] = new_score
+	next_depth = next_depth + 2
+return move[j] where move[j] is the largest among all move[i]
+```
+
+Moreover, we set `MIN_DEPTH` and `MAX_DEPTH` to be different for each game stage. For the open game, we set `MIN_DEPTH = 2` and `MAX_DEPTH = 4`. For middle game and end game, we set `MIN_DEPTH = 2` and `MAX_DEPTH = 6`.
 
 # 3. Implementation Detail
 
@@ -119,5 +145,7 @@ else
 # 5. Discussion
 
 selective deepening with statistics
+
+dynamic threshold for IDAS
 
 # 6. How to Compile the code
