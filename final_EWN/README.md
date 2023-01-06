@@ -128,13 +128,9 @@ return move[j] where move[j] is the largest among all move[i]
 
 Moreover, we set `MIN_DEPTH` and `MAX_DEPTH` to be different for each game stage. For the open game, we set `MIN_DEPTH = 2` and `MAX_DEPTH = 4`. For middle game and end game, we set `MIN_DEPTH = 2` and `MAX_DEPTH = 6`.
 
-# 3. Implementation Detail
+# 3. Experiments and Results
 
-## 3.1 Bitboard Data Structure
-
-# 4. Experiments and Results
-
-## 4.1 Search Depth
+## 3.1 Search Depth
 
 We compare the performance and time usage of each fixed depth agent. Each agent play against the Depth 0 agent for 20 games. The results are show in the following table.
 
@@ -145,7 +141,7 @@ We compare the performance and time usage of each fixed depth agent. Each agent 
 
 From the table, we can see that the average time spent for a complete round increases exponentially as the search depth increases. As for the win rate, agents that search deeper usually performs better than those that search shallower. However, the win rate is not strictly increasing.
 
-## 4.1 Star0 vs. Star0.5 vs. Star1
+## 3.2 Star0 vs. Star0.5 vs. Star1
 
 In this project, we implemented 3 different chance node search algorithms as follows:
 
@@ -153,7 +149,7 @@ In this project, we implemented 3 different chance node search algorithms as fol
 - Star0.5: chance node search with cuts in between choices
 - Star1: chance node search with cuts inside choices using bounds from an arbitrary move ordering
 
-To compare the time usage of each algorithm, we take 2 open game board configuration, 2 middle game ones, and 2 end game ones. We set the depth to be fixed at 4, disable the transposition table, and compare the leaf nodes in the search tree.
+To compare the performance of each algorithm, we take 2 open game board configuration, 2 middle game ones, and 2 end game ones. We set the depth to be fixed at 4, disable the transposition table, and compare the leaf nodes in the search tree.
 
 ![https://i.imgur.com/WEtweOF.png](https://i.imgur.com/WEtweOF.png)
 
@@ -165,14 +161,23 @@ To compare the time usage of each algorithm, we take 2 open game board configura
 
 Comparing the three algorithms, we can see that the number of leaf nodes of Star0.5 is less than Star0 and that of Star1 is even further less. It is also worth mentioning that the improvement is much more significant in end game configurations. 
 
-## 4.2 Transposition Table Performance
+## 3.3 Transposition Table Performance
 
-## 4.3 Iterative Deepening Aspiration Search
+To evaluate the performance enhancement of the transposition table, we compare the leaf nodes in the search tree with two agents. One with the transposition table enabled, and the other disabled. The experiments are run against the 6 board configurations introduced in previous section.
 
-# 5. Discussion
+|  | Open game 1 | Open game 2 | Middle game 1 | Middle game 2 | End game 1 | End game 2 |
+| --- | --- | --- | --- | --- | --- | --- |
+| TP disabled | 4134750 (0%) | 5230117 (0%) | 14032449 (0%) | 6090856 (0%) | 1617891 (0%) | 273630 (0%) |
+| TP enabled | 1240975 (-69.99%) | 899432 (-82.80%) | 1239950 (-91.16%) | 409648 (-93.27%) | 22024 (-98.64%) | 11558 (-95.78%) |
 
-selective deepening with statistics
+The experiment results show that the transposition table does efficiently reuse the search result of previous searches. The impact is especially significant on end game configurations. A possible reason is that a lot of the cubes have been captured, thus multiple dice outcomes may lead to the same game tree search. By utilizing the transposition table, we need not do duplicated search.
 
-dynamic threshold for IDAS
+# 4. Discussion
 
-# 6. How to Compile the code
+In our experiment, we found that it is usually the case that searching with a fixed depth 6 can be made within the 240-second time limit while setting any search to be depth 8 may take more than 10 minutes for a single move. Due to this finding, we set our `MAX_DEPTH` to be 6 for both the middle game and the end game.
+
+However, during the tournament, we found that some of the moves appear to be far inferior to others after a shallow search is done. Therefore, a further idea is to use statistical analysis to cluster moves based on their scores attained from the shallow search. Then we apply deeper search on the moves that belongs to the cluster with the highest scores only. This may be an idea for further improvement.
+
+# 5. How to Compile the code
+
+Run the `make` command to compile the code into `main.out`. No argument is required to execute the agent.
