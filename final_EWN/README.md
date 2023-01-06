@@ -163,7 +163,7 @@ Comparing the three algorithms, we can see that the number of leaf nodes of Star
 
 ## 3.3 Transposition Table Performance
 
-To evaluate the performance enhancement of the transposition table, we compare the leaf nodes in the search tree with two agents. One with the transposition table enabled, and the other disabled. The experiments are run against the 6 board configurations introduced in previous section.
+To evaluate the performance enhancement of the transposition table, we compare the leaf nodes in the search tree with two agents. One with the transposition table enabled, and the other disabled. The experiments are run against the 6 board configurations introduced in the previous section.
 
 |  | Open game 1 | Open game 2 | Middle game 1 | Middle game 2 | End game 1 | End game 2 |
 | --- | --- | --- | --- | --- | --- | --- |
